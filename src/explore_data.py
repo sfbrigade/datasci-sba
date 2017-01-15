@@ -22,7 +22,10 @@ namely:
  - sbadistrictoffice
  - congressionaldistrict
 
- 3.
+3. There is a discrepancy between the data dictionary for the 7a files and
+the files themselves, where there are more columns in the file than there are
+columns described in the data dictionary. The additional columns are the ff:
+- sbadistrictoffice (my best guess)
 '''
 
 
@@ -46,14 +49,42 @@ def load_7a_data():
         df (dataframe): dataframe of all three 7a dataframes stacked on each
         other
     '''
+    columns = ['program', 'borrname', 'borrstreet', 'borrcity', 'borrstate',
+               'borrzip', 'bankname', 'bankstreet', 'bankcity', 'bankstate',
+               'bankzip', 'grossapproval', 'sbaguaranteedapproval',
+               'approvaldate', 'approvalfiscalyear', 'firstdisbursementdate',
+               'deliverymethod', 'subpgmdesc', 'initialinterestrate',
+               'terminmonths', 'naicscode', 'naicsdescription',
+               'franchisecode', 'franchisename', 'projectcounty',
+               'projectstate', 'sbadistrictoffice', 'unknownnumber',
+               'businesstype', 'loanstatus', 'chargeoffdate',
+               'grosschargeoffamount', 'revolverstatus', 'jobssupported']
     file_7a_1991 = []
+    file_7a_2000 = []
+    file_7a_2010 = []
+    print('loading 7a-1991-1999-mod.csv')
     with open('data/7a-1991-1999-mod.csv') as f:
         for line in f:
             s = StringIO(line)
             file_7a_1991.append(list(csv.reader(s))[0])
-    return file_7a_1991
+    print('loading 7a-2000-2009-mod.csv')
+    with open('data/7a-2000-2009-mod.csv') as f:
+        for line in f:
+            s = StringIO(line)
+            file_7a_2000.append(list(csv.reader(s))[0])
+    print('loading 7a-2010-2016-mod.csv')
+    with open('data/7a-2010-2016-mod.csv') as f:
+        for line in f:
+            s = StringIO(line)
+            file_7a_2010.append(list(csv.reader(s))[0])
+    file_7a_1991.extend(file_7a_2000)
+    del file_7a_2000
+    file_7a_1991.extend(file_7a_2010)
+    del file_7a_2010
+    df = pd.DataFrame(file_7a_1991, columns=columns)
+    return df
 
 
 if __name__ == "__main__":
     # df = load_fiveofour_data()
-    file_7a_1991 = load_7a_data()
+    df = load_7a_data()
