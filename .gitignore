@@ -1,0 +1,17 @@
+*.pyc
+*.zip
+*.pyc
+*.json
+*.csv
+*.bak
+*.gz
+*.txt
+*.jar
+*.txt
+*.sql
+*.pkl
+*.ipynb_checkpoints
+*.ipynb
+*.pdf
+*.gml
+*.data
