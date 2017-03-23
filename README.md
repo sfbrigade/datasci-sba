@@ -9,10 +9,10 @@ At a fundamental level, what the SBA does is a public/private partnership.
 The SBA is engaged with in business support in three primary areas:
 1. Finance
 2. Education
---Counseling
---Incubator spaces
---Mentoring
---Contracting (helping small businesses with federal government. By law 23 % of federal government contracts are reserved for small businesses)
+* Counseling
+* Incubator spaces
+* Mentoring
+* Contracting (helping small businesses with federal government. By law 23 % of federal government contracts are reserved for small businesses)
 3. Disaster Relief
 -- Can get financing after disaster hits
 
