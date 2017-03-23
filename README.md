@@ -45,7 +45,7 @@ Two major challenges from office perspective
 ## Contributing DSWG Members
 ### Slack Channel: #datasci-sba
 | Name | Slack Handle | Contribution |
-| ---| --- | --- |
+| Vincent La| vincela14 | --- |
 
 ## Tech
 
