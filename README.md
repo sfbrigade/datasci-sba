@@ -38,6 +38,8 @@ Two major challenges from office perspective
 2. We have limited personnel, limited resources. Currently decisions being made about where we are doing outreach, where we are going to do partnership, right now it's a bit haphazard.
 * We would rather focus our outreach efforts towards underserved areas. (In generally we want a way to figure out how to prioritize certain areas)
 
+[Problem Statements](https://docs.google.com/document/u/1/d/1snCqR35VbrRRzY35Okvrc7iNjOx-uy5GpmxDm1wvCJ4/edit?usp=sharing)
+
 ### Live links
 
 ## Contributing DSWG Members
