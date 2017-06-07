@@ -37,13 +37,12 @@ https://modeanalytics.com/editor/vincentla/reports/4124e51db598
 Download the original FOIA (Freedom of Information Act) data here & explore it however you like: 
 https://www.sba.gov/about-sba/sba-performance/open-government/foia/frequently-requested-records/sba-7a-504-loan-data-reports
 
-The data is also available on the Data Science team's Azure account here:                 QUESTION - which version of data is this?
+The data is also available on the Data Science team's Azure account here:      QUESTION - which version of the data is this?
 https://c4sfdatascience.blob.core.windows.net/sba/FOIA%20-%20504%20(FY1991-Present).xlsx
 
+Data Dictionary https://files.slack.com/files-pri/T0431NL8C-F4FQLCV42/download/7a_504_foia_data_dictionary.xlsx
 
-## Metadata (pinned in the slack channel)
-- Data Dictionary https://files.slack.com/files-pri/T0431NL8C-F4FQLCV42/download/7a_504_foia_data_dictionary.xlsx
-- Information about the cities https://files.slack.com/files-pri/T0431NL8C-F4VHWSM28/download/0912_-_city_profiles.xlsx
+Information about the cities https://files.slack.com/files-pri/T0431NL8C-F4VHWSM28/download/0912_-_city_profiles.xlsx
 
 
 # Platforms
