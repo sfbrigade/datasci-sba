@@ -1,7 +1,7 @@
 # What is the SBA project about?
 
 ## Context 
-This project is focused on working with Small Business Administration (SBA) data in the hopes of rendering trends in the use of small business loans visible in order to assist in the administration of San Feancisco-area loans and answer questions like:
+This project is focused on working with San Francisco area Small Business Administration (SBA) data in the hopes of rendering trends in the use of small business loans visible in order to assist in the administration of San Feancisco-area loans and answer questions like:
 - How actively are different communities or areas taking advantage of available loans? Are there areas that could benefit from learning about SBA resources?
 - What are some success stories among SBA loan recipients that can help the the SBA garner more support - and benefit more small businesses?
 
@@ -34,10 +34,13 @@ Use basic SQL to query and explore the data! A version of the data has been uplo
 https://modeanalytics.com/editor/vincentla/reports/4124e51db598
 
 ## Data
-Download the original FOIA (Freedom of Information Act) data here & explore it however you like: 
+This csv contains the San Francisco-area loans from the original FOIA (Freedom of Information Act) data that is cleared for public use:
+https://files.slack.com/files-pri/T0431NL8C-F5P0JLZHB/download/foia_sfdo_504_7a.csv
+
+The FOIA data on the SBA site is divided by loan type and years but also covers a larger geographical area: 
 https://www.sba.gov/about-sba/sba-performance/open-government/foia/frequently-requested-records/sba-7a-504-loan-data-reports
 
-The data is also available on the Data Science team's Azure account here:      QUESTION - which version of the data is this?
+The data is also available on the Data Science team's Azure account here:      
 https://c4sfdatascience.blob.core.windows.net/sba/FOIA%20-%20504%20(FY1991-Present).xlsx
 
 Data Dictionary https://files.slack.com/files-pri/T0431NL8C-F4FQLCV42/download/7a_504_foia_data_dictionary.xlsx
@@ -45,14 +48,20 @@ Data Dictionary https://files.slack.com/files-pri/T0431NL8C-F4FQLCV42/download/7
 Information about the cities https://files.slack.com/files-pri/T0431NL8C-F4VHWSM28/download/0912_-_city_profiles.xlsx
 
 
-# Platforms
+# Platforms / Tools used for data exploration, processing, and visualization
 We are currently exploring platforms for rendering the data and visualizations accessible for people in the SBA and people who want to learn about the cool stuff that the SBA is up to. Everything in this section is up for grabs currently, but - so far - initial efforts have been made to make the data available on the following platforms:
 
 - Python / Jupyter. There are several notebooks with code to clean and explore the data. 
   - SBA Data Integration.ipynb - Provides the steps for integrating the original FOIA SBA data with zip code level data on businesses and  IRS tax return data
   - yelp.py - uses BeautifulSoup and Requests to pull yelp data.
-  
+
+- Open Refine (http://openrefine.org/) for cleaning data with following steps in JSON https://sfbrigade.slack.com/files/nerb/F5P20FLHJ/clean_sfdo_data.json
+
 - Mode - Primarily to explore the data.  https://modeanalytics.com/editor/vincentla/reports/4124e51db598
+
+- Tableau - Need to get the link to @z's visualization.
+
+- Carto - An early visualization - https://sheffieldhale.carto.com/viz/a20ce71a-2578-11e7-bf69-0e05a8b3e3d7/public_map
 
 - Heroku - An initial effort to make the data available online.  https://datasci-sba-metabase.herokuapp.com
 
