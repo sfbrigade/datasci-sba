@@ -48,7 +48,7 @@ Data Dictionary https://files.slack.com/files-pri/T0431NL8C-F4FQLCV42/download/7
 Information about the cities https://files.slack.com/files-pri/T0431NL8C-F4VHWSM28/download/0912_-_city_profiles.xlsx
 
 
-# Platforms / Tools used for data exploration, processing, and visualization
+# Tools used for data exploration, processing, and visualization
 We are currently exploring platforms for rendering the data and visualizations accessible for people in the SBA and people who want to learn about the cool stuff that the SBA is up to. Everything in this section is up for grabs currently, but - so far - initial efforts have been made to make the data available on the following platforms:
 
 - Python / Jupyter. There are several notebooks with code to clean and explore the data. 
