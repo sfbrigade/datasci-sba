@@ -59,7 +59,7 @@ We are currently exploring platforms for rendering the data and visualizations a
 
 - Mode - Primarily to explore the data.  https://modeanalytics.com/editor/vincentla/reports/4124e51db598
 
-- Tableau - Need to get the link to @z's visualization.
+- Tableau - Currently the MVP - https://public.tableau.com/profile/zlatan.kremonic#!/vizhome/SBALoans_1/ZIP_Analysis
 
 - Carto - An early visualization - https://sheffieldhale.carto.com/viz/a20ce71a-2578-11e7-bf69-0e05a8b3e3d7/public_map
 
