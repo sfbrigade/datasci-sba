@@ -1,7 +1,9 @@
-# datasci-sba (Small Business Association
+# datasci-sba (Small Business Association)
 Data Science Working Group working with the Small Business Administration (SBA) to create interactive applications, models, visualizations, and much more.
 
 This project is part of [Data Science Working Group at Code for San Francisco](https://github.com/sfbrigade/data-science-wg)
+
+If you're looking to jump right in, please see our [Onboarding doc](https://github.com/sfbrigade/datasci-sba/blob/master/onboarding.md).
 
 ## Project Description
 At a fundamental level, what the SBA does is a public/private partnership. The SBA is a federal government agency, albeit fairly decentralized. In particular, business owners very rarely interact directly with the SBA. For example, a business owner will still go to a bank to get a loan backed by the SBA (as opposed to going directly into an SBA office to get a loan). Another example would be business owners might go to a non-profit funded by an SBA to get counseling. The SBA is engaged with in business support in three primary areas:
