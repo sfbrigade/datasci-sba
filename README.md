@@ -40,13 +40,15 @@ Two major challenges from office perspective
 
 [Problem Statements](https://docs.google.com/document/u/1/d/1snCqR35VbrRRzY35Okvrc7iNjOx-uy5GpmxDm1wvCJ4/edit?usp=sharing)
 
-### Live links
-
 ## Contributing DSWG Members
 ### Slack Channel: #datasci-sba
-| Name | Slack Handle | Contribution |
-
-| Vincent La| vincela14 | --- |
+|Name   |Slack Handle   | 
+|---|---|
+|Noah Brod| nerb|
+|Brian Lindsbeth|brianl   |
+|Zlatan   |z   |
+|Dianna Yau |dyau   |
+|Vincent La|vincela14 |
 
 ## Tech
 
