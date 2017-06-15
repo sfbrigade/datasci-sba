@@ -55,6 +55,7 @@ Two major challenges from office perspective
 ## Tech
 
 ## Contributing
+Please see our [Onboarding doc](https://github.com/sfbrigade/datasci-sba/blob/master/onboarding.md) to get started.
 
 [Fork this repo](https://help.github.com/articles/fork-a-repo/), then clone your repo locally
 ```
