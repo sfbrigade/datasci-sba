@@ -41,7 +41,7 @@ def main():
     print('Parsing FOIA datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    directory = '/Users/VincentLa/git/datasci-sba/src/data/'
+    directory = '/Users/VincentLa/git/datasci-sba/src/data/sba'
     load_foia_datasets(dbm, directory)
 
 

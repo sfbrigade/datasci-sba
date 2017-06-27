@@ -33,7 +33,7 @@ def main():
     print('Parsing Census datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    directory = '/Users/VincentLa/git/datasci-sba/src/data/'
+    directory = '/Users/VincentLa/git/datasci-sba/src/data/census'
     load_foia_datasets(dbm, directory)
 
 
