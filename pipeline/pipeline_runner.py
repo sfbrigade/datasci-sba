@@ -57,14 +57,14 @@ def run_files(dbm, files, db_url):
         if file[-3:] == '.py':
             p = subprocess.Popen(['python3', '-m',
                                   'pipeline.pipeline_tasks.{}'.format(file[:-3]),
-                                  '--dbm={}'.format(dbm)])
+                                  '--db_url={}'.format(db_url)])
             p.communicate()
             print("Done running the python file {}".format(file))
         else:
             #p = subprocess.Popen(['psql', '-d', db_url, '-a', '-f',
             #                      './pipeline/{}.sql'.format(file)])
             #p.communicate()
-            dbm.write_query_table(sql_util.get_sql_as_string(SQL_PATH, file))
+            dbm.write_query_table(sql_utils.get_sql_as_string(SQL_PATH, file))
             print("Done running SQL file {}".format(file))
         localendtime = dt.datetime.now()
         localduration = localendtime - localstarttime
