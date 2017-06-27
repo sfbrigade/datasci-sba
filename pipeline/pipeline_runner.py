@@ -84,7 +84,7 @@ def main():
 
     # Define list of files you want to run
     files = [
-        '00_01_load_foia_datasets.py',
+        'parse.00_01_load_foia_datasets.py',
         # '00_02_load_census_datasets.py',
     ]
 
