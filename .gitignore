@@ -5,10 +5,7 @@
 *.csv
 *.bak
 *.gz
-*.txt
 *.jar
-*.txt
-*.sql
 *.pkl
 *.ipynb_checkpoints
 *.gml
