@@ -17,8 +17,8 @@ def get_args():
     return parser.parse_args()
 
 
-def load_foia_datasets(dbm, direc):
-    """Load foia datasets
+def load_sba_datasets(dbm, direc):
+    """Load foia sba datasets
 
     Keyword Args:
         dbm: DBManager object
@@ -26,12 +26,15 @@ def load_foia_datasets(dbm, direc):
     """
     foia_504_1991_present = pd.read_excel(direc + 'FOIA - 504 (FY1991-Present).xlsx')
     foia_7a_1991_1999 = pd.read_excel(direc + 'FOIA - 7(a) (FY1991-FY1999).xlsx')
+    foia_7a_2000_2009 = pd.read_excel(direc + 'FOIA - 7(a)(FY2000-FY2009).xlsx')
     foia_7a_2010_present = pd.read_excel(direc + 'FOIA - 7(a) (FY2010-Present).xlsx')
 
     dbm.write_df_table(
         foia_504_1991_present, table_name='sba__foia_504_1991_present', schema='data_ingest')
     dbm.write_df_table(
         foia_7a_1991_1999, table_name='sba__foia_7a_1991_1999', schema='data_ingest')
+    dbm.write_df_table(
+        foia_7a_2000_2009, table_name='sba__foia_7a_2000_2009', schema='data_ingest')
     dbm.write_df_table(
         foia_7a_2010_present, table_name='sba__foia_7a_2010_present', schema='data_ingest')
 
@@ -42,7 +45,7 @@ def main():
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
     directory = '/Users/VincentLa/git/datasci-sba/src/data/sba'
-    load_foia_datasets(dbm, directory)
+    load_sba_datasets(dbm, directory)
 
 
 if __name__ == '__main__':
