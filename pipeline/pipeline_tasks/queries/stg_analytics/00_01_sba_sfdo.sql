@@ -1,5 +1,5 @@
 /*
-Go from FOIA national datasets to SFDO
+Go from FOIA SBA national datasets and subset it to SFDO
 Clean up city names, etc.
 */
 drop table if exists stg_analytics.sba_sfdo;
@@ -10,4 +10,6 @@ create table stg_analytics.sba_sfdo
 ;
 
 insert into stg_analytics.sba_sfdo
+select
+
 ;

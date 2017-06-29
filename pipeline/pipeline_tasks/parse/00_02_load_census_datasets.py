@@ -17,24 +17,28 @@ def get_args():
     return parser.parse_args()
 
 
-def load_foia_datasets(dbm, direc):
-    """Load foia datasets
+def load_census_datasets(dbm, direc):
+    """Load census datasets
 
     Keyword Args:
         dbm: DBManager object
-        dir: Directory where files are
+        direc: Directory where files are
     """
-    df = pd.read_table(direc + 'CB1500CZ21.dat', sep="|")
+    # Read tables in chunks: https://stackoverflow.com/questions/13651117/pandas-filter-lines-on-load-in-read-csv
+    iter_table = pd.read_table(direc + 'CB1500CZ21.dat', sep="|", dtype=str, iterator=True, chunksize=1000)
+    # Let's just write California, otherwise the file is too big
+    df = pd.concat([chunk[chunk['ST'] == '06'] for chunk in iter_table])
     dbm.write_df_table(
-        df, table_name='census__cb1500cz21', schema='data_ingest')
+        df, table_name='census__zip_business_patterns', schema='data_ingest')
+
 
 def main():
     """Execute Stuff"""
     print('Parsing Census datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    directory = '/Users/VincentLa/git/datasci-sba/src/data/census'
-    load_foia_datasets(dbm, directory)
+    directory = '/Users/VincentLa/git/datasci-sba/src/data/census/'
+    load_census_datasets(dbm, directory)
 
 
 if __name__ == '__main__':
