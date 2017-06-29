@@ -5,13 +5,11 @@
 *.csv
 *.bak
 *.gz
-*.txt
 *.jar
-*.txt
-*.sql
 *.pkl
 *.ipynb_checkpoints
-*.pdf
 *.gml
 *.data
 *.xlsx
+*.DS_Store
+*.dat

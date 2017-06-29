@@ -1,0 +1,5 @@
+name: datasci-sba
+channels:
+- defaults
+prefix: /Users/VincentLa/anaconda3/envs/datasci-sba
+
