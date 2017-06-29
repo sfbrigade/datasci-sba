@@ -28,8 +28,8 @@ One challenge is to visualize and identify businesses who have received SBA fund
 One of the largest challenges to SBA is increasing their profile so people know who they are
 
 SBA definition of Small Business
-* 500 employees or fewer and under $7.5 million in annual revenues.  (for the complicated answer, see [here](https://www.sba.gov/contracting/getting-started-contractor/make-sure-you-meet-sba-size-standards/table-small-business-size-standards) 
-* Exclude public traded companies, etc. 
+* 500 employees or fewer and under $7.5 million in annual revenues.  (for the complicated answer, see [here](https://www.sba.gov/contracting/getting-started-contractor/make-sure-you-meet-sba-size-standards/table-small-business-size-standards)
+* Exclude public traded companies, etc.
 
 Two major challenges from office perspective
 1. Identifying businesses who have benefited from SBA program
@@ -44,13 +44,14 @@ Two major challenges from office perspective
 
 ## Contributing DSWG Members
 ### Slack Channel: #datasci-sba
-|Name   |Slack Handle   | 
+|Name   |Slack Handle   |
 |---|---|
 |Noah Brod| nerb|
 |Brian Lindsbeth|brianl   |
 |Zlatan   |z   |
 |Dianna Yau |dyau   |
 |Vincent La|vincela14 |
+|Chris Van Dusen|cvandusen |
 
 ## Tech
 
