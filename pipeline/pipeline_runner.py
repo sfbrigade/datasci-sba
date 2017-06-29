@@ -84,7 +84,9 @@ def main():
 
     # Define list of files you want to run
     files = [
-        'parse.00_01_load_foia_datasets.py',
+        'parse.00_01_load_sba_datasets.py',
+        'parse.00_02_load_census_datasets.py'
+        'queries.stg_analytics.00_01_sba_sfdo'
         # '00_02_load_census_datasets.py',
     ]
 
