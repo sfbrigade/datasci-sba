@@ -25,8 +25,8 @@ def load_sba_datasets(dbm, direc):
         dir: Directory where files are
     """
     foia_504_1991_present = pd.read_excel(direc + 'FOIA - 504 (FY1991-Present).xlsx')
-    foia_7a_1991_1999 = pd.read_excel(direc + 'FOIA - 7(a) (FY1991-FY1999).xlsx')
-    foia_7a_2000_2009 = pd.read_excel(direc + 'FOIA - 7(a)(FY2000-FY2009).xlsx')
+    foia_7a_1991_1999 = pd.read_excel(direc + 'FOIA - 7(a) (FY1991-FY1999).xlsx', skiprows=1)
+    foia_7a_2000_2009 = pd.read_excel(direc + 'FOIA - 7(a)(FY2000-FY2009).xlsx', skiprows=1)
     foia_7a_2010_present = pd.read_excel(direc + 'FOIA - 7(a) (FY2010-Present).xlsx')
 
     dbm.write_df_table(

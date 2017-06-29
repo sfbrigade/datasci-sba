@@ -1,4 +1,5 @@
 """Creating a class that will manage interactions with Postgres Database"""
+import urllib.parse
 
 import pandas as pd
 import psycopg2 as ps
@@ -21,11 +22,18 @@ class DBManager(object):
 
     def __init__(self, db_url):
         self.db_url = db_url
+        result = urllib.parse.urlparse(db_url)
+        self.host = result.hostname
+        self.user = result.username
+        self.dbname = result.path[1:]
+        self.password = result.password
         self.engine = sa.create_engine(db_url)
 
     def create_schema(self, schema):
         """Creates schema if does not exist"""
-        conn = ps.connect(self.db_url)
+        conn_string = "host={0} user={1} dbname={2} password={3}".format(
+            self.host, self.user, self.dbname, self.password)
+        conn = ps.connect(conn_string)
         with conn:
             cur = conn.cursor()
             query = 'CREATE SCHEMA IF NOT EXISTS {schema};'.format(schema=schema)
@@ -60,5 +68,6 @@ class DBManager(object):
                       schema=schema,
                       dtype=dtype,
                       if_exists=if_exists,
-                      index=index
+                      index=index,
+                      chunksize=1000
                      )

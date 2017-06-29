@@ -52,6 +52,7 @@ Two major challenges from office perspective
 |Dianna Yau |dyau   |
 |Vincent La|vincela14 |
 |Chris Van Dusen|cvandusen |
+|Gregory Boyer|boyer |
 
 ## Tech
 

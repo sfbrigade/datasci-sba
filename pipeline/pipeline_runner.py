@@ -16,6 +16,7 @@ from utilities.db_manager import DBManager
 
 from pandas.io.sql import SQLTable
 
+
 RUNTIME_ID = str(dt.datetime.now())
 SQL_PATH = os.path.join(os.path.dirname(__file__))
 
@@ -64,7 +65,7 @@ def run_files(dbm, files, db_url):
             #p = subprocess.Popen(['psql', '-d', db_url, '-a', '-f',
             #                      './pipeline/{}.sql'.format(file)])
             #p.communicate()
-            dbm.write_query_table(sql_utils.get_sql_as_string(SQL_PATH, file))
+            dbm.write_query_table(sql_utils.get_sql_as_string(SQL_PATH + file))
             print("Done running SQL file {}".format(file))
         localendtime = dt.datetime.now()
         localduration = localendtime - localstarttime
@@ -78,15 +79,15 @@ def main():
     """Main function to run tasks."""
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-
+    print(SQL_PATH)
     print('\n' + '\n' + 'Started at ' + str(starttime))
     print('\n')
 
     # Define list of files you want to run
     files = [
-        'parse.00_01_load_sba_datasets.py',
+        # 'parse.00_01_load_sba_datasets.py',
         'parse.00_02_load_census_datasets.py'
-        'queries.stg_analytics.00_01_sba_sfdo'
+        # 'queries.stg_analytics.00_01_sba_sfdo'
         # '00_02_load_census_datasets.py',
     ]
 
