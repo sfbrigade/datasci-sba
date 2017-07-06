@@ -69,5 +69,5 @@ class DBManager(object):
                       dtype=dtype,
                       if_exists=if_exists,
                       index=index,
-                      chunksize=1000
+                      chunksize=10000
                      )
