@@ -5,7 +5,7 @@ This query:
 2. Performs a left join of (1) against a count of 504 loans by zip code.
 3. Performs a left join of (1) against a count of 7A loans by zip code.
 4. Performs a left join of (1) against NAICS data by zip code (to obtain # of small businesses).
-	- here we reduce the NAICS data to only look at "Total Number of Businesses"
+	- here we reduce the NAICS data to only look at Total Number of Businesses
 5. Performs a left join of (1) against IRS data by zip code (to obtain mean AGI by zip code).
 6. Calculates ratios of total SBA loans, 504 loans, & 7A loans to the total number of businesses.
 7. Writes output to new table.
@@ -16,103 +16,103 @@ drop table if exists trg_analytics.sba_zip_level;
 create table trg_analytics.sba_zip_level
 
 (
-	"BorrZip" bigint
-	,"Total_SBA" int
-	,"Total_504" int
-	,"Total_7A" int
-	,"Total_Small_Bus" varchar
-	,"Mean_Agi" varchar
-	,"SBA_per_Small_Bus" float
-	,"504_per_Small_Bus" float
-	,"7A_per_Small_Bus" float
+	borr_zip bigint
+	,total_sba int
+	,total_504 int
+	,total_7a int
+	,total_small_bus varchar
+	,mean_agi varchar
+	,sba_per_small_bus float
+	,loan_504_per_small_bus float
+	,loan_7a_per_small_bus float
 );
 
 insert into trg_analytics.sba_zip_level
 
 select
-	A_combined."BorrZip"
-	,A_combined."Total_SBA"
-	,A_504."Total_504"
-	,A_7A."Total_7A"
-	,A_naics."ESTAB" as "Total_Small_Bus"
-	,A_irs."MEAN_AGI" as "Mean_Agi"
-	,cast(A_combined."Total_SBA" as float)/cast(A_naics."ESTAB" as float) as "SBA_per_Small_Bus"
-	,cast(A_504."Total_504" as float)/cast(A_naics."ESTAB" as float) as "504_per_Small_Bus"
-	,cast(A_7A."Total_7A" as float)/cast(A_naics."ESTAB" as float) as "7A_per_Small_Bus"
+	a_combined.borr_zip
+	,a_combined.total_sba
+	,a_504.total_504
+	,a_7a.total_7a
+	,a_naics.num_establishments as total_small_bus
+	,a_irs.mean_agi as mean_agi
+	,cast(a_combined.total_sba as float)/cast(a_naics.num_establishments as float) as sba_per_small_bus
+	,cast(a_504.total_504 as float)/cast(a_naics.num_establishments as float) as loan_504_per_small_bus
+	,cast(a_7a.total_7a as float)/cast(a_naics.num_establishments as float) as loan_7a_per_small_bus
 
-from 
+from
 
 	(
 	select
-		"BorrZip"
-		,count(*) as "Total_SBA"
+		borr_zip
+		,count(*) as total_sba
 
 	from stg_analytics.sba_sfdo
 
-	group by "BorrZip"
+	group by borr_zip
 
-	) A_combined
+	) a_combined
 
 	left join
 
 	(
 	select
-		"BorrZip"
-		,count(*) as "Total_504"
+		borr_zip
+		,count(*) as total_504
 
 	from stg_analytics.sba_sfdo
 
-	where "Program" = '504'
+	where Program = '504'
 
-	group by "BorrZip"
+	group by borr_zip
 
-	) A_504
+	) a_504
 
-	on A_combined."BorrZip" = A_504."BorrZip"
+	on a_combined.borr_zip = a_504.borr_zip
 
 	left join
 
 	(
 	select
-		"BorrZip"
-		,count(*) as "Total_7A"
+		borr_zip
+		,count(*) as total_7a
 
 	from stg_analytics.sba_sfdo
 
-	where "Program" = '7A'
+	where Program = '7A'
 
-	group by "BorrZip"
+	group by borr_zip
 
-	) A_7A
+	) a_7a
 
-	on A_combined."BorrZip" = A_7A."BorrZip"
+	on a_combined.borr_zip = a_7a.borr_zip
 
 	left join
 
 	(
 	select
-		"ESTAB"
-		,"GEO_ID"
-		,cast("ZIPCODE" as bigint)
+		num_establishments
+		,geo_id
+		,cast(zipcode as bigint)
 
 	from stg_analytics.census_naics
 
-	where "NAICS2012" = '00'
+	where naics2012 = '00'
 
-	) A_naics
+	) a_naics
 
-	on A_combined."BorrZip" = A_naics."ZIPCODE"
+	on a_combined.borr_zip = a_naics.zipcode
 
 	left join
 
 	(
 	select
-		cast("ZIPCODE" as bigint)
-		,"MEAN_AGI"
+		cast(zipcode as bigint)
+		,mean_agi
 
 	from stg_analytics.irs_income
 
-	) A_irs
+	) a_irs
 
-	on A_combined."BorrZip" = A_irs."ZIPCODE"
+	on a_combined.borr_zip = a_irs.zipcode
 ;

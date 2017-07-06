@@ -15,7 +15,7 @@ alter table data_ingest.sba__foia_7a_1991_1999 rename column "ApprovalDate" to a
 alter table data_ingest.sba__foia_7a_1991_1999 rename column "ApprovalFiscalYear" to approval_fiscal_year;
 alter table data_ingest.sba__foia_7a_1991_1999 rename column "FirstDisbursementDate" to first_disbursement_date;
 alter table data_ingest.sba__foia_7a_1991_1999 rename column "DeliveryMethod" to delivery_method;
-alter table data_ingest.sba__foia_7a_1991_1999 rename column "subpgmdesc" to subpgmdesc;
+alter table data_ingest.sba__foia_7a_1991_1999 rename column "subpgmdesc" to subprogram_description;
 alter table data_ingest.sba__foia_7a_1991_1999 rename column "InitialInterestRate" to initial_interest_rate;
 alter table data_ingest.sba__foia_7a_1991_1999 rename column "TermInMonths" to term_in_months;
 alter table data_ingest.sba__foia_7a_1991_1999 rename column "NaicsCode" to naics_code;
