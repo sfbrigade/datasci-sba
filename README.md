@@ -51,6 +51,8 @@ Two major challenges from office perspective
 |Zlatan   |z   |
 |Dianna Yau |dyau   |
 |Vincent La|vincela14 |
+|Gregory Boyer|boyer |
+|Michael Matthews|makfan |
 
 ## Tech
 
