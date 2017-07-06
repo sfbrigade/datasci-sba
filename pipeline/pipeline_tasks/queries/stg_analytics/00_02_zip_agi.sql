@@ -22,6 +22,6 @@ insert into stg_analytics.irs_income
 select
   zipcode,
   ceiling((sum(a00100) / sum(n1 + mars2)) * 1000) as mean_agi
-from data_ingest.irs_zip_data
+from data_ingest.irs__zip_data
 group by zipcode
 ;

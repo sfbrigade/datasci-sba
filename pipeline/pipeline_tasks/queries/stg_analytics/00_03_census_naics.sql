@@ -21,7 +21,7 @@ zipcode text,
 geo_id text,
 naics2012 text,
 naics2012_ttl text,
-num_establishments text
+num_establishments numeric
 );
 
 insert into stg_analytics.census_naics
@@ -38,7 +38,7 @@ where empszes_ttl in ('Establishments with 1 to 4 employees', 'Establishments wi
                       'Establishments with 10 to 19 employees', 'Establishments with 20 to 49 employees',
                       'Establishments with 100 to 249 employees', 'Establishments with 250 to 499 employees')
 
-  and zipcode::text in (select distinct borr_zip from stg_analytics.sba_sfdo)
+  and zipcode::text in (select distinct borr_zip::text from stg_analytics.sba_sfdo)
 
 group by zipcode, geo_id, naics2012, naics2012_ttl
 ;

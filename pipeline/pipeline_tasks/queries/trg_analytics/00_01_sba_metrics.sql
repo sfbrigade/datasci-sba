@@ -36,9 +36,15 @@ select
 	,a_7a.total_7a
 	,a_naics.num_establishments as total_small_bus
 	,a_irs.mean_agi as mean_agi
-	,cast(a_combined.total_sba as float)/cast(a_naics.num_establishments as float) as sba_per_small_bus
-	,cast(a_504.total_504 as float)/cast(a_naics.num_establishments as float) as loan_504_per_small_bus
-	,cast(a_7a.total_7a as float)/cast(a_naics.num_establishments as float) as loan_7a_per_small_bus
+	,case when a_naics.num_establishments = 0 then null
+          else a_combined.total_sba / a_naics.num_establishments
+     end as sba_per_small_bus
+	,case when a_naics.num_establishments = 0 then null
+	      else a_504.total_504 / a_naics.num_establishments
+	 end as loan_504_per_small_bus
+	,case when a_naics.num_establishments = 0 then null
+	      else a_7a.total_7a / a_naics.num_establishments
+	 end as loan_7a_per_small_bus
 
 from
 
