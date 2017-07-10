@@ -29,7 +29,7 @@ def load_irs_data(dbm, direc):
     """
     df = pd.read_csv(direc + '14_irs_zip.csv')
     dbm.write_df_table(
-        df, table_name='irs_zip_data', schema='data_ingest')
+        df, table_name='irs__zip_data', schema='data_ingest')
 
 
 def main():
