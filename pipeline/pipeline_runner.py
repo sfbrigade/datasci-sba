@@ -38,8 +38,8 @@ SQLTable._execute_insert = _execute_insert
 def get_args():
     """Use argparse to parse command line arguments."""
     parser = argparse.ArgumentParser(description='Runner for tasks')
-    parser.add_argument('--db_url', help='Database url string to the db.', required=True)
-    parser.add_argument('--runtime_id', help='Run Time ID', default=RUNTIME_ID)
+    parser.add_argument('--db_url', help='Database url string to the db.', type=str, required=True)
+    parser.add_argument('--runtime_id', help='Run Time ID', type=str, default=RUNTIME_ID)
     return parser.parse_args()
 
 
