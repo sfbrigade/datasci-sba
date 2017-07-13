@@ -32,6 +32,7 @@ def geocode(df, api_key=YOUR_API_KEY):
             location=place,
             radius=100
         )
+        print(query_result.places)
         matches.append(query_result.places)
         i = i + 1
         if i == 10:
