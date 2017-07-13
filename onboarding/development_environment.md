@@ -4,6 +4,9 @@ https://www.continuum.io/downloads
 
 You should download the Python 3 version.
 
+# Clone the Repository
+`git clone https://github.com/sfbrigade/datasci-sba.git`
+
 # Setting Up Python Environment
 A useful guide to conda environments: https://conda.io/docs/using/envs.html
 The two important files are:
@@ -32,5 +35,13 @@ In your ~/.bash_profile you need to set up environment variables corresponding t
 See https://github.com/sfbrigade/datasci-sba/blob/master/notebooks/query_sql_template.ipynb as an example to query tables in the database
 
 # Installing Postgres locally
+
+## For Mac
 This is technically optional, but it's nice to have a local instance of Postgres running. The easiest way to do this is:
 https://postgresapp.com/ (This will only work for Mac)
+
+If you have a mac you can also install Postgres via HomeBrew: https://brew.sh/
+
+`brew install postgres`
+
+## For PC
