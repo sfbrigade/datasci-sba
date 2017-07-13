@@ -53,7 +53,9 @@ class DBManager(object):
 
     def write_query_table(self, query):
         """Given a Create Table Query. Execute the Query to write against the DWH"""
-        conn = ps.connect(self.db_url)
+        conn_string = "host={0} user={1} dbname={2} password={3}".format(
+            self.host, self.user, self.dbname, self.password)
+        conn = ps.connect(conn_string)
         with conn:
             cur = conn.cursor()
             cur.execute(query)
@@ -69,5 +71,5 @@ class DBManager(object):
                       dtype=dtype,
                       if_exists=if_exists,
                       index=index,
-                      chunksize=1000
+                      chunksize=10000
                      )
