@@ -24,7 +24,6 @@ cligj==0.4.0
 cloudpickle==0.2.2
 clyent==1.2.2
 colorama==0.3.7
-conda==4.3.18
 configobj==5.0.6
 contextlib2==0.5.4
 cryptography==1.7.1
