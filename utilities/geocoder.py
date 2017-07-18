@@ -7,18 +7,15 @@ import os
 
 import pandas as pd
 
-from geopy.geocoders import Google V3
+from geopy import GoogleV3
 
-YOUR_API_KEY = os.getenv('GOOGLE_PLACES_API')
-
-
-def geocode(df, api_key=YOUR_API_KEY):
+def geocode(df):
     """Add Geocoded columns to df
     Keyword Args:
     df: Dataframe which must have an "address" column with a clean address
     api_key: Google Places API Key
     """
-    geolocator = GoogleV3(api_key = api_key)
+    geolocator = GoogleV3()
     latitudes = []
     longitudes = []
 
@@ -29,9 +26,22 @@ def geocode(df, api_key=YOUR_API_KEY):
         print(i)
         query_result = geolocator.geocode(place)
 
-        print(query_result.latitude, query_result.longitude)
-        latitudes.append(query_result.latitude)
-        longitudes.append(query_result.longitude)
+        if query_result == None:
+            # address not found
+            # tries a new address by cutting off at the first comma, getting rid of secondary address unit
+            new_address = df.borr_street[i].split(',')[0] + ', ' + df.borr_city[i] + ', ' \
+                          + df.borr_state[i] + ', ' + str(df.borr_zip[i])
+            query_result = geolocator.geocode(new_address)
+
+        if query_result != None:
+            print(query_result.latitude, query_result.longitude)
+            latitudes.append(query_result.latitude)
+            longitudes.append(query_result.longitude)
+        else:
+            print("Address Not Found")
+            latitudes.append(None)
+            longitudes.append(None)
+
         i = i + 1
         if i == 10:
             break
