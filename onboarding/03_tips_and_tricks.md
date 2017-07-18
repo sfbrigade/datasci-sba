@@ -5,12 +5,12 @@ Working with Git and GitHub might seem tricky at first, but I promise it gets mu
 
 [Clone this repo locally](https://help.github.com/articles/cloning-a-repository/)
 ```
-$ git clone <your-repo>
-$ cd <this-repo's-name>
+$ git clone https://github.com/sfbrigade/datasci-sba.git
+$ cd datasci-sba
 ```
-Create a feature branch:
+Create your own branch to start work:
 ```
-$ git checkout -b <feature-branch>
+$ git checkout -b <your-branch-name>
 ```
 Do some work:  
 ```
