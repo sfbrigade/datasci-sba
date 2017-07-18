@@ -31,7 +31,7 @@ $ git push
 ## Using the Jupyter Notebook
 To access the Jupyter notebook, type ```$ jupyter notebook``` on Mac or ```$ jupyter notebook --no-browser``` on Windows. It will say "The Jupyter terminal is running at http://localhost:8888/sometoken." Copy the link and paste it in your browser. 
 
-If you have a Windows computer, you may see an error message about a "dead kernel." [The fix](http://sdsawtelle.github.io/blog/output/bash-and-ipython-on-ubuntu-for-windows.html) is to type in Bash the following: ```$ conda install -c jzuhone zeromq=4.1.dev0```. To learn more about why this works, [click here](http://sdsawtelle.github.io/blog/output/bash-and-ipython-on-ubuntu-for-windows.html)
+If you have a Windows computer, you may see an error message about a "dead kernel." [The fix](http://sdsawtelle.github.io/blog/output/bash-and-ipython-on-ubuntu-for-windows.html) is to type in Bash the following: ```$ conda install -c jzuhone zeromq=4.1.dev0```. To learn more about why this works, [click here.](http://sdsawtelle.github.io/blog/output/bash-and-ipython-on-ubuntu-for-windows.html)
 
 ## Querying tables in our database
 See https://github.com/sfbrigade/datasci-sba/blob/master/notebooks/query_sql_template.ipynb as an example to query tables in the database
