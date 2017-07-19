@@ -57,4 +57,4 @@ Two major challenges from office perspective
 ## Tech
 
 ## Contributing
-Please see our [Onboarding doc](https://github.com/sfbrigade/datasci-sba/blob/master/onboarding.md) to get started.
+Please see our [Onboarding doc](https://github.com/sfbrigade/datasci-sba/blob/master/onboarding/01_exploring_the_data.md) to get started.
