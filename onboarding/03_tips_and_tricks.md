@@ -5,12 +5,16 @@ Working with Git and GitHub might seem tricky at first, but I promise it gets mu
 
 [Clone this repo locally](https://help.github.com/articles/cloning-a-repository/)
 ```
-$ git clone <your-repo>
-$ cd <this-repo's-name>
+$ git clone https://github.com/sfbrigade/datasci-sba.git
+$ cd datasci-sba
 ```
-Create a feature branch:
+Create your own branch to start work:
 ```
-$ git checkout -b <feature-branch>
+$ git checkout -b <your-branch-name>
+```
+To change between branches: 
+```
+$ git checkout <branch-name>
 ```
 Do some work:  
 ```
@@ -23,6 +27,11 @@ $ git commit -m 'my awesome feature'
 $ git push
 ```
 [Create a Pull Request](https://help.github.com/articles/creating-a-pull-request/) from your pushed branch (compare branch) to the master branch
+
+## Using the Jupyter Notebook
+To access the Jupyter notebook, type ```$ jupyter notebook``` on Mac or ```$ jupyter notebook --no-browser``` on Windows. It will say "The Jupyter terminal is running at http://localhost:8888/sometoken." Copy the link and paste it in your browser. 
+
+If you have a Windows computer, you may see an error message about a "dead kernel." [The fix](http://sdsawtelle.github.io/blog/output/bash-and-ipython-on-ubuntu-for-windows.html) is to type in Bash the following: ```$ conda install -c jzuhone zeromq=4.1.dev0```. To learn more about why this works, [click here.](http://sdsawtelle.github.io/blog/output/bash-and-ipython-on-ubuntu-for-windows.html)
 
 ## Querying tables in our database
 See https://github.com/sfbrigade/datasci-sba/blob/master/notebooks/query_sql_template.ipynb as an example to query tables in the database
