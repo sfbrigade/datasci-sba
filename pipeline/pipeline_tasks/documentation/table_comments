@@ -1,4 +1,21 @@
+
+--comment on tables
 COMMENT ON TABLE stg_analytics.sba_sfdo IS 'Staging table containing the combined SBA data for the Bay Area'
+;COMMENT ON TABLE stg_analytics.irs_income IS 'Staging table containing IRS data for the zip codes being used'
+;COMMENT ON TABLE stg_analytics.census_naics IS 'Staging table containing census info for small business counts by zip'
+;COMMENT ON TABLE trg_analytics.sba_zip_level IS 'Reporting table for zip-level data'
+;COMMENT ON TABLE data_ingest.sba__foia_7a_2010_present IS 'Table with raw data from pubic SBA table for 7(a) loans, 2010-present'
+;COMMENT ON TABLE data_ingest.sba__foia_7a_1991_1999 IS 'Table with raw data from pubic SBA table for 7(a) loans, 1991-1999'
+;COMMENT ON TABLE data_ingest.sba__foia_7a_2000_2009 IS 'Table with raw data from pubic SBA table for 7(a) loans, 2000-2009'
+;COMMENT ON TABLE data_ingest.sba__foia_504_1991_present IS 'Table with raw data from pubic SBA table for 504 loans, 1991-present'
+;COMMENT ON TABLE data_ingest.census__zip_business_patterns IS 'Table with raw data from census including number of small business by zip. Census: "CBP is an annual series that provides subnational economic data by industry. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll."'
+
+
+
+
+
+
+--comment on stg_analyticx.sba_sfdo
 ;COMMENT ON COLUMN stg_analytics.sba_sfdo.program IS 'Indicator of whether loan was approved under SBA''s 7(a) or 504 loan program'
 ;COMMENT ON COLUMN stg_analytics.sba_sfdo.borr_name IS 'Borrower name'
 ;COMMENT ON COLUMN stg_analytics.sba_sfdo.borr_street IS 'Borrower street address'
@@ -42,5 +59,169 @@ COMMENT ON TABLE stg_analytics.sba_sfdo IS 'Staging table containing the combine
 ;COMMENT ON COLUMN stg_analytics.sba_sfdo.bank_zip IS 'Bank zip code'
 ;COMMENT ON COLUMN stg_analytics.sba_sfdo.sba_guaranteed_approval IS 'Amount of SBA''s loan guaranty'
 ;COMMENT ON COLUMN stg_analytics.sba_sfdo.revolver_status IS 'Indicator of whether a loan is a term loan or revolving line of credit (0=Term, 1=Revolver)'
+
+
+
+
+--comment on data_ingest.sba__foia_504_1991_present
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.program IS 'Indicator of whether loan was approved under SBA''s 7(a) or 504 loan program'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.borr_name IS 'Borrower name'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.borr_street IS 'Borrower street address'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.borr_city IS 'Borrower city'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.borr_state IS 'Borrower state'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.borr_zip IS 'Borrower zip code'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.gross_approval IS 'SBA/CDC loan amount'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.approval_date IS 'Date the loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.approval_fiscal_year IS 'Fiscal year the loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.first_disbursement_date IS 'Date of first loan disbursement (if available)'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.delivery_method IS 'Specific delivery method loan was approved under.  See SOP 50 10 5 for definitions and rules for each delivery method.'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.subprogram_description IS 'Subprogram description - specific subprogram loan was aproved under.  See SOP 50 10 5 for definitions and rules for each subprogram.'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.initial_interest_rate IS 'Initial interest rate - total interest rate (base rate plus spread) at time loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.term_in_months IS 'Length of loan term'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.naics_code IS 'North American Industry Classification System (NAICS) code'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.naics_description IS 'North American Industry Classification System (NAICS) description'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.franchise_code IS 'Franchise Code'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.franchise_name IS 'Franchise Name'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.project_county IS 'County where project occurs'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.project_state IS 'State where project occurs'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.sba_district_office IS 'SBA district office for the loan'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.congressional_district IS 'Congressional district office, within each state, for the borrower address'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.business_type IS 'Borrower Business Type - Individual, Partnership, or Corporation'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.loan_status IS 'Status of the loan. PIF=Paid in Full; EXEMPT=Not Disclosed, treat like Unknown; CHGOFF=Charged Off; NOT FUNDED=Not yet disbursed; CANCLED=Cancelled'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.chargeoff_date IS 'Date SBA charged off loan'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.gross_chargeoff_amount IS 'Total loan balance charged off (includes guaranteed and non-guaranteed portion of loan)'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.jobs_supported IS 'Total Jobs Created + Jobs Retained as reported by lender on SBA Loan Application.  SBA does not review, audit, or validate these numbers - they are simply self-reported, good faith estimates by the lender.'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.cdc_name IS 'Community Development Corporation name'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.cdc_street IS 'Community Development Corporation street address'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.cdc_city IS 'Community Development Corporation city'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.cdc_state IS 'Community Development Corporation state'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.cdc_zip IS 'Community Development Corporation zip code'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.third_party_lender_name IS 'Third Party Lender name'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.third_party_lender_city IS 'Third Party Lender city'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.third_party_lender_state IS 'Third Party Lender state'
+;COMMENT ON COLUMN data_ingest.sba__foia_504_1991_present.third_party_dollars IS 'Third Party loan amount'
+
+
+
+
+--comment on data_ingest.sba__foia_7a_1991_1999
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.program IS 'Indicator of whether loan was approved under SBA''s 7(a) or 504 loan program'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.borr_name IS 'Borrower name'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.borr_street IS 'Borrower street address'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.borr_city IS 'Borrower city'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.borr_state IS 'Borrower state'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.borr_zip IS 'Borrower zip code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.gross_approval IS 'SBA/CDC loan amount'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.approval_date IS 'Date the loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.approval_fiscal_year IS 'Fiscal year the loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.first_disbursement_date IS 'Date of first loan disbursement (if available)'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.delivery_method IS 'Specific delivery method loan was approved under.  See SOP 50 10 5 for definitions and rules for each delivery method.'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.subprogram_description IS 'Subprogram description - specific subprogram loan was aproved under.  See SOP 50 10 5 for definitions and rules for each subprogram.'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.initial_interest_rate IS 'Initial interest rate - total interest rate (base rate plus spread) at time loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.term_in_months IS 'Length of loan term'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.naics_code IS 'North American Industry Classification System (NAICS) code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.naics_description IS 'North American Industry Classification System (NAICS) description'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.franchise_code IS 'Franchise Code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.franchise_name IS 'Franchise Name'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.project_county IS 'County where project occurs'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.project_state IS 'State where project occurs'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.sba_district_office IS 'SBA district office for the loan'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.congressional_district IS 'Congressional district office, within each state, for the borrower address'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.business_type IS 'Borrower Business Type - Individual, Partnership, or Corporation'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.loan_status IS 'Status of the loan. PIF=Paid in Full; EXEMPT=Not Disclosed, treat like Unknown; CHGOFF=Charged Off; NOT FUNDED=Not yet disbursed; CANCLED=Cancelled'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.chargeoff_date IS 'Date SBA charged off loan'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.gross_chargeoff_amount IS 'Total loan balance charged off (includes guaranteed and non-guaranteed portion of loan)'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.jobs_supported IS 'Total Jobs Created + Jobs Retained as reported by lender on SBA Loan Application.  SBA does not review, audit, or validate these numbers - they are simply self-reported, good faith estimates by the lender.'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.bank_name IS 'Bank name'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.bank_street IS 'Bank street address'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.bank_city IS 'Bank city'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.bank_state IS 'Bank state'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.bank_zip IS 'Bank zip code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.sba_guaranteed_approval IS 'Amount of SBA''s loan guaranty'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_1991_1999.revolver_status IS 'Indicator of whether a loan is a term loan or revolving line of credit (0=Term, 1=Revolver)'
+
+
+
+
+
+
+--comment on data_ingest.sba__foia_7a_2000_2009
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.program IS 'Indicator of whether loan was approved under SBA''s 7(a) or 504 loan program'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.borr_name IS 'Borrower name'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.borr_street IS 'Borrower street address'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.borr_city IS 'Borrower city'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.borr_state IS 'Borrower state'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.borr_zip IS 'Borrower zip code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.gross_approval IS 'SBA/CDC loan amount'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.approval_date IS 'Date the loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.approval_fiscal_year IS 'Fiscal year the loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.first_disbursement_date IS 'Date of first loan disbursement (if available)'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.delivery_method IS 'Specific delivery method loan was approved under.  See SOP 50 10 5 for definitions and rules for each delivery method.'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.subprogram_description IS 'Subprogram description - specific subprogram loan was aproved under.  See SOP 50 10 5 for definitions and rules for each subprogram.'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.initial_interest_rate IS 'Initial interest rate - total interest rate (base rate plus spread) at time loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.term_in_months IS 'Length of loan term'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.naics_code IS 'North American Industry Classification System (NAICS) code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.naics_description IS 'North American Industry Classification System (NAICS) description'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.franchise_code IS 'Franchise Code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.franchise_name IS 'Franchise Name'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.project_county IS 'County where project occurs'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.project_state IS 'State where project occurs'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.sba_district_office IS 'SBA district office for the loan'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.congressional_district IS 'Congressional district office, within each state, for the borrower address'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.business_type IS 'Borrower Business Type - Individual, Partnership, or Corporation'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.loan_status IS 'Status of the loan. PIF=Paid in Full; EXEMPT=Not Disclosed, treat like Unknown; CHGOFF=Charged Off; NOT FUNDED=Not yet disbursed; CANCLED=Cancelled'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.chargeoff_date IS 'Date SBA charged off loan'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.gross_chargeoff_amount IS 'Total loan balance charged off (includes guaranteed and non-guaranteed portion of loan)'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.jobs_supported IS 'Total Jobs Created + Jobs Retained as reported by lender on SBA Loan Application.  SBA does not review, audit, or validate these numbers - they are simply self-reported, good faith estimates by the lender.'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.bank_name IS 'Bank name'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.bank_street IS 'Bank street address'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.bank_city IS 'Bank city'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.bank_state IS 'Bank state'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.bank_zip IS 'Bank zip code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.sba_guaranteed_approval IS 'Amount of SBA''s loan guaranty'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2000_2009.revolver_status IS 'Indicator of whether a loan is a term loan or revolving line of credit (0=Term, 1=Revolver)'
+
+ 
+
+
+ --comment on data_ingest.sba__foia_7a_2010_present
+ ;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.program IS 'Indicator of whether loan was approved under SBA''s 7(a) or 504 loan program'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.borr_name IS 'Borrower name'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.borr_street IS 'Borrower street address'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.borr_city IS 'Borrower city'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.borr_state IS 'Borrower state'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.borr_zip IS 'Borrower zip code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.gross_approval IS 'SBA/CDC loan amount'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.approval_date IS 'Date the loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.approval_fiscal_year IS 'Fiscal year the loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.first_disbursement_date IS 'Date of first loan disbursement (if available)'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.delivery_method IS 'Specific delivery method loan was approved under.  See SOP 50 10 5 for definitions and rules for each delivery method.'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.subprogram_description IS 'Subprogram description - specific subprogram loan was aproved under.  See SOP 50 10 5 for definitions and rules for each subprogram.'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.initial_interest_rate IS 'Initial interest rate - total interest rate (base rate plus spread) at time loan was approved'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.term_in_months IS 'Length of loan term'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.naics_code IS 'North American Industry Classification System (NAICS) code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.naics_description IS 'North American Industry Classification System (NAICS) description'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.franchise_code IS 'Franchise Code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.franchise_name IS 'Franchise Name'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.project_county IS 'County where project occurs'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.project_state IS 'State where project occurs'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.sba_district_office IS 'SBA district office for the loan'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.congressional_district IS 'Congressional district office, within each state, for the borrower address'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.business_type IS 'Borrower Business Type - Individual, Partnership, or Corporation'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.loan_status IS 'Status of the loan. PIF=Paid in Full; EXEMPT=Not Disclosed, treat like Unknown; CHGOFF=Charged Off; NOT FUNDED=Not yet disbursed; CANCLED=Cancelled'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.chargeoff_date IS 'Date SBA charged off loan'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.gross_chargeoff_amount IS 'Total loan balance charged off (includes guaranteed and non-guaranteed portion of loan)'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.jobs_supported IS 'Total Jobs Created + Jobs Retained as reported by lender on SBA Loan Application.  SBA does not review, audit, or validate these numbers - they are simply self-reported, good faith estimates by the lender.'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.bank_name IS 'Bank name'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.bank_street IS 'Bank street address'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.bank_city IS 'Bank city'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.bank_state IS 'Bank state'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.bank_zip IS 'Bank zip code'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.sba_guaranteed_approval IS 'Amount of SBA''s loan guaranty'
+;COMMENT ON COLUMN data_ingest.sba__foia_7a_2010_present.revolver_status IS 'Indicator of whether a loan is a term loan or revolving line of credit (0=Term, 1=Revolver)'
+
+ 
+
+
 
  
