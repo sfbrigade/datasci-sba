@@ -53,8 +53,3 @@ Two major challenges from office perspective
 |Vincent La|vincela14 |
 |Gregory Boyer|boyer |
 |Michael Mathews|makfan |
-
-## Tech
-
-## Contributing
-Please see our [Onboarding doc](https://github.com/sfbrigade/datasci-sba/blob/master/onboarding/01_exploring_the_data.md) to get started.
