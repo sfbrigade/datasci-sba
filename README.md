@@ -52,9 +52,9 @@ Two major challenges from office perspective
 |Dianna Yau |dyau   |
 |Vincent La|vincela14 |
 |Gregory Boyer|boyer |
-|Michael Matthews|makfan |
+|Michael Mathews|makfan |
 
 ## Tech
 
 ## Contributing
-Please see our [Onboarding doc](https://github.com/sfbrigade/datasci-sba/blob/master/onboarding.md) to get started.
+Please see our [Onboarding doc](https://github.com/sfbrigade/datasci-sba/blob/master/onboarding/01_exploring_the_data.md) to get started.
