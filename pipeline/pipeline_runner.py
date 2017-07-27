@@ -85,17 +85,17 @@ def main():
 
     # Define list of files you want to run
     files = [
-        # 'parse.00_01_01_load_sba_datasets.py',
-        # 'parse/00_01_02_sba__foia_7a_1991_1999',
-        # 'parse/00_01_03_sba__foia_7a_2000_2009',
-        # 'parse/00_01_04_sba__foia_7a_2010_present',
-        # 'parse/00_01_05_sba__foia_504_1991_present',
+        'parse.00_01_01_load_sba_datasets.py',
+        'parse/00_01_02_sba__foia_7a_1991_1999',
+        'parse/00_01_03_sba__foia_7a_2000_2009',
+        'parse/00_01_04_sba__foia_7a_2010_present',
+        'parse/00_01_05_sba__foia_504_1991_present',
         # 'parse.00_02_01_load_census_datasets.py'
         # 'parse/00_02_02_census__zip_business_patterns',
         # '00_03_01_load_irs_datasets.py',
         # 'parse/00_03_02_irs__zip_data',
-        # 'queries/stg_analytics/00_01_sba_sfdo',
-        # 'queries/stg_analytics/00_02_zip_agi',
+        'queries/stg_analytics/00_01_sba_sfdo',
+        'queries/stg_analytics/00_02_zip_agi',
         'queries/stg_analytics/00_03_census_naics',
         'queries/trg_analytics/00_01_sba_metrics',
     ]

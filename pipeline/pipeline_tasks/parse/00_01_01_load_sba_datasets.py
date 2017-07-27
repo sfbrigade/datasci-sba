@@ -24,19 +24,41 @@ def load_sba_datasets(dbm, direc):
         dbm: DBManager object
         dir: Directory where files are
     """
-    foia_504_1991_present = pd.read_excel(direc + 'FOIA - 504 (FY1991-Present).xlsx')
-    foia_7a_1991_1999 = pd.read_excel(direc + 'FOIA - 7(a) (FY1991-FY1999).xlsx', skiprows=1)
-    foia_7a_2000_2009 = pd.read_excel(direc + 'FOIA - 7(a)(FY2000-FY2009).xlsx', skiprows=1)
-    foia_7a_2010_present = pd.read_excel(direc + 'FOIA - 7(a) (FY2010-Present).xlsx')
+    foia_504_1991_present = pd.read_excel(
+        direc + 'FOIA - 504 (FY1991-Present).xlsx',
+        dtype={'borr_zip': str, 'cdc_zip': str})
+    foia_7a_1991_1999 = pd.read_excel(
+        direc + 'FOIA - 7(a) (FY1991-FY1999).xlsx',
+        skiprows=1,
+        dtype={'borr_zip': str, 'bank_zip': str})
+    foia_7a_2000_2009 = pd.read_excel(
+        direc + 'FOIA - 7(a)(FY2000-FY2009).xlsx',
+        skiprows=1,
+        dtype={'borr_zip': str, 'bank_zip': str})
+    foia_7a_2010_present = pd.read_excel(
+        direc + 'FOIA - 7(a) (FY2010-Present).xlsx',
+        dtype={'borr_zip': str, 'bank_zip': str})
 
     dbm.write_df_table(
-        foia_504_1991_present, table_name='sba__foia_504_1991_present', schema='data_ingest')
+        foia_504_1991_present,
+        table_name='sba__foia_504_1991_present',
+        schema='data_ingest',
+        dtype={'borr_zip': str, 'cdc_zip': str})
     dbm.write_df_table(
-        foia_7a_1991_1999, table_name='sba__foia_7a_1991_1999', schema='data_ingest')
+        foia_7a_1991_1999,
+        table_name='sba__foia_7a_1991_1999',
+        schema='data_ingest',
+        dtype={'borr_zip': str, 'bank_zip': str})
     dbm.write_df_table(
-        foia_7a_2000_2009, table_name='sba__foia_7a_2000_2009', schema='data_ingest')
+        foia_7a_2000_2009,
+        table_name='sba__foia_7a_2000_2009',
+        schema='data_ingest',
+        dtype={'borr_zip': str, 'bank_zip': str})
     dbm.write_df_table(
-        foia_7a_2010_present, table_name='sba__foia_7a_2010_present', schema='data_ingest')
+        foia_7a_2010_present,
+        table_name='sba__foia_7a_2010_present',
+        schema='data_ingest',
+        dtype={'borr_zip': str, 'bank_zip': str})
 
 
 def main():
