@@ -9,7 +9,7 @@ zip_county text
 );
 
 insert into stg_analytics.sba_sfdo_zips
-values (
+values 
 ('94002','Belmont','CA','San Mateo')
 ,('94005','Brisbane','CA','San Mateo')
 ,('94010','Burlingame','CA','San Mateo')
@@ -579,5 +579,4 @@ values (
 ,('95625','Elmira','CA','Solano')
 ,('95687','Vacaville','CA','Solano')
 ,('95688','Vacaville','CA','Solano')
-,('95696','Vacaville','CA','Solano')
-);
+,('95696','Vacaville','CA','Solano');
