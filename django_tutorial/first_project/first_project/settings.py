@@ -77,12 +77,22 @@ WSGI_APPLICATION = 'first_project.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+
+    # Ask on slack for credentials
+    'azure_postgres': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'VincentLa',
-        'USER': 'VincentLa',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': '[DB_NAME]',
+        'USER': '[DB_USER]',
+        'PASSWORD': '[DB_PASSWORD]',
+        'HOST': '[DB_HOST]',
+        'PORT': '[DB_PORT]',
+        'OPTIONS': {
+            'options': '-c search_path=[DB_SCHEMAS]',
+            'sslmode': 'require',
+        }
     }
 }
 
