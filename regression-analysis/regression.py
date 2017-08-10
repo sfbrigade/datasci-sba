@@ -33,6 +33,7 @@ def dummify_variables(df, var_names):
             pd.cut(df['grade'], bins=[0, 4, 7, 10, 13]))
         grade_dummies.columns = ['low_grade',
                                  'mid_grade', 'high_grade', 'higher_grade']
+    
 
     return df.join(grade_dummies).drop(['grade', 'low_grade'], axis=1)
 
