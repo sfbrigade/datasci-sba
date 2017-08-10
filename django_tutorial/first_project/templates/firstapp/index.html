@@ -1,0 +1,11 @@
+{% extends 'layout/layout1.html' %}
+
+{% block title %}Title page{% endblock %}
+
+{% block content %}
+
+{% for zip in data %}
+<h1>{{ zip.borr_zip }}</h1>
+{% endfor %}
+
+{% endblock %}
