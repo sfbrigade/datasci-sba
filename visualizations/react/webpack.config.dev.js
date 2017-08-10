@@ -28,7 +28,12 @@ module.exports = {
         ],
         use: [
           'style-loader',
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              localIdentName: '[name]-[local]',
+            },
+          },
           {
             loader: 'postcss-loader',
             options: {
