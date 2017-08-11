@@ -14,7 +14,8 @@ drop table if exists stg_analytics.irs_income;
 create table stg_analytics.irs_income
 (
   zipcode text,
-  mean_agi numeric
+  mean_agi numeric,
+  primary key(zipcode)
 );
 
 insert into stg_analytics.irs_income
