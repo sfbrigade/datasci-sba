@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import urllib.parse
+
+# Read DB URI From Environment Variable
+# Perhaps will need to change this when we deploy the Django Server to Azure?
+SBA_DWH = os.getenv('SBA_DWH')
+PARSED_DBURI = urllib.parse.urlparse(SBA_DWH)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -76,21 +82,16 @@ WSGI_APPLICATION = 'first_project.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-
     # Ask on slack for credentials
-    'azure_postgres': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '[DB_NAME]',
-        'USER': '[DB_USER]',
-        'PASSWORD': '[DB_PASSWORD]',
-        'HOST': '[DB_HOST]',
-        'PORT': '[DB_PORT]',
+        'NAME': PARSED_DBURI.path[1:],
+        'USER': PARSED_DBURI.username,
+        'PASSWORD': PARSED_DBURI.password,
+        'HOST': PARSED_DBURI.hostname,
+        'PORT': '5432',
         'OPTIONS': {
-            'options': '-c search_path=[DB_SCHEMAS]',
+            'options': '-c search_path=data_ingest,stg_analytics,trg_analytics',
             'sslmode': 'require',
         }
     }
