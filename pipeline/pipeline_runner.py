@@ -97,7 +97,7 @@ def main():
         'queries/stg_analytics/00_01_sba_sfdo',
         'queries/stg_analytics/00_02_irs_income',
         'queries/stg_analytics/00_03_census_naics',
-        'queries/stg_analytics/00_04_usps_zips',
+        'queries/stg_analytics/00_04_sba_sfdo_zips',
         'queries/trg_analytics/00_01_sba_metrics',
     ]
 
