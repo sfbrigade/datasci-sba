@@ -6,6 +6,7 @@ Source of data:
 import argparse
 
 import pandas as pd
+import sqlalchemy as sa
 
 from utilities.db_manager import DBManager
 
@@ -24,41 +25,87 @@ def load_sba_datasets(dbm, direc):
         dbm: DBManager object
         dir: Directory where files are
     """
+    print('Reading FOIA 504')
     foia_504_1991_present = pd.read_excel(
-        direc + 'FOIA - 504 (FY1991-Present).xlsx',
-        dtype={'borr_zip': str, 'cdc_zip': str})
+        direc + 'FOIA - 504 (FY1991-Present).xlsx')
+
+    print('Reading FOIA 7a 1991-1999')
     foia_7a_1991_1999 = pd.read_excel(
         direc + 'FOIA - 7(a) (FY1991-FY1999).xlsx',
-        skiprows=1,
-        dtype={'borr_zip': str, 'bank_zip': str})
+        skiprows=1)
+
+    print('Reading FOIA 7a 2000-2009')
     foia_7a_2000_2009 = pd.read_excel(
         direc + 'FOIA - 7(a)(FY2000-FY2009).xlsx',
-        skiprows=1,
-        dtype={'borr_zip': str, 'bank_zip': str})
-    foia_7a_2010_present = pd.read_excel(
-        direc + 'FOIA - 7(a) (FY2010-Present).xlsx',
-        dtype={'borr_zip': str, 'bank_zip': str})
+        skiprows=1)
 
+    print('Reading FOIA 7a 2010-Present')
+    foia_7a_2010_present = pd.read_excel(
+        direc + 'FOIA - 7(a) (FY2010-Present).xlsx')
+
+    print('Writing FOIA 504')
     dbm.write_df_table(
         foia_504_1991_present,
         table_name='sba__foia_504_1991_present',
         schema='data_ingest',
-        dtype={'borr_zip': str, 'cdc_zip': str})
+        dtype={'Program': sa.String,
+               'BorrZip': sa.String,
+               'CDC_Zip': sa.String,
+               'ThirdPartyLender_Name': sa.String,
+               'ThirdPartyLender_City': sa.String,
+               'ThirdPartyLender_State': sa.String,
+               'DeliveryMethod': sa.String,
+               'FranchiseCode': sa.String,
+               'FranchiseName': sa.String,
+               'ChargeOffDate': sa.Date,})
+
+    print('Writing FOIA 7a 1991-1999')
     dbm.write_df_table(
         foia_7a_1991_1999,
         table_name='sba__foia_7a_1991_1999',
         schema='data_ingest',
-        dtype={'borr_zip': str, 'bank_zip': str})
+        dtype={'Program': sa.String,
+               'BorrZip': sa.String,
+               'Bank_Zip': sa.String,
+               'ThirdPartyLender_Name': sa.String,
+               'ThirdPartyLender_City': sa.String,
+               'ThirdPartyLender_State': sa.String,
+               'DeliveryMethod': sa.String,
+               'FranchiseCode': sa.String,
+               'FranchiseName': sa.String,
+               'ChargeOffDate': sa.Date,})
+
+    print('Writing FOIA 7a 2000-2009')
     dbm.write_df_table(
         foia_7a_2000_2009,
         table_name='sba__foia_7a_2000_2009',
         schema='data_ingest',
-        dtype={'borr_zip': str, 'bank_zip': str})
+        dtype={'Program': sa.String,
+               'BorrZip': sa.String,
+               'Bank_Zip': sa.String,
+               'ThirdPartyLender_Name': sa.String,
+               'ThirdPartyLender_City': sa.String,
+               'ThirdPartyLender_State': sa.String,
+               'DeliveryMethod': sa.String,
+               'FranchiseCode': sa.String,
+               'FranchiseName': sa.String,
+               'ChargeOffDate': sa.Date,})
+
+    print('Writing FOIA 7a 2010-present')
     dbm.write_df_table(
         foia_7a_2010_present,
         table_name='sba__foia_7a_2010_present',
         schema='data_ingest',
-        dtype={'borr_zip': str, 'bank_zip': str})
+        dtype={'Program': sa.String,
+               'BorrZip': sa.String,
+               'Bank_Zip': sa.String,
+               'ThirdPartyLender_Name': sa.String,
+               'ThirdPartyLender_City': sa.String,
+               'ThirdPartyLender_State': sa.String,
+               'DeliveryMethod': sa.String,
+               'FranchiseCode': sa.String,
+               'FranchiseName': sa.String,
+               'ChargeOffDate': sa.Date,})
 
 
 def main():

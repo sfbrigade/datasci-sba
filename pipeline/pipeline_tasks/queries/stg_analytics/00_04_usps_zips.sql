@@ -2,14 +2,15 @@ drop table if exists stg_analytics.sba_sfdo_zips;
 
 create table stg_analytics.sba_sfdo_zips
 (
-zip_code text,
-zip_city text,
-zip_state text,
-zip_county text
+zipcode text,
+city text,
+state text,
+county text,
+primary key(zipcode)
 );
 
 insert into stg_analytics.sba_sfdo_zips
-values 
+values
 ('94002','Belmont','CA','San Mateo')
 ,('94005','Brisbane','CA','San Mateo')
 ,('94010','Burlingame','CA','San Mateo')

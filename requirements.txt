@@ -24,3 +24,4 @@ scipy
 seaborn
 SQLAlchemy
 statsmodels
+xlrd

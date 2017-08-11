@@ -1,95 +1,53 @@
 /*
+This query aggregates mean agi, total number of businesses, and SBA counts at the zip code level.
 
-This query:
-1. Counts the total number of SBA businesses by zip code from the sba_sfdo table.
-2. Performs a left join of (1) against a count of 504 loans by zip code.
-3. Performs a left join of (1) against a count of 7A loans by zip code.
-4. Performs a left join of (1) against NAICS data by zip code (to obtain # of small businesses).
-	- here we reduce the NAICS data to only look at Total Number of Businesses
-5. Performs a left join of (1) against IRS data by zip code (to obtain mean AGI by zip code).
-6. Calculates ratios of total SBA loans, 504 loans, & 7A loans to the total number of businesses.
-7. Writes output to new table.
-
+Also computes relevant metrics, sba loans per small businesses.
 */
 
 drop table if exists trg_analytics.sba_zip_level;
 create table trg_analytics.sba_zip_level
 (
   borr_zip text,
+  mean_agi numeric,
+  total_small_bus int,
   total_sba int,
   total_504 int,
   total_7a int,
-  total_small_bus text,
-  mean_agi text,
   sba_per_small_bus numeric,
   loan_504_per_small_bus numeric,
-  loan_7a_per_small_bus numeric
+  loan_7a_per_small_bus numeric,
+  primary key(borr_zip)
 );
 
 insert into trg_analytics.sba_zip_level
 
 select
-  a_combined.borr_zip,
-  a_combined.total_sba,
-  a_504.total_504,
-  a_7a.total_7a,
-  a_naics.num_establishments as total_small_bus,
-  a_irs.mean_agi as mean_agi,
-  case when a_naics.num_establishments = 0 then null
-        else a_combined.total_sba / a_naics.num_establishments
-  end as sba_per_small_bus,
-  case when a_naics.num_establishments = 0 then null
-       else a_504.total_504 / a_naics.num_establishments
-  end as loan_504_per_small_bus,
-  case when a_naics.num_establishments = 0 then null
-       else a_7a.total_7a / a_naics.num_establishments
-  end as loan_7a_per_small_bus
-
+  borr_zip,
+  mean_agi,
+  total_small_bus,
+  total_sba,
+  total_504,
+  total_7a,
+  1.0 * total_sba / total_small_bus as sba_per_small_bus,
+  1.0 * total_504 / total_small_bus as loan_504_per_small_bus,
+  1.0 * total_7a / total_small_bus as loan_7a_per_small_bus
 from
-  (
-  select
-    borr_zip,
-    count(*) as total_sba
-  from stg_analytics.sba_sfdo
-  group by borr_zip
-  ) as a_combined
-
-  left join
-  (
-    select
-      borr_zip,
-      count(*) as total_504
-    from stg_analytics.sba_sfdo
-    where program = '504'
-    group by borr_zip
-  ) as a_504
-    on a_combined.borr_zip = a_504.borr_zip
-  left join
-  (
-    select
-      borr_zip,
-      count(*) as total_7a
-    from stg_analytics.sba_sfdo
-    where program = '7A'
-    group by borr_zip
-  ) a_7a
-    on a_combined.borr_zip = a_7a.borr_zip
-  left join
-  (
-    select
-      num_establishments,
-      geo_id,
-      zipcode
-    from stg_analytics.census_naics
-    where naics2012 = '00'
-  ) a_naics
-    on a_combined.borr_zip = a_naics.zipcode
-  left join
-  (
-    select
-      zipcode,
-      mean_agi
-    from stg_analytics.irs_income
-  ) a_irs
-    on a_combined.borr_zip = a_irs.zipcode
+(
+select
+  sba.borr_zip,
+  irs.mean_agi,
+  census.num_establishments as total_small_bus,
+  count(*) as total_sba,
+  sum((sba.program = '504')::int) as total_504,
+  sum((sba.program = '7A')::int) as total_7a
+from stg_analytics.sba_sfdo as sba
+  inner join stg_analytics.sba_sfdo_zips as valid_zips
+    on sba.borr_zip = valid_zips.zipcode
+  left join stg_analytics.census_naics as census
+    on sba.borr_zip = census.zipcode
+      and census.naics2012 = '00'
+  left join stg_analytics.irs_income as irs
+    on sba.borr_zip = irs.zipcode
+group by sba.borr_zip, irs.mean_agi, census.num_establishments
+) as sub
 ;

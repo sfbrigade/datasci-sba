@@ -21,7 +21,8 @@ zipcode text,
 geo_id text,
 naics2012 text,
 naics2012_ttl text,
-num_establishments numeric
+num_establishments int,
+primary key (zipcode, naics2012)
 );
 
 insert into stg_analytics.census_naics
