@@ -1,4 +1,4 @@
-drop table if exists stg_analytics.sba_sfdo_zips;
+THIS IS INVALID SQLdrop table if exists stg_analytics.sba_sfdo_zips;
 
 create table stg_analytics.sba_sfdo_zips
 (
