@@ -5,12 +5,19 @@ METADATA = sa.MetaData()
 
 DATA_INGEST__CENSUS__ZIP_BUSINESS_PATTERNS = sa.Table(
     'census__zip_business_patterns', METADATA,
-    sa.Column('zipcode', sa.Text),
-    sa.Column('geo_id', sa.Text),
-    sa.Column('naics2012', sa.Text),
-    sa.Column('naics2012_ttl', sa.Text),
-    sa.Column('estab', sa.Text),
-    sa.Column('empszes_ttl', sa.Text),
+    sa.Column('st', sa.Text), 
+    sa.Column('zipcode', sa.Text), 
+    sa.Column('geo_id', sa.Text), 
+    sa.Column('geo_ttl', sa.Text), 
+    sa.Column('footid_geo', sa.Numeric), 
+    sa.Column('naics2012', sa.Text), 
+    sa.Column('naics2012_ttl', sa.Text), 
+    sa.Column('footid_naics', sa.Numeric), 
+    sa.Column('year', sa.Text), 
+    sa.Column('empszes', sa.Text), 
+    sa.Column('empszes_ttl', sa.Text), 
+    sa.Column('estab', sa.Text), 
+    sa.Column('estab_f', sa.Numeric), 
     schema='data_ingest')
 
 
