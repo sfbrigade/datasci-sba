@@ -24,3 +24,5 @@ scipy
 seaborn
 SQLAlchemy
 statsmodels
+testing.postgresql
+xlrd

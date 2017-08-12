@@ -27,7 +27,7 @@ def load_irs_data(dbm, direc):
         dbm: DBManager object
         direc: Directory where files are
     """
-    df = pd.read_csv(direc + '14_irs_zip.csv')
+    df = pd.read_csv(direc + '14zpallnoagi.csv')
     dbm.write_df_table(
         df, table_name='irs__zip_data', schema='data_ingest')
 
@@ -37,7 +37,7 @@ def main():
     print('Parsing Census datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    directory = 'C:/Users/User/Dropbox/Documents/Analytics/Analyses/SBA/data/'
+    directory = '/Users/VincentLa/git/datasci-sba/src/data/irs/'
     load_irs_data(dbm, directory)
 
 

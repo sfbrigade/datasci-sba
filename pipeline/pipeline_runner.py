@@ -94,9 +94,10 @@ def main():
         # 'parse/00_02_02_census__zip_business_patterns',
         # '00_03_01_load_irs_datasets.py',
         # 'parse/00_03_02_irs__zip_data',
-        # 'queries/stg_analytics/00_01_sba_sfdo',
-        # 'queries/stg_analytics/00_02_zip_agi',
+        'queries/stg_analytics/00_01_sba_sfdo',
+        'queries/stg_analytics/00_02_irs_income',
         'queries/stg_analytics/00_03_census_naics',
+        'queries/stg_analytics/00_04_sba_sfdo_zips',
         'queries/trg_analytics/00_01_sba_metrics',
     ]
 
