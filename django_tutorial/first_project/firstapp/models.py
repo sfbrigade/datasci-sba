@@ -10,24 +10,20 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class CensusZipBusinessPatterns(models.Model):
-    st = models.TextField(blank=True, null=True)
-    zipcode = models.TextField(blank=True, null=True)
-    geo_id = models.TextField(blank=True, null=True)
-    geo_ttl = models.TextField(blank=True, null=True)
-    footid_geo = models.FloatField(blank=True, null=True)
-    naics2012 = models.TextField(blank=True, null=True)
-    naics2012_ttl = models.TextField(blank=True, null=True)
-    footid_naics = models.FloatField(blank=True, null=True)
-    year = models.TextField(blank=True, null=True)
-    empszes = models.TextField(blank=True, null=True)
-    empszes_ttl = models.TextField(blank=True, null=True)
-    estab = models.TextField(blank=True, null=True)
-    estab_f = models.FloatField(blank=True, null=True)
+class sba_zip_level(models.Model):
+    borr_zip = models.TextField(blank=True, null=True)
+    mean_agi = models.FloatField(blank=True, null=True)
+    total_small_bus = models.BigIntegerField(blank=True, null=True)
+    total_sba = models.BigIntegerField(blank=True, null=True)
+    total_504 = models.BigIntegerField(blank=True, null=True)
+    total_7a = models.BigIntegerField(blank=True, null=True)
+    sba_per_small_bus = models.FloatField(blank=True, null=True)
+    loan_504_per_small_bus = models.FloatField(blank=True, null=True)
+    loan_7a_per_small_bus = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'census__zip_business_patterns'
+        db_table = 'sba_zip_level'
 
 
 class IrsZipData(models.Model):
