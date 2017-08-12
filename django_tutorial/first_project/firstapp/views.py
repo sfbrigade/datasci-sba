@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from models import CensusZipBusinessPatterns, IrsZipData
+from firstapp.models import CensusZipBusinessPatterns, IrsZipData
 
 # Create your views here.
 
