@@ -1,4 +1,4 @@
-"""Miscallaneous Utility Functions"""
+"""Miscellaneous Utility Functions"""
 
 import git
 
