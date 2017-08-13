@@ -29,14 +29,14 @@ def load_irs_data(dbm, direc):
         dbm: DBManager object
         direc: Directory where files are
     """
-    df = pd.read_csv(direc + '14zpallnoagi.csv')
+    df = pd.read_csv(os.path.join(direc, '14zpallnoagi.csv'))
     dbm.write_df_table(
         df, table_name='irs__zip_data', schema='data_ingest')
 
 
 def main():
     """Execute Stuff"""
-    print('Parsing Census datasets')
+    print('Parsing IRS datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
     git_root_dir = uf.get_git_root(os.path.dirname(__file__))

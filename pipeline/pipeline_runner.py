@@ -90,9 +90,9 @@ def main():
         # 'parse/00_01_03_sba__foia_7a_2000_2009',
         # 'parse/00_01_04_sba__foia_7a_2010_present',
         # 'parse/00_01_05_sba__foia_504_1991_present',
-        # 'parse.00_02_01_load_census_datasets.py'
+        # 'parse.00_02_01_load_census_datasets.py',
         # 'parse/00_02_02_census__zip_business_patterns',
-        # '00_03_01_load_irs_datasets.py',
+        # 'parse.00_03_01_load_irs_datasets.py',
         # 'parse/00_03_02_irs__zip_data',
         'queries/stg_analytics/00_01_01_sba_sfdo_zips',
         'queries/stg_analytics/00_01_sba_sfdo',

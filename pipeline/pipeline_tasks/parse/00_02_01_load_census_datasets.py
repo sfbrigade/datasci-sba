@@ -27,7 +27,8 @@ def load_census_datasets(dbm, direc):
         direc: Directory where files are
     """
     # Read tables in chunks: https://stackoverflow.com/questions/13651117/pandas-filter-lines-on-load-in-read-csv
-    iter_table = pd.read_table(direc + 'CB1500CZ21.dat', sep="|", dtype=str, iterator=True, chunksize=1000)
+    iter_table = pd.read_table(
+        os.path.join(direc, 'CB1500CZ21.dat'), sep="|", dtype=str, iterator=True, chunksize=1000)
     # Let's just write California, otherwise the file is too big
     df = pd.concat([chunk[chunk['ST'] == '06'] for chunk in iter_table])
     dbm.write_df_table(

@@ -29,21 +29,21 @@ def load_sba_datasets(dbm, direc):
     """
     print('Reading FOIA 504')
     foia_504_1991_present = pd.read_excel(
-        direc + 'FOIA - 504 (FY1991-Present).xlsx')
+        os.path.join(direc, 'FOIA - 504 (FY1991-Present).xlsx'))
 
     print('Reading FOIA 7a 1991-1999')
     foia_7a_1991_1999 = pd.read_excel(
-        direc + 'FOIA - 7(a) (FY1991-FY1999).xlsx',
+        os.path.join(direc, 'FOIA - 7(a) (FY1991-FY1999).xlsx'),
         skiprows=1)
 
     print('Reading FOIA 7a 2000-2009')
     foia_7a_2000_2009 = pd.read_excel(
-        direc + 'FOIA - 7(a)(FY2000-FY2009).xlsx',
+        os.path.join(direc, 'FOIA - 7(a)(FY2000-FY2009).xlsx'),
         skiprows=1)
 
     print('Reading FOIA 7a 2010-Present')
     foia_7a_2010_present = pd.read_excel(
-        direc + 'FOIA - 7(a) (FY2010-Present).xlsx')
+        os.path.join(direc, 'FOIA - 7(a) (FY2010-Present).xlsx'))
 
     print('Writing FOIA 504')
     dbm.write_df_table(
