@@ -4,10 +4,12 @@ Load Census Datasets
 Source of data:
 """
 import argparse
+import os
 
 import pandas as pd
 
 from utilities.db_manager import DBManager
+from utilities import util_functions as uf
 
 
 def get_args():
@@ -37,7 +39,8 @@ def main():
     print('Parsing Census datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    directory = '/Users/VincentLa/git/datasci-sba/src/data/census/'
+    git_root_dir = uf.get_git_root(os.path.dirname(__file__))
+    directory = os.path.join(git_root_dir, 'src', 'data', 'census')
     load_census_datasets(dbm, directory)
 
 

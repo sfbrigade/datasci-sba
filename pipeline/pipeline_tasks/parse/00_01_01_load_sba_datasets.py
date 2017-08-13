@@ -4,11 +4,13 @@ Load SBA FOIA datasets
 Source of data:
 """
 import argparse
+import os
 
 import pandas as pd
 import sqlalchemy as sa
 
 from utilities.db_manager import DBManager
+from utilities import util_functions as uf
 
 
 def get_args():
@@ -113,7 +115,8 @@ def main():
     print('Parsing FOIA datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    directory = '/Users/VincentLa/git/datasci-sba/src/data/sba/'
+    git_root_dir = uf.get_git_root(os.path.dirname(__file__))
+    directory = os.path.join(git_root_dir, 'src', 'data', 'sba')
     load_sba_datasets(dbm, directory)
 
 
