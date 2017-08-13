@@ -73,6 +73,13 @@ One solutions would be to just point the right version of `pg_dump`, for example
 /usr/lib/postgresql/9.6/bin/pg_dump -d postgres --host=hostname --username=username --port=5432 -s > schema.sql
 ```
 
+An alternative solution is to use the `--cluster' switch, for example
+
+```
+pg_dump --cluster 9.6/main -d postgres --host=hostname --username=username --port=5432 -s > schema.sql
+```
+
+
 You can also just remove the old version of postgresql. In this case, the old version was 9.5, so you can do
 ```
 sudo apt-get remove postgresql-client-9.5
