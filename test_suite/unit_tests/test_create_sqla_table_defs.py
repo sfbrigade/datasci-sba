@@ -31,7 +31,7 @@ def db_setup(tpostgres):
 
 
 def test_query_info_schema_table_def(tpostgres):
-    """Tests that we are pulling most recent score for a test."""
+    """Tests that we are querying correctly from information_schema table."""
     conn = tpostgres.session.connection()
     select = cstd.query_info_schema_table_def(conn, 'test_schema.test_table')
     results = [dict(row) for row in conn.execute(select)]
