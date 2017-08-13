@@ -17,3 +17,14 @@ path {
 .q6-9 {fill: #2171b5;}
 .q7-9 {fill: #08519c;}
 .q8-9 {fill: #08306b;}
+
+
+div.tooltip {   
+  position: absolute;           
+  padding: 8px;             
+  font: 12px sans-serif;        
+  background: white;   
+  border: 1px solid black;
+  pointer-events: none;
+  box-shadow: 0px 5px 10px #333;     
+}

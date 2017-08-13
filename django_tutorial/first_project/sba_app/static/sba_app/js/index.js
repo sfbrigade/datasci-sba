@@ -17,6 +17,8 @@ var path = d3.geoPath()
     .projection(projection)
 
 
+// TODO: change the color scale to use scaleQuantile (real quantiles) instead of
+// scaleQuantize (linear scale between the data min and max)
 var bins = rangeArray(9)
 var colorScale = d3.scaleQuantize()
 colorScale.range(bins)
@@ -48,12 +50,34 @@ function drawMap(error, data, map) {
       .rollup(v=>{return v[0].sba_per_small_bus})
       .object(data)
 
+  var tooltip = d3.select("body").append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 0);
+
   svg.append('g')
       .selectAll('.zip')
         .data(topojson.feature(map, map.objects.ca_zips).features)
       .enter().append('path')
         .attr('d', path)
-        .on('click', function(d){ return console.log(d.properties.GEOID10) })
+        .on("mouseover", function(d) {
+            let sba_per_small_bus = dataMap[d.properties.GEOID10]
+            tooltip.transition()        
+                .duration(200)
+                .style("opacity", .95);      
+            tooltip .html('<table>' +
+                '<tr><td>Zipcode:</td><td>' + d.properties.GEOID10 + '</td></tr>' +
+                '<tr><td>SBA to Small Ratio:</td><td>' + sba_per_small_bus + '</td></tr>' +
+                '<tr><td>Ratio Quantile:</td><td>' + colorScale(sba_per_small_bus) + '</td></tr>' +
+                '</table>'
+                )  
+                .style("left", (d3.event.pageX + 10) + "px")     
+                .style("top", (d3.event.pageY + 20) + "px");    
+            })                  
+        .on("mouseout", function(d) {       
+            tooltip.transition()        
+                .duration(500)      
+                .style("opacity", 0);   
+        })
         .attr('class', function(d){
           let val = dataMap[d.properties.GEOID10]
           return colorScale(val)
