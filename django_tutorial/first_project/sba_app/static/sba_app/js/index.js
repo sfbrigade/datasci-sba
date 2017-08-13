@@ -22,10 +22,12 @@ var colorScale = d3.scaleQuantize()
 colorScale.range(bins)
 
 
+const zipsUrl = d3.select('#map_container').attr('data-zips-url')
+const topoUrl = d3.select('#map_container').attr('data-topo-url')
 
 d3.queue()
-  .defer(d3.json,'/firstapp/api/v1/zips')
-  .defer(d3.json, '/static/sba_app/tempdata/ca_zips.json')
+  .defer(d3.json, zipsUrl)
+  .defer(d3.json, topoUrl)
   .await(drawMap);
 
 
