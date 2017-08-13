@@ -56,7 +56,7 @@ def query_info_schema_table_def(conn, table_name):
     schema, table = table_name.split('.')
 
     return sa.select([
-                 information_schema__columns.c.table_schema,
+              information_schema__columns.c.table_schema,
               information_schema__columns.c.table_name,
               information_schema__columns.c.column_name,
               information_schema__columns.c.data_type
