@@ -42,7 +42,11 @@ function drawMap(error, data, map) {
 
   data = data.data
 
-  let exten = d3.extent(data, (d)=>{return d.sba_per_small_bus})
+  // the data includes one zip code with sba_per_small_bus=5; to avoid that one datapoint
+  // skewing the color distribution, just set the range to [0, 1] for now.  this should be
+  // superfluous once we switch to real quantiles
+  let exten = [0, 1];
+  //let exten = d3.extent(data, (d)=>{return d.sba_per_small_bus})
   colorScale.domain(exten)
 
   let dataMap = d3.nest()
