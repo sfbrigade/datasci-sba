@@ -11,7 +11,7 @@ from django.db import models
 
 
 class sba_zip_level(models.Model):
-    borr_zip = models.TextField(blank=True, null=True)
+    borr_zip = models.TextField(blank=True, null=False, primary_key=True)
     mean_agi = models.FloatField(blank=True, null=True)
     total_small_bus = models.BigIntegerField(blank=True, null=True)
     total_sba = models.BigIntegerField(blank=True, null=True)
