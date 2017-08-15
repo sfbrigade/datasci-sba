@@ -47,7 +47,7 @@ pg_dump: server version: 9.6.2; pg_dump version: 9.5.7
 pg_dump: aborting because of server version mismatch
 ```
 
-You need to update your version of `pg_dump`. In this case, my `pg_dump` version was 9.5, but the Postgres server version was 9.6. The following is a solution: https://github.com/laradock/laradock/issues/778 (Confirmed that this works on Bash on Ubuntu for Windows)
+You need to update your version of `pg_dump`. In this case, my `pg_dump` version was 9.5, but the Postgres server version was 9.6. The following is a solution: https://github.com/laradock/laradock/issues/778 (Confirmed that this works on Bash on Ubuntu for Windows. On Mac OS, instead of `apt-get` you will likely use `brew`.)
 
 ```
 sudo apt-get update
