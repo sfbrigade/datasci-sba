@@ -1,103 +1,196 @@
-/* page setup */
-var width = parseInt(d3.select('#map_container').style('width')),
-    height = width,
-    active = d3.select(null)
-
-var svg = d3.select("#map_container").append("svg")
-    .style('width', width + 'px')
-    .style('height', height + 'px');
-    // .on("click", stopped, true)
-
-var projection = d3.geoMercator()
-    .center([-122.433701, 37.767683])
-    .scale(3 * width)
-    .translate([width / 2, height / 2])
-
-var path = d3.geoPath()
-    .projection(projection)
 
 
-// TODO: change the color scale to use scaleQuantile (real quantiles) instead of
-// scaleQuantize (linear scale between the data min and max)
-var bins = rangeArray(9)
-var colorScale = d3.scaleQuantize()
-colorScale.range(bins)
+var map;
+var sbaData;
+var selectedField = 'sba_per_small_bus'
+var fields = {
+  'sba_per_small_bus': {
+    userReadableName: 'Total SBA Loans per Small Biz',
+    extent: [0, 1]
+  },
+  'loan_504_per_small_bus': {
+    userReadableName: '504 Loans per Small Biz',
+    extent: [0, 1]
+  },
+  'loan_7a_per_small_bus': {
+    userReadableName: '7a Loans per Small Biz',
+    extent: [0, 1]
+  },
+}
 
 
-const zipsUrl = d3.select('#map_container').attr('data-zips-url')
-const topoUrl = d3.select('#map_container').attr('data-topo-url')
+function initMap() {
 
-d3.queue()
-  .defer(d3.json, zipsUrl)
-  .defer(d3.json, topoUrl)
-  .await(drawMap);
+  // load the map
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 40, lng: -123},
+    zoom: 7,
+    styles: [{
+        'stylers': [{'visibility': 'off'}]
+      }, {
+        'featureType': 'road.highway',
+        'stylers': [{'visibility': 'simplified'}]
+      }, {
+        'featureType': 'administrative',
+        'stylers': [{'visibility': 'on'}]
+      }, {
+        'featureType': 'water',
+        'elementType': 'geometry',
+        'stylers': [{'visibility': 'simplified'}]
+      }
+    ]
+  });
 
 
-function drawMap(error, data, map) {
-  if (error) throw error;
-  if(data.status !== 'success') {
-    console.log('error: ' + data.status)
-    return
-  }
+  // set up the style rules and events for google.maps.Data
+  map.data.setStyle(styleFeature);
+  map.data.addListener('mouseover', mouseInToRegion);
+  map.data.addListener('mouseout', mouseOutOfRegion);
 
-  data = data.data
+  // wire up the button
+  var selectBox = document.getElementById('census-variable');
+  google.maps.event.addDomListener(selectBox, 'change', function() {
+    // selectBox.options[selectBox.selectedIndex].value
+    renderRegions();
+  });
 
-  // the data includes one zip code with sba_per_small_bus=5; to avoid that one datapoint
-  // skewing the color distribution, just set the range to [0, 1] for now.  this should be
-  // superfluous once we switch to real quantiles
-  let exten = [0, 1];
-  //let exten = d3.extent(data, (d)=>{return d.sba_per_small_bus})
-  colorScale.domain(exten)
+  // state polygons only need to be loaded once, do them now
+  loadMapShapes();
 
-  let dataMap = d3.nest()
-      .key(d=>{return d.borr_zip})
-      .rollup(v=>{return v[0].sba_per_small_bus})
-      .object(data)
-
-  var tooltip = d3.select("body").append("div")   
-    .attr("class", "tooltip")               
-    .style("opacity", 0);
-
-  svg.append('g')
-      .selectAll('.zip')
-        .data(topojson.feature(map, map.objects.ca_zips).features)
-      .enter().append('path')
-        .attr('d', path)
-        .on("mouseover", function(d) {
-            let sba_per_small_bus = dataMap[d.properties.GEOID10]
-            tooltip.transition()        
-                .duration(200)
-                .style("opacity", .95);      
-            tooltip .html('<table>' +
-                '<tr><td>Zipcode:</td><td>' + d.properties.GEOID10 + '</td></tr>' +
-                '<tr><td>SBA to Small Ratio:</td><td>' + sba_per_small_bus + '</td></tr>' +
-                '<tr><td>Ratio Quantile:</td><td>' + colorScale(sba_per_small_bus) + '</td></tr>' +
-                '</table>'
-                )  
-                .style("left", (d3.event.pageX + 10) + "px")     
-                .style("top", (d3.event.pageY + 20) + "px");    
-            })                  
-        .on("mouseout", function(d) {       
-            tooltip.transition()        
-                .duration(500)      
-                .style("opacity", 0);   
-        })
-        .attr('class', function(d){
-          let val = dataMap[d.properties.GEOID10]
-          return colorScale(val)
-        })
 }
 
 
 
+/** Loads the state boundary polygons from a GeoJSON source. */
+function loadMapShapes() {
+  let regionGeometryPromise = $.ajax({
+    url: window.topoUrl,
+    dataType: 'json'
+  })
+  let sbaDataPromise = $.ajax({
+    url: window.zipsUrl,
+    dataType: 'json'
+  })
 
-
-function rangeArray (bins) {
-  //TODO: i think there is a native d3 function that does this
-  var result = [],
-      max = bins - 1
-  for (var i = 0; i <= max; i++) {
-   result.push('q'+ i + '-' + bins);
-  }
-  return result
+  $.when(regionGeometryPromise, sbaDataPromise).done((regionGeometryResponse, sbaDataResponse) => {
+    map.data.addGeoJson(regionGeometryResponse[0], { idPropertyName: 'GEOID10' })
+    sbaData = sbaDataResponse[0].data
+    renderRegions()
+  })
 }
+
+/**
+ * Loads the census data from a simulated API call to the US Census API.
+ *
+ * @param {string} variable
+ */
+function renderRegions() {
+  clearRegions()
+
+  if(fields[selectedField].extent === undefined) {
+    fields[selectedField].extent = [
+      sbaData.reduce((min, region) => Math.min(min, region[selectedField]), Number.MAX_VALUE),
+      sbaData.reduce((max, region) => Math.max(max, region[selectedField]), Number.MIN_VALUE)
+    ]
+  }
+
+  sbaData.forEach(function(row) {
+    const censusVariable = row[selectedField]
+
+    // update the existing row with the new data
+    const feature = map.data.getFeatureById(row.borr_zip)
+    if(feature)
+      feature.setProperty('census_variable', censusVariable);
+  });
+
+  // update and display the legend
+  document.getElementById('census-min').textContent =
+      fields[selectedField].extent[0].toLocaleString();
+  document.getElementById('census-max').textContent =
+      fields[selectedField].extent[1].toLocaleString();
+}
+
+/** Removes census data from each shape on the map and resets the UI. */
+function clearRegions() {
+  map.data.forEach(function(row) {
+    row.setProperty('census_variable', undefined);
+  });
+  document.getElementById('data-box').style.display = 'none';
+  document.getElementById('data-caret').style.display = 'none';
+}
+
+/**
+ * Applies a gradient style based on the 'census_variable' column.
+ * This is the callback passed to data.setStyle() and is called for each row in
+ * the data set.  Check out the docs for Data.StylingFunction.
+ *
+ * @param {google.maps.Data.Feature} feature
+ */
+function styleFeature(feature) {
+  var low = [5, 69, 54];  // color of smallest datum
+  var high = [151, 83, 34];   // color of largest datum
+
+  // delta represents where the value sits between the min and max
+  var delta = (feature.getProperty('census_variable') - fields[selectedField].extent[0]) /
+      (fields[selectedField].extent[1] - fields[selectedField].extent[0]);
+
+  var color = [];
+  for (var i = 0; i < 3; i++) {
+    // calculate an integer color based on the delta
+    color[i] = (high[i] - low[i]) * delta + low[i];
+  }
+
+  // determine whether to show this shape or not
+  var showRow = true;
+  if (feature.getProperty('census_variable') == null ||
+      isNaN(feature.getProperty('census_variable'))) {
+    showRow = false;
+  }
+
+  var outlineWeight = 0.5, zIndex = 1;
+  if (feature.getProperty('state') === 'hover') {
+    outlineWeight = zIndex = 2;
+  }
+
+  return {
+    strokeWeight: outlineWeight,
+    strokeColor: '#fff',
+    zIndex: zIndex,
+    fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)',
+    fillOpacity: 0.75,
+    visible: showRow
+  };
+}
+
+/**
+ * Responds to the mouse-in event on a map shape (state).
+ *
+ * @param {?google.maps.MouseEvent} e
+ */
+function mouseInToRegion(e) {
+  // set the hover state so the setStyle function can change the border
+  e.feature.setProperty('state', 'hover');
+
+  var percent = (e.feature.getProperty('census_variable') - fields[selectedField].extent[0]) /
+      (fields[selectedField].extent[1] - fields[selectedField].extent[0]) * 100;
+
+  // update the label
+  document.getElementById('data-label').textContent =
+      e.feature.getProperty('NAME');
+  document.getElementById('data-value').textContent =
+      e.feature.getProperty('census_variable').toLocaleString();
+  document.getElementById('data-box').style.display = 'block';
+  document.getElementById('data-caret').style.display = 'block';
+  document.getElementById('data-caret').style.paddingLeft = percent + '%';
+}
+
+/**
+ * Responds to the mouse-out event on a map shape (state).
+ *
+ * @param {?google.maps.MouseEvent} e
+ */
+function mouseOutOfRegion(e) {
+  // reset the hover state, returning the border to normal
+  e.feature.setProperty('state', 'normal');
+}
+
