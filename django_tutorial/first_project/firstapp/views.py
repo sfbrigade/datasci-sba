@@ -1,6 +1,7 @@
 from django.db.models import Avg
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_GET
 
 from firstapp.models import sba_zip_level, IrsZipData
 
@@ -24,3 +25,16 @@ def index(request):
     }
 
     return render(request, 'firstapp/index.html', context=context)
+
+
+
+
+@require_GET
+def zips(request):
+    """API endpoint returning list of zips"""
+    result = {
+        'status': 'success',
+        # use comprehension to convert from queryset to list of dicts, otherwise json lib can't serialize it
+        'data': [x for x in sba_zip_level.objects.values()],
+    }
+    return JsonResponse(result)

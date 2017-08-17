@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SBA App</title>
+
+    <link rel="stylesheet" href="{% static "sba_app/css/style.css" %}">
+    <script src="//d3js.org/d3.v4.js"></script>
+    <script src="//unpkg.com/topojson@3"></script>
+    <script src="//d3js.org/d3-queue.v3.min.js"></script>
+</head>
+<body>
+
+    <div id="map_container"
+        data-zips-url="{% url 'firstapp:zips' %}"
+        data-topo-url="{% static "sba_app/tempdata/ca_zips.json" %}"></div>
+    <script src="{% static "sba_app/js/index.js" %}"></script>
+
+</body>
+</html>

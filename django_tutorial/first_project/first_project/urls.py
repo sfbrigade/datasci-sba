@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^firstapp/', include('firstapp.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^app/', include('sba_app.urls')),
 ]
