@@ -1,22 +1,40 @@
 
 
-var map;
-var sbaData;
-var selectedField = 'sba_per_small_bus'
-var fields = {
+const numQuantiles = 10
+const fields = {
   'sba_per_small_bus': {
-    userReadableName: 'Total SBA Loans per Small Biz',
-    extent: [0, 1]
+    userReadableName: 'Total SBA Loans per Small Business'
   },
   'loan_504_per_small_bus': {
-    userReadableName: '504 Loans per Small Biz',
-    extent: [0, 1]
+    userReadableName: '504 Loans per Small Biz'
   },
   'loan_7a_per_small_bus': {
-    userReadableName: '7a Loans per Small Biz',
-    extent: [0, 1]
+    userReadableName: '7a Loans per Small Biz'
   },
+  'mean_agi': {
+    userReadableName: 'Mean AGI'
+  },
+  'total_7a': {
+    userReadableName: 'Total 7a Loans'
+  },
+  'total_504': {
+    userReadableName: 'Total 504 Loans'
+  },
+  'total_sba': {
+    userReadableName: 'Total SBA Loans'
+  },
+  'total_small_bus': {
+    userReadableName: 'Total Small Businesses'
+  }
 }
+
+
+var map; // instance of google.maps.Map
+var sbaData;  // map from zip to region data
+var colorField = 'sba_per_small_bus'
+var filterField = 'sba_per_small_bus'
+var colorQuantiler
+var filterRange = [0, 1]
 
 
 function initMap() {
@@ -47,22 +65,16 @@ function initMap() {
   map.data.addListener('mouseover', mouseInToRegion);
   map.data.addListener('mouseout', mouseOutOfRegion);
 
-  // wire up the button
-  var selectBox = document.getElementById('census-variable');
-  google.maps.event.addDomListener(selectBox, 'change', function() {
-    // selectBox.options[selectBox.selectedIndex].value
-    renderRegions();
-  });
-
   // state polygons only need to be loaded once, do them now
-  loadMapShapes();
+  loadMapData();
 
+  initControls();
 }
 
 
 
 /** Loads the state boundary polygons from a GeoJSON source. */
-function loadMapShapes() {
+function loadMapData() {
   let regionGeometryPromise = $.ajax({
     url: window.topoUrl,
     dataType: 'json'
@@ -72,10 +84,81 @@ function loadMapShapes() {
     dataType: 'json'
   })
 
-  $.when(regionGeometryPromise, sbaDataPromise).done((regionGeometryResponse, sbaDataResponse) => {
+
+  $.when(sbaDataPromise, regionGeometryPromise).done((sbaDataResponse, regionGeometryResponse) => {
     map.data.addGeoJson(regionGeometryResponse[0], { idPropertyName: 'GEOID10' })
-    sbaData = sbaDataResponse[0].data
+    sbaArray = sbaDataResponse[0].data
+
+    sbaData = {}
+    sbaArray.forEach(region => {
+      sbaData[region.borr_zip] = region
+    })
+
+    Object.keys(fields).forEach(field => {
+      let min = Number.MAX_VALUE
+      let max = Number.MIN_VALUE
+      Object.values(sbaData).forEach(region => {
+        region[field] = parseFloat(region[field])
+        if(region[field] != null && !isNaN(region[field])) {
+          min = Math.min(min, region[field])
+          max = Math.max(max, region[field])
+        }
+      })
+      if(fields[field].extent === undefined) {
+        fields[field].extent = [min, max]
+      }
+    })
+
     renderRegions()
+  })
+}
+
+function initControls() {
+  let colorSelectBox = $('#color-select');
+  let filterSelectBox = $('#filter-select')
+  let orderedFields = Object.keys(fields)
+  orderedFields.sort((a, b) => fields[a].userReadableName < fields[b].userReadableName)
+  orderedFields.forEach(key => {
+    // TODO reduce duplication here, could be a React class instead
+    colorSelectBox.append($('<option>', {
+      text: fields[key].userReadableName,
+      value: key,
+      selected: key == colorField
+    }))
+    filterSelectBox.append($('<option>', {
+      text: fields[key].userReadableName,
+      value: key,
+      selected: key == filterField
+    }))
+  })
+  colorSelectBox.change(() => {
+    colorField = colorSelectBox.find(':selected').prop('value')
+    renderRegions();
+  });
+  filterSelectBox.change(() => {
+    filterField = filterSelectBox.find(':selected').prop('value')
+    filterRange = fields[filterField].extent.slice()
+    $('#filter-slider').slider({
+      min: filterRange[0],
+      max: filterRange[1],
+      step: (filterRange[1] - filterRange[0]) / 100,
+      values: filterRange.slice()
+    })
+    renderRegions();
+  });
+
+  $('#filter-slider').slider({
+    range: true,
+    min: filterRange[0],
+    max: filterRange[1],
+    values: filterRange.slice(),
+    slide(event, ui) {
+      filterRange = ui.values.slice()
+      $('#filter-min').text(round(filterRange[0], 1))
+      $('#filter-max').text(round(filterRange[1], 1))
+      renderRegions()
+    },
+    step: 0.1
   })
 }
 
@@ -87,27 +170,28 @@ function loadMapShapes() {
 function renderRegions() {
   clearRegions()
 
-  if(fields[selectedField].extent === undefined) {
-    fields[selectedField].extent = [
-      sbaData.reduce((min, region) => Math.min(min, region[selectedField]), Number.MAX_VALUE),
-      sbaData.reduce((max, region) => Math.max(max, region[selectedField]), Number.MIN_VALUE)
-    ]
-  }
+  colorQuantiler = new Quantiler(
+    Object.values(sbaData).map(region => region[colorField]),
+    numQuantiles)
+  
 
-  sbaData.forEach(function(row) {
-    const censusVariable = row[selectedField]
 
-    // update the existing row with the new data
-    const feature = map.data.getFeatureById(row.borr_zip)
-    if(feature)
-      feature.setProperty('census_variable', censusVariable);
+
+  Object.values(sbaData).forEach(function(row) {
+    const colorVariable = row[colorField]
+    const filterVariable = row[filterField]
+
+    if(filterRange[0] <= filterVariable && filterVariable <= filterRange[1]) {
+      // update the existing row with the new data
+      const feature = map.data.getFeatureById(row.borr_zip)
+      if(feature)
+        feature.setProperty('census_variable', colorVariable);    
+    }
+
   });
 
-  // update and display the legend
-  document.getElementById('census-min').textContent =
-      fields[selectedField].extent[0].toLocaleString();
-  document.getElementById('census-max').textContent =
-      fields[selectedField].extent[1].toLocaleString();
+  $('#legend-min').text(round(fields[colorField].extent[0], 1))
+  $('#legend-max').text(round(fields[colorField].extent[1], 1))
 }
 
 /** Removes census data from each shape on the map and resets the UI. */
@@ -115,8 +199,6 @@ function clearRegions() {
   map.data.forEach(function(row) {
     row.setProperty('census_variable', undefined);
   });
-  document.getElementById('data-box').style.display = 'none';
-  document.getElementById('data-caret').style.display = 'none';
 }
 
 /**
@@ -131,13 +213,12 @@ function styleFeature(feature) {
   var high = [151, 83, 34];   // color of largest datum
 
   // delta represents where the value sits between the min and max
-  var delta = (feature.getProperty('census_variable') - fields[selectedField].extent[0]) /
-      (fields[selectedField].extent[1] - fields[selectedField].extent[0]);
+  let quantile = colorQuantiler.getQuantile(feature.getProperty('census_variable'))
 
   var color = [];
   for (var i = 0; i < 3; i++) {
     // calculate an integer color based on the delta
-    color[i] = (high[i] - low[i]) * delta + low[i];
+    color[i] = (high[i] - low[i]) * quantile / (numQuantiles - 1) + low[i];
   }
 
   // determine whether to show this shape or not
@@ -171,17 +252,21 @@ function mouseInToRegion(e) {
   // set the hover state so the setStyle function can change the border
   e.feature.setProperty('state', 'hover');
 
-  var percent = (e.feature.getProperty('census_variable') - fields[selectedField].extent[0]) /
-      (fields[selectedField].extent[1] - fields[selectedField].extent[0]) * 100;
+  sbaDatum = sbaData[e.feature.getId()]
 
-  // update the label
-  document.getElementById('data-label').textContent =
-      e.feature.getProperty('NAME');
-  document.getElementById('data-value').textContent =
-      e.feature.getProperty('census_variable').toLocaleString();
-  document.getElementById('data-box').style.display = 'block';
-  document.getElementById('data-caret').style.display = 'block';
-  document.getElementById('data-caret').style.paddingLeft = percent + '%';
+  $('#tooltip').html('<table>' +
+      '<tr><td>Zipcode:</td><td>' + sbaDatum.borr_zip + '</td></tr>' +
+      '<tr><td>SBA to Small Ratio:</td><td>' + sbaDatum.sba_per_small_bus + '</td></tr>' +
+      '</table>'
+      )
+    .css({
+      left: (e.va.clientX + 10) + "px",
+      top: (e.va.clientY + 20) + "px"
+    })
+    .stop()
+    .animate({
+      opacity: .95
+    }, 200)
 }
 
 /**
@@ -192,5 +277,36 @@ function mouseInToRegion(e) {
 function mouseOutOfRegion(e) {
   // reset the hover state, returning the border to normal
   e.feature.setProperty('state', 'normal');
+  $('#tooltip').stop().animate({opacity: 0}, 500);
 }
 
+
+
+class Quantiler {
+  constructor(values, numQuantiles) {
+    values = values.filter(value => value != null && !isNaN(value))
+    values.sort((a, b) => a - b)
+
+    this.thresholds = []
+    for(let i = 1; i < numQuantiles; i++) {
+      let index = i * values.length / numQuantiles
+      this.thresholds[i-1] = (values[Math.floor(index)] + values[Math.ceil(index)]) / 2
+    }
+    console.log(this.thresholds)
+  }
+
+  getQuantile(value) {
+    if(value != null && !isNaN(value)) {
+      let index = this.thresholds.findIndex(threshold => value < threshold)
+      if(index === -1) {
+        index = this.thresholds.length
+      }
+      return index
+    }
+  }
+}
+
+function round(number, precision) {
+  const factor = Math.pow(10, precision)
+  return Math.round(number * factor) / factor
+}

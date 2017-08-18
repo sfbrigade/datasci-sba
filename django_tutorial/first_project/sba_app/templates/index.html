@@ -3,47 +3,54 @@
 {% load static %}
 
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <title>Mashups with google.maps.Data</title>
-    <link rel="stylesheet" href="{% static "sba_app/css/style.css" %}">
-  </head>
-  <body>
-    <div id="controls" class="nicebox">
-      <div>
-      <select id="census-variable">
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP02_0066PE">Percent of population over 25 that completed high
-        school</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0017E">Median age</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0001E">Total population</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP02_0016E">Average family size</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP03_0088E">Per-capita income</option>
-      </select>
-      </div>
-      <div id="legend">
-        <div id="census-min">min</div>
-        <div class="color-key"><span id="data-caret">&#x25c6;</span></div>
-        <div id="census-max">max</div>
-      </div>
-    </div>
-    <div id="data-box" class="nicebox">
-      <label id="data-label" for="data-value"></label>
-      <span id="data-value"></span>
-    </div>
-    <div id="map"></div>
-    <script>
-        // TODO: don't use global vars like this
-        var zipsUrl = "{% url 'firstapp:zips' %}"
-        var topoUrl = "{% static "sba_app/tempdata/ca_zips_geo.json" %}"
-    </script>
-    <script
-        src="https://code.jquery.com/jquery-3.2.1.min.js"
-        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"></script>
-    <script src="{% static "sba_app/js/index.js" %}"></script>
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMkwqz_xwd2fA2nAKy5s5ruzdAIy6T354&callback=initMap">
-    </script>
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <title>SBA Region Analysis</title>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="{% static "sba_app/css/style.css" %}">
+    </head>
+    <body>
+        <div id="controls" class="nicebox">
+            <div>
+                <h2>Color by:</h2>
+                <select id="color-select">
+                </select>
+            </div>
+            <div id="legend">
+                <div id="legend-min">min</div>
+                <div class="color-key"></div>
+                <div id="legend-max">max</div>
+            </div>
+            <div>
+                <h2>Filter by:</h2>
+                <select id="filter-select">
+                </select>
+                <div>
+                    <div id="filter-min">0</div>
+                    <div id="filter-max">1</div>
+                    <div id="filter-slider"></div>
+                </div>
+            </div>
+            <div>
+
+            </div>
+        </div>
+        <div id="map"></div>
+        <div id="tooltip"></div>
+        <script>
+                // TODO: don't use global vars like this
+                var zipsUrl = "{% url 'firstapp:zips' %}"
+                var topoUrl = "{% static "sba_app/tempdata/ca_zips_geo.json" %}"
+        </script>
+        <script
+                src="https://code.jquery.com/jquery-3.2.1.min.js"
+                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="{% static "sba_app/js/index.js" %}"></script>
+        <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMkwqz_xwd2fA2nAKy5s5ruzdAIy6T354&callback=initMap">
+        </script>
+    </body>
 </html>
