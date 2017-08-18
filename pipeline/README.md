@@ -1,10 +1,10 @@
 # Pipeline Runner
-This pipeline runner is a way to keep all tasks hitting our database in a central location. The value of this, is that we can recreate the state of our database very easily, and we what all the tasks that are writing to our database are.
+This pipeline runner is a way to keep all tasks hitting our database in a central location. The value of this, is that we can recreate the state of our database very easily, and we know where are all the tasks that are writing to our database.
 
-The entry point into the pipeline runner is [pipeline_runner.py](./pipeline_runner.py). In this file, we essentially create a for loop that loops through all the files in a list and executes them. Currently we only support `.sql` and `.py` files.
+The entry point into the pipeline runner is [pipeline_runner.py](./pipeline_runner.py). In this file, we essentially create a `for` loop that loops through all the files in a list and executes them. Currently we only support `.sql` and `.py` files.
 
 ## Adding Additional Files
-To add additional files to run, simply add the file name to the `files` list object.
+To add additional files to run, add the file name to the appropriate list object.
 
 To run the pipeline, you need to have the connection string stored as an environment variable. You will also need to have Python3 installed as well as necessary dependencies specified in `requirements.txt`. Please see the [development environment onboarding doc](https://github.com/sfbrigade/datasci-sba/blob/master/onboarding/02_development_environment.md) for more information.
 
