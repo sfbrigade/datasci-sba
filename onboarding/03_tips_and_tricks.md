@@ -28,6 +28,15 @@ $ git push
 ```
 [Create a Pull Request](https://help.github.com/articles/creating-a-pull-request/) from your pushed branch (compare branch) to the master branch
 
+Another handy thing while working in terminal is to automatically show what branch you're working on in the command line. To do this, add the following your your `.bash_profile`
+
+```
+parse_git_branch() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
+```
+
 ## Using the Jupyter Notebook
 To access the Jupyter notebook, type ```$ jupyter notebook``` on Mac or ```$ jupyter notebook --no-browser``` on Windows. It will say "The Jupyter terminal is running at http://localhost:8888/sometoken." Copy the link and paste it in your browser. 
 

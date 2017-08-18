@@ -4,11 +4,13 @@ Load SBA FOIA datasets
 Source of data:
 """
 import argparse
+import os
 
 import pandas as pd
 import sqlalchemy as sa
 
 from utilities.db_manager import DBManager
+from utilities import util_functions as uf
 
 
 def get_args():
@@ -27,21 +29,21 @@ def load_sba_datasets(dbm, direc):
     """
     print('Reading FOIA 504')
     foia_504_1991_present = pd.read_excel(
-        direc + 'FOIA - 504 (FY1991-Present).xlsx')
+        os.path.join(direc, 'FOIA - 504 (FY1991-Present).xlsx'))
 
     print('Reading FOIA 7a 1991-1999')
     foia_7a_1991_1999 = pd.read_excel(
-        direc + 'FOIA - 7(a) (FY1991-FY1999).xlsx',
+        os.path.join(direc, 'FOIA - 7(a) (FY1991-FY1999).xlsx'),
         skiprows=1)
 
     print('Reading FOIA 7a 2000-2009')
     foia_7a_2000_2009 = pd.read_excel(
-        direc + 'FOIA - 7(a)(FY2000-FY2009).xlsx',
+        os.path.join(direc, 'FOIA - 7(a)(FY2000-FY2009).xlsx'),
         skiprows=1)
 
     print('Reading FOIA 7a 2010-Present')
     foia_7a_2010_present = pd.read_excel(
-        direc + 'FOIA - 7(a) (FY2010-Present).xlsx')
+        os.path.join(direc, 'FOIA - 7(a) (FY2010-Present).xlsx'))
 
     print('Writing FOIA 504')
     dbm.write_df_table(
@@ -113,7 +115,8 @@ def main():
     print('Parsing FOIA datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    directory = '/Users/VincentLa/git/datasci-sba/src/data/sba/'
+    git_root_dir = uf.get_git_root(os.path.dirname(__file__))
+    directory = os.path.join(git_root_dir, 'src', 'data', 'sba')
     load_sba_datasets(dbm, directory)
 
 

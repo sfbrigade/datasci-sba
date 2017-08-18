@@ -35,10 +35,27 @@ def _execute_insert(self, conn, keys, data_iter):
 SQLTable._execute_insert = _execute_insert
 
 
+def _str2bool(v):
+    """Define a function that converts string to bool used in argparse"""
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 def get_args():
     """Use argparse to parse command line arguments."""
     parser = argparse.ArgumentParser(description='Runner for tasks')
     parser.add_argument('--db_url', help='Database url string to the db.', type=str, required=True)
+    parser.add_argument(
+        '--run_parse',
+        help='Values: True or False. If True: Run Parse tasks; If False: Do not run parse tasks',
+        type=_str2bool,
+        default='false',
+        required=False
+    )
     parser.add_argument('--runtime_id', help='Run Time ID', type=str, default=RUNTIME_ID)
     return parser.parse_args()
 
@@ -79,21 +96,24 @@ def main():
     """Main function to run tasks."""
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    print(SQL_PATH)
     print('\n' + '\n' + 'Started at ' + str(starttime))
     print('\n')
 
+    # Define the list of tasks that are parse tasks
+    parse_tasks = [
+        'parse.00_01_01_load_sba_datasets.py',
+        'parse/00_01_02_sba__foia_7a_1991_1999',
+        'parse/00_01_03_sba__foia_7a_2000_2009',
+        'parse/00_01_04_sba__foia_7a_2010_present',
+        'parse/00_01_05_sba__foia_504_1991_present',
+        'parse.00_02_01_load_census_datasets.py',
+        'parse/00_02_02_census__zip_business_patterns',
+        'parse.00_03_01_load_irs_datasets.py',
+        'parse/00_03_02_irs__zip_data',
+    ]
+
     # Define list of files you want to run
-    files = [
-        # 'parse.00_01_01_load_sba_datasets.py',
-        # 'parse/00_01_02_sba__foia_7a_1991_1999',
-        # 'parse/00_01_03_sba__foia_7a_2000_2009',
-        # 'parse/00_01_04_sba__foia_7a_2010_present',
-        # 'parse/00_01_05_sba__foia_504_1991_present',
-        # 'parse.00_02_01_load_census_datasets.py'
-        # 'parse/00_02_02_census__zip_business_patterns',
-        # '00_03_01_load_irs_datasets.py',
-        # 'parse/00_03_02_irs__zip_data',
+    tasks = [
         'queries/stg_analytics/00_01_01_sba_sfdo_zips',
         'queries/stg_analytics/00_01_sba_sfdo',
         'queries/stg_analytics/00_02_irs_income',
@@ -101,11 +121,15 @@ def main():
         'queries/trg_analytics/00_01_sba_metrics',
     ]
 
+    if args.run_parse:
+        files = parse_tasks + tasks
+    else:
+        files = tasks
+
     # Run files
     run_files(dbm, files, args.db_url)
 
     endtime = dt.datetime.now()
-
     duration = endtime - starttime
 
     print('Ended at: ' + str(endtime))

@@ -14,6 +14,8 @@ To actually run `pipeline_runner.py` you need to first be in the root folder of 
 cd ~/git/datasci-sba
 ```
 
+In addition (especially if you are running the pipeline end-to-end including parsing the raw CSV/Excel files to load into the Database), you will need to have the data in the proper location: `datasci-sba/src/data`. See this [README file](../src/README.md) for further documentation and Dropbox location for the appropriate files.
+
 Now to run the `pipeline_runner.py`:
 ```
 python -m pipeline.pipeline_runner --db_url=$SBA_DWH

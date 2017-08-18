@@ -16,3 +16,4 @@
 *.dat
 
 table_def_dump.py
+pg_dump_output.sql
