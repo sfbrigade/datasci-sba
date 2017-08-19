@@ -4,10 +4,13 @@ This query aggregates mean agi, total number of businesses, and SBA counts at th
 Also computes relevant metrics, sba loans per small businesses.
 */
 
-drop table if exists trg_analytics.sba_zip_level;
-create table trg_analytics.sba_zip_level
+drop table if exists trg_analytics.sba_region_level;
+create table trg_analytics.sba_region_level
 (
-  borr_zip text,
+  id serial primary key,
+  region_type text not null,
+  region text not null,
+  sba_district_office text,
   mean_agi numeric,
   total_small_bus int,
   total_sba int,
@@ -16,25 +19,41 @@ create table trg_analytics.sba_zip_level
   sba_per_small_bus numeric,
   loan_504_per_small_bus numeric,
   loan_7a_per_small_bus numeric,
-  primary key(borr_zip)
+  unique(region_type, region)
 );
 
-insert into trg_analytics.sba_zip_level
-
-select
-  borr_zip,
+insert into trg_analytics.sba_region_level
+(
+  region_type,
+  region,
+  sba_district_office,
   mean_agi,
   total_small_bus,
   total_sba,
   total_504,
   total_7a,
-  1.0 * total_sba / total_small_bus as sba_per_small_bus,
-  1.0 * total_504 / total_small_bus as loan_504_per_small_bus,
-  1.0 * total_7a / total_small_bus as loan_7a_per_small_bus
+  sba_per_small_bus,
+  loan_504_per_small_bus,
+  loan_7a_per_small_bus
+)
+
+select
+  'zipcode'::text as region_type,
+  borr_zip as region,
+  sba_district_office,
+  mean_agi,
+  total_small_bus,
+  total_sba,
+  total_504,
+  total_7a,
+  round(1.0 * total_sba / total_small_bus, 3) as sba_per_small_bus,
+  round(1.0 * total_504 / total_small_bus, 3) as loan_504_per_small_bus,
+  round(1.0 * total_7a / total_small_bus, 3) as loan_7a_per_small_bus
 from
 (
 select
   sba.borr_zip,
+  sba.sba_district_office,
   irs.mean_agi,
   census.num_establishments as total_small_bus,
   count(*) as total_sba,
@@ -48,6 +67,6 @@ from stg_analytics.sba_sfdo as sba
       and census.naics2012 = '00'
   left join stg_analytics.irs_income as irs
     on sba.borr_zip = irs.zipcode
-group by sba.borr_zip, irs.mean_agi, census.num_establishments
+group by sba.borr_zip, sba.sba_district_office, irs.mean_agi, census.num_establishments
 ) as sub
 ;

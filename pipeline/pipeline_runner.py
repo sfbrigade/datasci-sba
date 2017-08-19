@@ -72,6 +72,7 @@ def run_files(dbm, files, db_url):
     localstarttime = dt.datetime.now()
 
     for file in files:
+        print("Start running file {}".format(file))
         if file[-3:] == '.py':
             p = subprocess.Popen(['python3', '-m',
                                   'pipeline.pipeline_tasks.{}'.format(file[:-3]),
@@ -118,7 +119,7 @@ def main():
         'queries/stg_analytics/00_01_sba_sfdo',
         'queries/stg_analytics/00_02_irs_income',
         'queries/stg_analytics/00_03_census_naics',
-        'queries/trg_analytics/00_01_sba_metrics',
+        'queries/trg_analytics/00_01_sba_region_level',
     ]
 
     if args.run_parse:

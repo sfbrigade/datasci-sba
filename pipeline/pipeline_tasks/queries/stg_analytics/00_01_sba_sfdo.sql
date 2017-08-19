@@ -78,7 +78,7 @@ select
   franchise_name,
   project_county,
   project_state,
-  sba_district_office,
+  regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') as sba_district_office,
   congressional_district,
   business_type,
   loan_status,
@@ -109,6 +109,7 @@ where borr_state = 'CA'
                          'ALAMEDA', 'CONTRA COSTA', 'MARIN',
                          'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
                          'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') = 'SAN FRANCISCO DISTRICT OFFICE'
 ;
 
 insert into stg_analytics.sba_sfdo
@@ -133,7 +134,7 @@ select
   franchise_name,
   project_county,
   project_state,
-  sba_district_office,
+  regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') as sba_district_office,
   congressional_district,
   business_type,
   loan_status,
@@ -162,6 +163,7 @@ where borr_state = 'CA'
                          'ALAMEDA', 'CONTRA COSTA', 'MARIN',
                          'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
                          'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') = 'SAN FRANCISCO DISTRICT OFFICE'
 ;
 
 insert into stg_analytics.sba_sfdo
@@ -186,7 +188,7 @@ select
   franchise_name,
   project_county,
   project_state,
-  sba_district_office,
+  regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') as sba_district_office,
   congressional_district,
   business_type,
   loan_status,
@@ -211,10 +213,11 @@ select
   revolver_status
 from data_ingest.sba__foia_7a_2000_2009
 where borr_state = 'CA'
-and project_county in ('SANTA CRUZ', 'SANTA CLARA', 'SAN MATEO',
-                       'ALAMEDA', 'CONTRA COSTA', 'MARIN',
-                       'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
-                       'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and project_county in ('SANTA CRUZ', 'SANTA CLARA', 'SAN MATEO',
+                         'ALAMEDA', 'CONTRA COSTA', 'MARIN',
+                         'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
+                         'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') = 'SAN FRANCISCO DISTRICT OFFICE'
 ;
 
 insert into stg_analytics.sba_sfdo
@@ -239,7 +242,7 @@ select
   franchise_name,
   project_county,
   project_state,
-  sba_district_office,
+  regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') as sba_district_office,
   congressional_district,
   business_type,
   loan_status,
@@ -268,4 +271,8 @@ where borr_state = 'CA'
                          'ALAMEDA', 'CONTRA COSTA', 'MARIN',
                          'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
                          'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') = 'SAN FRANCISCO DISTRICT OFFICE'
 ;
+
+-- Creating Indices
+create index on stg_analytics.sba_sfdo (borr_zip);
