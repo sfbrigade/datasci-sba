@@ -4,8 +4,8 @@ This query aggregates mean agi, total number of businesses, and SBA counts at th
 Also computes relevant metrics, sba loans per small businesses.
 */
 
-drop table if exists trg_analytics.sba_zip_level;
-create table trg_analytics.sba_zip_level
+drop table if exists trg_analytics.sba_region_level;
+create table trg_analytics.sba_region_level
 (
   id serial primary key,
   region_type text not null,
@@ -22,7 +22,7 @@ create table trg_analytics.sba_zip_level
   unique(region_type, region)
 );
 
-insert into trg_analytics.sba_zip_level
+insert into trg_analytics.sba_region_level
 (
   region_type,
   region,
