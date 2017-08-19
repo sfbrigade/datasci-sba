@@ -1,7 +1,15 @@
+// TODO: add browserify or webpack to build pipeline, and break this into separate js files with imports,
+// instead of just using section headers
 
 
-const numQuantiles = 10
-const fields = {
+
+
+////////////////// State Fields //////////////////////
+
+// TODO: put these in redux
+
+var numQuantiles = 10
+var fields = {
   'sba_per_small_bus': {
     userReadableName: 'Total SBA Loans per Small Business'
   },
@@ -27,8 +35,6 @@ const fields = {
     userReadableName: 'Total Small Businesses'
   }
 }
-
-
 var map; // instance of google.maps.Map
 var sbaData;  // map from zip to region data
 var colorField = 'sba_per_small_bus'
@@ -37,6 +43,17 @@ var colorQuantiler
 var filterRange = [0, 1]
 
 
+
+
+
+
+
+////////////////// Initialization //////////////////////
+
+
+
+
+/** main entry point for the initialization; should be called by google maps API once its JS is loaded */
 function initMap() {
 
   // load the map
@@ -73,8 +90,12 @@ function initMap() {
 
 
 
-/** Loads the state boundary polygons from a GeoJSON source. */
+/**
+ * Loads the zip boundary polygons from a GeoJSON source, and the SBA loan data, and performs the initial render
+ */
 function loadMapData() {
+
+  // fire off 2 ajax requests: one for the zip GeoJSON data, and one for the SBA loan data
   let regionGeometryPromise = $.ajax({
     url: window.topoUrl,
     dataType: 'json'
@@ -84,21 +105,28 @@ function loadMapData() {
     dataType: 'json'
   })
 
-
+  // once both requests have returned...
   $.when(sbaDataPromise, regionGeometryPromise).done((sbaDataResponse, regionGeometryResponse) => {
     map.data.addGeoJson(regionGeometryResponse[0], { idPropertyName: 'GEOID10' })
     sbaArray = sbaDataResponse[0].data
 
+    // convert the SBA data from an array of regions to a map from zip code to region, for easy
+    // lookup by zip
     sbaData = {}
     sbaArray.forEach(region => {
       sbaData[region.borr_zip] = region
     })
 
+    // go through the SBA data, cleaning up some values and calculating min/max for each field
     Object.keys(fields).forEach(field => {
       let min = Number.MAX_VALUE
       let max = Number.MIN_VALUE
       Object.values(sbaData).forEach(region => {
+
+        // HACK: API currently returns string values for fields that are numeric in the PG DB;
+        // convert them to numbers now, but ideally the API would return numbers not strings
         region[field] = parseFloat(region[field])
+
         if(region[field] != null && !isNaN(region[field])) {
           min = Math.min(min, region[field])
           max = Math.max(max, region[field])
@@ -111,8 +139,12 @@ function loadMapData() {
 
     renderRegions()
   })
+
+  // TODO error handling if either request failed
 }
 
+
+/** builds the color/filter controls in the DOM */
 function initControls() {
   let colorSelectBox = $('#color-select');
   let filterSelectBox = $('#filter-select')
@@ -162,10 +194,18 @@ function initControls() {
   })
 }
 
+
+
+
+
+////////////////// Rendering //////////////////////
+
+
+
+
 /**
- * Loads the census data from a simulated API call to the US Census API.
- *
- * @param {string} variable
+ * Updates the styling on map regions to match the currently selected
+ * color and filter fields
  */
 function renderRegions() {
   clearRegions()
@@ -185,7 +225,7 @@ function renderRegions() {
       // update the existing row with the new data
       const feature = map.data.getFeatureById(row.borr_zip)
       if(feature)
-        feature.setProperty('census_variable', colorVariable);    
+        feature.setProperty('colorVariable', colorVariable);    
     }
 
   });
@@ -197,23 +237,26 @@ function renderRegions() {
 /** Removes census data from each shape on the map and resets the UI. */
 function clearRegions() {
   map.data.forEach(function(row) {
-    row.setProperty('census_variable', undefined);
+    row.setProperty('colorVariable', undefined);
   });
 }
 
 /**
- * Applies a gradient style based on the 'census_variable' column.
+ * Applies a gradient style based on the colorField.
  * This is the callback passed to data.setStyle() and is called for each row in
  * the data set.  Check out the docs for Data.StylingFunction.
  *
  * @param {google.maps.Data.Feature} feature
  */
 function styleFeature(feature) {
+
+  // TODO: don't use a red/green color scheme!  use viridis instead?
+
   var low = [5, 69, 54];  // color of smallest datum
   var high = [151, 83, 34];   // color of largest datum
 
   // delta represents where the value sits between the min and max
-  let quantile = colorQuantiler.getQuantile(feature.getProperty('census_variable'))
+  let quantile = colorQuantiler.getQuantile(feature.getProperty('colorVariable'))
 
   var color = [];
   for (var i = 0; i < 3; i++) {
@@ -223,8 +266,8 @@ function styleFeature(feature) {
 
   // determine whether to show this shape or not
   var showRow = true;
-  if (feature.getProperty('census_variable') == null ||
-      isNaN(feature.getProperty('census_variable'))) {
+  if (feature.getProperty('colorVariable') == null ||
+      isNaN(feature.getProperty('colorVariable'))) {
     showRow = false;
   }
 
@@ -244,7 +287,7 @@ function styleFeature(feature) {
 }
 
 /**
- * Responds to the mouse-in event on a map shape (state).
+ * Responds to the mouse-in event on a region
  *
  * @param {?google.maps.MouseEvent} e
  */
@@ -259,6 +302,7 @@ function mouseInToRegion(e) {
       '<tr><td>SBA to Small Ratio:</td><td>' + sbaDatum.sba_per_small_bus + '</td></tr>' +
       '</table>'
       )
+    // TODO is it safe to reference event coords with e.va?  it works, but is not in Google Maps API docs....
     .css({
       left: (e.va.clientX + 10) + "px",
       top: (e.va.clientY + 20) + "px"
@@ -270,7 +314,7 @@ function mouseInToRegion(e) {
 }
 
 /**
- * Responds to the mouse-out event on a map shape (state).
+ * Responds to the mouse-out event on a region.
  *
  * @param {?google.maps.MouseEvent} e
  */
@@ -282,19 +326,42 @@ function mouseOutOfRegion(e) {
 
 
 
+
+
+////////////////// Utilities //////////////////////
+
+
+
+/**
+ * Constructs a set of quantile thresholds for an array of data.  Immutable.
+ * Meant to be used by creating a Quantiler from the data, then 
+ */
 class Quantiler {
-  constructor(values, numQuantiles) {
+
+  /**
+   * @param {number[]} values
+   * @param {number} numQuantiles
+   */
+  constructor(values, numQuantiles=10) {
     values = values.filter(value => value != null && !isNaN(value))
     values.sort((a, b) => a - b)
 
+    // note that this.thresholds will contain (numQuantiles-1) entries, representing
+    // the boundary values between each of the quantiles
     this.thresholds = []
     for(let i = 1; i < numQuantiles; i++) {
       let index = i * values.length / numQuantiles
       this.thresholds[i-1] = (values[Math.floor(index)] + values[Math.ceil(index)]) / 2
     }
-    console.log(this.thresholds)
   }
 
+  /**
+   * @param {number} value
+   * @returns {number} the 0-based quantile that contains the given value.  Will be an integer
+   * in [0, numQuantiles-1] inclusive.  If the given value is below the lowest quantile or 
+   * above the highest quantile, will simply return 0 or numQuantiles-1, respectively.  Returns
+   * undefined if value is NaN.
+   */
   getQuantile(value) {
     if(value != null && !isNaN(value)) {
       let index = this.thresholds.findIndex(threshold => value < threshold)
@@ -306,7 +373,13 @@ class Quantiler {
   }
 }
 
-function round(number, precision) {
+/**
+ * Rounds a number to a given decimal precision
+ * @param {number} number
+ * @param {number=} precision
+ * @returns {number}
+ */
+function round(number, precision=0) {
   const factor = Math.pow(10, precision)
   return Math.round(number * factor) / factor
 }

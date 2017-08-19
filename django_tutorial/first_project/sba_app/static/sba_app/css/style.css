@@ -18,6 +18,7 @@ html, body, #map { height: 100%; margin: 0; padding: 0; overflow: hidden; }
 }
 
 #legend { display: flex; display: -webkit-box; padding-top: 7px }
+
 .color-key {
   background: linear-gradient(to right,
     hsl(5, 69%, 54%) 0%,
