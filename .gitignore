@@ -13,3 +13,6 @@
 *.xlsx
 *.DS_Store
 *.dat
+
+table_def_dump.py
+pg_dump_output.sql

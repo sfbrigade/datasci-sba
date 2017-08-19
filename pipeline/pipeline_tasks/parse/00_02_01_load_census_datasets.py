@@ -4,10 +4,12 @@ Load Census Datasets
 Source of data:
 """
 import argparse
+import os
 
 import pandas as pd
 
 from utilities.db_manager import DBManager
+from utilities import util_functions as uf
 
 
 def get_args():
@@ -25,7 +27,8 @@ def load_census_datasets(dbm, direc):
         direc: Directory where files are
     """
     # Read tables in chunks: https://stackoverflow.com/questions/13651117/pandas-filter-lines-on-load-in-read-csv
-    iter_table = pd.read_table(direc + 'CB1500CZ21.dat', sep="|", dtype=str, iterator=True, chunksize=1000)
+    iter_table = pd.read_table(
+        os.path.join(direc, 'CB1500CZ21.dat'), sep="|", dtype=str, iterator=True, chunksize=1000)
     # Let's just write California, otherwise the file is too big
     df = pd.concat([chunk[chunk['ST'] == '06'] for chunk in iter_table])
     dbm.write_df_table(
@@ -37,7 +40,8 @@ def main():
     print('Parsing Census datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    directory = '/Users/VincentLa/git/datasci-sba/src/data/census/'
+    git_root_dir = uf.get_git_root(os.path.dirname(__file__))
+    directory = os.path.join(git_root_dir, 'src', 'data', 'census')
     load_census_datasets(dbm, directory)
 
 

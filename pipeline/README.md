@@ -1,10 +1,10 @@
 # Pipeline Runner
-This pipeline runner is a way to keep all tasks hitting our database in a central location. The value of this, is that we can recreate the state of our database very easily, and we what all the tasks that are writing to our database are.
+This pipeline runner is a way to keep all tasks hitting our database in a central location. The value of this, is that we can recreate the state of our database very easily, and we know where are all the tasks that are writing to our database.
 
-The entry point into the pipeline runner is [pipeline_runner.py](./pipeline_runner.py). In this file, we essentially create a for loop that loops through all the files in a list and executes them. Currently we only support `.sql` and `.py` files.
+The entry point into the pipeline runner is [pipeline_runner.py](./pipeline_runner.py). In this file, we essentially create a `for` loop that loops through all the files in a list and executes them. Currently we only support `.sql` and `.py` files.
 
 ## Adding Additional Files
-To add additional files to run, simply add the file name to the `files` list object.
+To add additional files to run, add the file name to the appropriate list object.
 
 To run the pipeline, you need to have the connection string stored as an environment variable. You will also need to have Python3 installed as well as necessary dependencies specified in `requirements.txt`. Please see the [development environment onboarding doc](https://github.com/sfbrigade/datasci-sba/blob/master/onboarding/02_development_environment.md) for more information.
 
@@ -13,6 +13,8 @@ To actually run `pipeline_runner.py` you need to first be in the root folder of 
 ```
 cd ~/git/datasci-sba
 ```
+
+In addition (especially if you are running the pipeline end-to-end including parsing the raw CSV/Excel files to load into the Database), you will need to have the data in the proper location: `datasci-sba/src/data`. See this [README file](../src/README.md) for further documentation and Dropbox location for the appropriate files.
 
 Now to run the `pipeline_runner.py`:
 ```
