@@ -25,3 +25,8 @@ To understand what this is doing:
 1. `-m` option: run library module as a script. See official docs https://docs.python.org/3.6/using/cmdline.html and https://docs.python.org/3.6/tutorial/modules.html if you're looking for a deeper understanding
 2. `--db_url`: is the option name for the database URL. We read this in using the `argparse` module in `pipeline_runner.py`.
 3. `$SBA_DWH`: the environment variable for our database URL. This assumes you've set the database URL as an environment variable. If you have trouble doing this, or if you need to know our database credentials, please ping the #datasci-sba slack channel.
+
+# Additional Items
+
+| [Looking up Congressional Districts](./01_congressional_district.md) |
+
