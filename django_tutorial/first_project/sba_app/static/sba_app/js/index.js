@@ -36,7 +36,7 @@ var fields = {
   }
 }
 var map; // instance of google.maps.Map
-var sbaData;  // map from zip to region data
+var sbaData;  // map from region code (eg zipcode) to region data
 var colorField = 'sba_per_small_bus'
 var filterField = 'sba_per_small_bus'
 var colorQuantiler
@@ -91,17 +91,17 @@ function initMap() {
 
 
 /**
- * Loads the zip boundary polygons from a GeoJSON source, and the SBA loan data, and performs the initial render
+ * Loads the region boundary polygons from a GeoJSON source, and the SBA loan data, and performs the initial render
  */
 function loadMapData() {
 
-  // fire off 2 ajax requests: one for the zip GeoJSON data, and one for the SBA loan data
+  // fire off 2 ajax requests: one for the region GeoJSON data, and one for the SBA loan data
   let regionGeometryPromise = $.ajax({
     url: window.topoUrl,
     dataType: 'json'
   })
   let sbaDataPromise = $.ajax({
-    url: window.zipsUrl,
+    url: window.regionsUrl,
     dataType: 'json'
   })
 
@@ -110,11 +110,11 @@ function loadMapData() {
     map.data.addGeoJson(regionGeometryResponse[0], { idPropertyName: 'GEOID10' })
     sbaArray = sbaDataResponse[0].data
 
-    // convert the SBA data from an array of regions to a map from zip code to region, for easy
-    // lookup by zip
+    // convert the SBA data from an array of regions to a map from region code (eg zip) to region data, for easy
+    // lookup by region code
     sbaData = {}
-    sbaArray.forEach(region => {
-      sbaData[region.borr_zip] = region
+    sbaArray.forEach(sbaDatum => {
+      sbaData[sbaDatum.region] = sbaDatum
     })
 
     // go through the SBA data, cleaning up some values and calculating min/max for each field
@@ -223,7 +223,7 @@ function renderRegions() {
 
     if(filterRange[0] <= filterVariable && filterVariable <= filterRange[1]) {
       // update the existing row with the new data
-      const feature = map.data.getFeatureById(row.borr_zip)
+      const feature = map.data.getFeatureById(row.region)
       if(feature)
         feature.setProperty('colorVariable', colorVariable);    
     }
@@ -298,7 +298,7 @@ function mouseInToRegion(e) {
   sbaDatum = sbaData[e.feature.getId()]
 
   $('#tooltip').html('<table>' +
-      '<tr><td>Zipcode:</td><td>' + sbaDatum.borr_zip + '</td></tr>' +
+      '<tr><td>Zipcode:</td><td>' + sbaDatum.region + '</td></tr>' +
       '<tr><td>SBA to Small Ratio:</td><td>' + sbaDatum.sba_per_small_bus + '</td></tr>' +
       '</table>'
       )

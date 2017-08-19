@@ -10,8 +10,11 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class sba_zip_level(models.Model):
-    borr_zip = models.TextField(blank=True, null=False, primary_key=True)
+class SbaRegionLevel(models.Model):
+    id = models.AutoField(auto_created=True, primary_key=True)
+    region_type = models.TextField(blank=True, null=False)
+    region = models.TextField(blank=True, null=False)
+    sba_district_office = models.TextField(blank=True, null=True)
     mean_agi = models.FloatField(blank=True, null=True)
     total_small_bus = models.BigIntegerField(blank=True, null=True)
     total_sba = models.BigIntegerField(blank=True, null=True)
@@ -23,7 +26,7 @@ class sba_zip_level(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'sba_zip_level'
+        db_table = 'sba_region_level'
 
 
 class IrsZipData(models.Model):
