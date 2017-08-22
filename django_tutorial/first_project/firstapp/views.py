@@ -3,30 +3,28 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
-from firstapp.models import SbaRegionLevel, IrsZipData
+from firstapp.models import SbaRegionLevel
 
-# Create your views here.
 
 def index(request):
     """Hello World"""
     zipcode_num = SbaRegionLevel.objects.count()
     avg_mean_agi = SbaRegionLevel.objects.all().aggregate(Avg('mean_agi'))['mean_agi__avg']
-    avg_total_small_bus = SbaRegionLevel.objects.all().aggregate(Avg('total_small_bus'))['total_small_bus__avg']
+    avg_total_small_bus = SbaRegionLevel.objects.all().aggregate(
+        Avg('total_small_bus'))['total_small_bus__avg']
     avg_total_sba = SbaRegionLevel.objects.all().aggregate(Avg('total_sba'))['total_sba__avg']
-    avg_sba_per_small_bus = SbaRegionLevel.objects.all().aggregate(Avg('sba_per_small_bus'))['sba_per_small_bus__avg']
+    avg_sba_per_small_bus = SbaRegionLevel.objects.all().aggregate(
+        Avg('sba_per_small_bus'))['sba_per_small_bus__avg']
 
-    print(avg_mean_agi)
     context = {
-    	'zipcode_num': zipcode_num,
-    	'avg_mean_agi': avg_mean_agi,
-    	'avg_total_small_bus': avg_total_small_bus,
-    	'avg_total_sba': avg_total_sba,
-    	'avg_sba_per_small_bus': avg_sba_per_small_bus,
+        'zipcode_num': zipcode_num,
+        'avg_mean_agi': avg_mean_agi,
+        'avg_total_small_bus': avg_total_small_bus,
+        'avg_total_sba': avg_total_sba,
+        'avg_sba_per_small_bus': avg_sba_per_small_bus,
     }
 
     return render(request, 'firstapp/index.html', context=context)
-
-
 
 
 @require_GET
