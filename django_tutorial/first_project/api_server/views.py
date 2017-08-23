@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
-from firstapp.models import SbaRegionLevel
+from api_server.models import SbaRegionLevel
 
 
 def index(request):
@@ -24,7 +24,7 @@ def index(request):
         'avg_sba_per_small_bus': avg_sba_per_small_bus,
     }
 
-    return render(request, 'firstapp/index.html', context=context)
+    return render(request, 'api_server/index.html', context=context)
 
 
 @require_GET

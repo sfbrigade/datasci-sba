@@ -8,7 +8,7 @@
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
         <title>SBA Region Analysis</title>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="{% static "sba_app/css/style.css" %}">
+        <link rel="stylesheet" href="{% static "web_app/css/style.css" %}">
     </head>
     <body>
         <div id="controls" class="nicebox">
@@ -40,15 +40,15 @@
         <div id="tooltip"></div>
         <script>
                 // TODO: don't use global vars like this
-                var regionsUrl = "{% url 'firstapp:regions' %}"
-                var topoUrl = "{% static "sba_app/tempdata/ca_zips_geo.json" %}"
+                var regionsUrl = "{% url 'api_server:regions' %}"
+                var topoUrl = "{% static "web_app/tempdata/ca_zips_geo.json" %}"
         </script>
         <script
                 src="https://code.jquery.com/jquery-3.2.1.min.js"
                 integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
                 crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script src="{% static "sba_app/js/index.js" %}"></script>
+        <script src="{% static "web_app/js/index.js" %}"></script>
         <script async defer
                 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMkwqz_xwd2fA2nAKy5s5ruzdAIy6T354&callback=initMap">
         </script>

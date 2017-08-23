@@ -1,6 +1,7 @@
 from django.conf.urls import url
-from sba_app import views
+from web_app import views
 
+app_name = 'web_app'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
 ]
