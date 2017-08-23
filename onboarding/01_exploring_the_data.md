@@ -7,11 +7,46 @@ https://modeanalytics.com/editor/code_for_san_francisco
 
 ### Playing with the data locally
 We now have our data loaded into a PostgreSQL database hosted on Microsoft Azure. However, if you want to play with the data locally using spreadsheet software (e.g. Excel), here are some of the data sources:
-1. This csv contains the San Francisco-area loans from the original FOIA (Freedom of Information Act) data that is cleared for public use: https://files.slack.com/files-pri/T0431NL8C-F5P0JLZHB/download/foia_sfdo_504_7a.csv
-2. The FOIA data on the SBA site is divided by loan type and years but also covers a larger geographical area: 
-https://www.sba.gov/about-sba/sba-performance/open-government/foia/frequently-requested-records/sba-7a-504-loan-data-reports
-3. Data Dictionary https://files.slack.com/files-pri/T0431NL8C-F4FQLCV42/download/7a_504_foia_data_dictionary.xlsx
-4. Information about the cities https://files.slack.com/files-pri/T0431NL8C-F4VHWSM28/download/0912_-_city_profiles.xlsx
+
+    1. This csv contains the San Francisco-area loans from the original FOIA (Freedom of Information Act) data that is cleared for public use: https://files.slack.com/files-pri/T0431NL8C-F5P0JLZHB/download/foia_sfdo_504_7a.csv
+
+    2. The FOIA data on the SBA site is divided by loan type and years but also covers a larger geographical area: 
+
+    https://www.sba.gov/about-sba/sba-performance/open-government/foia/frequently-requested-records/sba-7a-504-loan-data-reports
+
+    3. Data Dictionary https://files.slack.com/files-pri/T0431NL8C-F4FQLCV42/download/7a_504_foia_data_dictionary.xlsx
+
+    4. Information about the cities https://files.slack.com/files-pri/T0431NL8C-F4VHWSM28/download/0912_-_city_profiles.xlsx
+
+    5. Information regarding number of small business is provided by the census anually. Business Patterns by County can be found in the Census file CB1500A13. File is available on the American Fact Finder https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=BP_CB1500A13_FTP&prodType=document along with program methodoolgy. The file downloads as .dat, but is a tab delimited file that can be changed to .txt to open locally.
+
+    6. Information regarding number of small business is provided by the census anually. Business Patterns by County can be found in the Census file CB1500CZ21 "ZIP Code Business Statistics: Zip Code Business Patterns by Employment Size Class". File is available on the American Fact Finder https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=BP_CB1500CZ21_FTP&prodType=document along with program methodoolgy. The file downloads as .dat, but is a tab delimited file that can be changed to .txt to open locally.
+
+    CA is state code '06'
+
+    7. IRS data for mean agi on the county level is available at https://www.irs.gov/uac/soi-tax-stats-county-data-2014. 
+
+    8. Both census small business pattern files and IRS data uses FIPS codes, which may change every year (confirm?). Code reference can be found at https://www.census.gov/geographies/reference-files/2016/demo/popest/2016-fips.html
+
+    County codes in the SFDO area: 
+
+        001 Alameda County
+        013 Contra Costa County
+        015 Del Norte County
+        023 Humboldt County
+        033 Lake County
+        041 Marin County
+        045 Mendocino County
+        055 Napa County
+        075 San Francisco County
+        081 San Mateo County
+        085 Santa Clara County
+        087 Santa Cruz County
+        095 Solano County
+        097 Sonoma County
+
+
+
 
 
 # Tools used for data exploration, processing, and visualization

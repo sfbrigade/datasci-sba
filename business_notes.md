@@ -1,3 +1,4 @@
+
 2017-07-05 Business notes
 
     * 3 uses for dashboards
@@ -27,4 +28,10 @@
     * Status 
         * NOT FUNDED - undetermined loan not funded. 
         * Undisbursed comes before cancelled
+
+
+
+
+Questions:
+1. What is the SBA data refresh cycle like? Does all of the source data need to be up-to-date? Once a year? 
 
