@@ -1,0 +1,9 @@
+:local(.zip) {
+  fill: pink;
+  stroke: red;
+  stroke-width: 1;
+
+  &:hover {
+    fill: red;
+  }
+}
