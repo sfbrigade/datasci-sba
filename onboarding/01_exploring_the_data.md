@@ -5,8 +5,7 @@ https://modeanalytics.com/editor/code_for_san_francisco
 
 ## Data
 
-### Playing with the data locally
-We now have our data loaded into a PostgreSQL database hosted on Microsoft Azure. However, if you want to play with the data locally using spreadsheet software (e.g. Excel), here are some of the data sources:
+### Data Sources:
 
     1. This csv contains the San Francisco-area loans from the original FOIA (Freedom of Information Act) data that is cleared for public use: https://files.slack.com/files-pri/T0431NL8C-F5P0JLZHB/download/foia_sfdo_504_7a.csv
 
@@ -45,6 +44,11 @@ We now have our data loaded into a PostgreSQL database hosted on Microsoft Azure
         095 Solano County
         097 Sonoma County
 
+    9. Mean AGI by congressional districts in CA can be found on the Census site (https://www.census.gov/mycd/?st=06&cd=15). Presumably, this mean AGI is comparable to the measure provided by the IRS (but at a congressional district group level).
+
+    10. Small business by congressional district: no source yet, this factfinder page indicates it might be possible to generate based on county business pattern file
+
+    11. Congressional District info by Address: May be found via a few different possible APIs: Google Civic API - https://developers.google.com/civic-information/; Sunlight Foundation API - https://sunlightfoundation.com/api/ 
 
 
 
