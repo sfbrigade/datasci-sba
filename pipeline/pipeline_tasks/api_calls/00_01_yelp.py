@@ -1,39 +1,76 @@
-# -*- coding: utf-8 -*-
 """
-Created on Thu May 04 16:33:48 2017
+This script scrapes Yelp data and obtains the Yelp rating, number of reviews, and url for each business.
+The output of this table is spit into a table: 'sba_sfdo_yelp'
 
-@author: User
+**need to make sure addresses have been cleaned (particularly the city name) to ensure optimal results.**
 """
 
-import pprint
+import argparse
+import os
+import pandas as pd
+from utilities.db_manager import DBManager
+from utilities import util_functions as uf
 import requests
-from bs4 import BeautifulSoup
+from sqlalchemy import create_engine
+import pandas as pd
+
+def get_args():
+    """Use argparse to parse command line arguments."""
+    parser = argparse.ArgumentParser(description='Runner for tasks')
+    parser.add_argument('--db_url', help='Database url string to the db.', required=True)
+    return parser.parse_args()
 
 
-def main():
-    page = requests.get('https://maps.googleapis.com/maps/api/place/textsearch/json?query=El+Farolito+2779+Mission+Street+San+Francisco&key=AIzaSyD_xdgTbmgL-pVFykN-rMZIQF3DdeMszA0')
-    soup = BeautifulSoup(page.content, 'html.parser')
-
+def scrape_yelp(dbm):
+    """Scrape yelp reviews
+    Keyword Args:
+        dbm: DBManager object
+    """
     data = {'grant_type': 'client_credentials',
-            'client_id': 'kiD4d8ra_jebdWlH9XZyLw',
-            'client_secret': 'yAm96WC7WVyKhCUobTu0YX3nl5EqmlnVQnQrdRMomrMCDg4auhg7aK9QJyEIyUIm'}
+            'client_id': os.environ['yelp_id'],
+            'client_secret': os.environ['yelp_secret']}
     token = requests.post('https://api.yelp.com/oauth2/token', data=data)
     access_token = token.json()['access_token']
     url = 'https://api.yelp.com/v3/businesses/search'
     headers = {'Authorization': 'bearer %s' % access_token}
-    params = {'location': 'San Bruno',
-              'term': 'Japanese Restaurant',
-              'pricing_filter': '1, 2',
-              'sort_by': 'rating'
-             }
 
-    resp = requests.get(url=url, params=params, headers=headers)
-    pprint.pprint(resp.json()['businesses'])
-    page = requests.get('https://api.yelp.com/v3/businesses/search?term=delis&latitude=37.786882&longitude=-122.399972')
-    soup = BeautifulSoup(page.content, 'html.parser')
+    sfdo = load_table(self, 'sba_sfdo', 'stg_analytics')
+    sfdo['full_address'] = sfdo['borr_street']+', '+sfdo['borr_city']+', '+sfdo['borr_state']+', '+sfdo['borr_zip']
+    
+    sfdo['yelp_rating'] = None
+    sfdo['yelp_total_reviews'] = None
+    sfdo['yelp_url'] = None
+    
+    for i in range(len(sfdo)):
+        address = sfdo.iloc[i]['full_address']
+        name = sfdo.iloc[i]['borr_name']
+        params = {'location': address,
+                  'term': name,
+                  'radius': 100,
+                  'limit':1
+                  }
+    
+        resp = requests.get(url=url, params=params, headers=headers)
+    
+        try:
+            sfdo['yelp_rating'].loc[i] = resp.json()['businesses'][0]['rating']
+            sfdo['yelp_total_reviews'].loc[i] = resp.json()['businesses'][0]['review_count']
+            sfdo['yelp_url'].loc[i] = resp.json()['businesses'][0]['url']
+        except:
+            pass
+
+    dbm.write_df_table(
+        sfdo, table_name='sba_sfdo_yelp', schema='stg_analytics')
+
+def main():
+    """Execute Stuff"""
+    print('Scraping Yelp data')
+    args = get_args()
+    dbm = DBManager(db_url=args.db_url)
+    scrape_yelp(dbm)
+
 
 
 if __name__ == '__main__':
     """See https://stackoverflow.com/questions/419163/what-does-if-name-main-do"""
     main()
-
