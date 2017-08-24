@@ -1,0 +1,15 @@
+{% extends 'api_server/layout/layout1.html' %}
+
+{% block title %}Title page{% endblock %}
+
+{% block content %}
+
+<h1>The following are some summary statistics</h1>
+<p>Number of zipcodes: {{zipcode_num}}</p>
+<p>Average mean adjusted gross income: {{avg_mean_agi}}</p>
+<p>Average total number of small businesses: {{avg_total_small_bus}}</p>
+<p>Average total number of SBA Loans: {{avg_total_sba}}</p>
+<p>Average number of SBA loans per small business: {{avg_sba_per_small_bus}}</p>
+
+
+{% endblock %}
