@@ -64,6 +64,24 @@ To download Postgres: http://oscg-downloads.s3.amazonaws.com/packages/PostgreSQL
 
 For further instructions: https://medium.com/@colinrubbert/installing-ruby-on-rails-in-windows-10-w-bash-postgresql-e48e55954fbf
 
+## Tech Stack
+
+Here are the technologies used in the project, along with some tutorials if you'd like to learn.
+
+| Tech | Version | Purpose | Getting Started |
+|------|---------|---------|-----------------|
+| Git | 2.4+ | Version control | [Udacity course](https://classroom.udacity.com/courses/ud775), [good comprehensive online book](https://git-scm.com/book/en/v2) |
+| Postgres | 9.6 | Database | [Tutorial](https://www.postgresql.org/docs/8.0/static/tutorial.html) |
+| SQL | |  Language used for database queries | [Tutorial from Postgres site](https://www.postgresql.org/docs/8.0/static/tutorial-sql.html) |
+| Python | v3 | Data Analysis & Webserver | [Tutorial](https://docs.python.org/3/tutorial/) |
+| SciPy | | Python packages for data analysis | [Intro to Pandas](http://pandas.pydata.org/pandas-docs/stable/10min.html), [NumPy Tutorial](https://docs.scipy.org/doc/numpy-dev/user/quickstart.html) |
+| Jupyter | ? | Easily share Python analysis with code and results | [Quickstart guide](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/) |
+| Django | 1.11.4 | Python webserver | [Getting started](https://docs.djangoproject.com/en/1.11/intro/) |
+| Javascript | ES2015 / ES6 | Clientside scripting language | [Tutorial covering modern JS](https://javascript.info/), [Quick reference of ES6 features](http://es6-features.org/) |
+| Redux | 3.7.2 | Clientside state management | [Docs](http://redux.js.org/), [Good introductory videos](https://egghead.io/courses/getting-started-with-redux) |
+| jQuery | 3.2.1 | Clientside DOM manipulation | [Tutorial](https://www.tutorialspoint.com/jquery/jquery-overview.htm) |
+
 | Previous | Next |
 |:---------|-----:|
 | [Exploring the Data](./01_exploring_the_data.md) | [Tips and Tricks](./03_tips_and_tricks.md) |
+
