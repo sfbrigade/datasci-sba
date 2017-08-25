@@ -13,6 +13,8 @@
 *.xlsx
 *.DS_Store
 *.dat
+*.bundle.js*
+**/node_modules
 
 table_def_dump.py
 pg_dump_output.sql

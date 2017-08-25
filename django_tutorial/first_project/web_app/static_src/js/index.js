@@ -11,7 +11,7 @@
 
 
 /** main entry point for the initialization; should be called by google maps API once its JS is loaded */
-function init() {
+window.init = function() {
 
   // this is the initial state that redux will contain; also serves as a reference for the state shape
   var initialState = {
