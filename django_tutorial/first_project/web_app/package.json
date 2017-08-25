@@ -20,5 +20,9 @@
     "style-loader": "^0.18.2",
     "webpack": "^3.5.5",
     "webpack-dev-server": "^2.7.1"
+  },
+  "dependencies": {
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.1.0"
   }
 }
