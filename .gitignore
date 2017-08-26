@@ -13,7 +13,7 @@
 *.xlsx
 *.DS_Store
 *.dat
-*.bundle.js*
+django_tutorial/first_project/web_app/static/web_app/*
 **/node_modules
 
 table_def_dump.py
