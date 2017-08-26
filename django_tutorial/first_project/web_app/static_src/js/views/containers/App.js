@@ -7,6 +7,9 @@ import FilterControls from './FilterControls'
 import GoogleMap from './GoogleMap'
 import MapTooltip from './MapTooltip'
 
+/**
+ * Main container for the React app
+ */
 function App(props) {
   return (
     <div>

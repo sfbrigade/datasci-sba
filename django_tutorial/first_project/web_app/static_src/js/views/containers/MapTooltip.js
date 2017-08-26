@@ -5,6 +5,9 @@ import {getMousedRegion} from '../../redux/regions'
 
 import {fields, getOrderedFields, round} from '../../utilities'
 
+/**
+ * Renders the tooltip showing data about a specific region when that region is moused over
+ */
 function MapTooltip(props) {
   return props.mousedRegion !== undefined && (
     <div id="tooltip">

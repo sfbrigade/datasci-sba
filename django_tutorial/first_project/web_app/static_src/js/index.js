@@ -14,29 +14,21 @@ import App from './views/containers/App'
 import {composeReducers} from './utilities'
 
 
-
-
-  // this is the "main" reducer that will be exported and plugged into the Redux store
-const rootReducer = composeReducers([regionsReducer, filterReducer, colorReducer])
-
-
-
-
 /** main entry point for the initialization; should be called by google maps API once its JS is loaded */
 window.init = function() {
 
   // this is the initial state that redux will contain; also serves as a reference for the state shape
-  var initialState = {
+  const initialState = {
     regionTypes: {
       'zip': {
         userReadableName: 'ZIP Code'
       }
     },
     regions: {
-
+      // will be filled in with response from API endpoint
     },
     geometry: {
-
+      // will be filled in with response from API endpoint
     },
     districts: {
       'SFDO': {
@@ -59,9 +51,11 @@ window.init = function() {
     }
   }
 
+  // this is the "main" reducer that will be exported and plugged into the Redux store
+  const rootReducer = composeReducers([regionsReducer, filterReducer, colorReducer])
 
 
-  var store = createStore(rootReducer, initialState, applyMiddleware(ReduxThunk))
+  const store = createStore(rootReducer, initialState, applyMiddleware(ReduxThunk))
 
   ReactDOM.render(
     <Provider store={store}>
