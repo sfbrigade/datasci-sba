@@ -56,24 +56,28 @@ export default function filterReducer(state, action) {
   switch(type) {
     case 'SET_FILTER_FIELD':
     case 'SET_DISTRICT_REGION_TYPE_AND_REGIONS':
-      return Object.assign({}, state, {
-        ui: Object.assign({}, state.ui, {
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
           filter: {
             filterField,
             filterRange: getFieldExtent(state, filterField)
           }
-        })
-      })
+        }
+      }
 
     case 'SET_FILTER_RANGE':
-      return Object.assign({}, state, {
-        ui: Object.assign({}, state.ui, {
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
           filter: {
             filterField,
             filterRange: filterRange
           }
-        })
-      })
+        }
+      }
 
     default: return state
   }

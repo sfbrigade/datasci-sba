@@ -24,8 +24,10 @@ export default function colorReducer(state, action) {
   switch(type) {
     case 'SET_COLOR_FIELD':
     case 'SET_DISTRICT_REGION_TYPE_AND_REGIONS':
-      return Object.assign({}, state, {
-        ui: Object.assign({}, state.ui, {
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
           color: {
             numQuantiles: getNumColorQuantiles(state),
             colorField,
@@ -33,8 +35,8 @@ export default function colorReducer(state, action) {
               Object.values(getRegions(state)).map(region => region[colorField]),
               getNumColorQuantiles(state))
           }
-        })
-      })
+        }
+      }
 
     default: return state
   }
