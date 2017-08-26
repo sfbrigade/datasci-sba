@@ -1,3 +1,5 @@
+import fetch from 'isomorphic-fetch'
+
 import {fields} from '../utilities'
 
 
@@ -5,17 +7,21 @@ import {fields} from '../utilities'
 ////////////////// State Selectors //////////////////////
 
 
-export const getRegions            = (state) => state.regions
-export const getGeometry           = (state) => state.geometry
-export const getSelectedDistrict   = (state) => state.ui.selectedDistrict
-export const getSelectedRegionType = (state) => state.ui.selectedRegionType
-
+export const getRegions            = state => state.regions
+export const getGeometry           = state => state.geometry
+export const getSelectedDistrict   = state => state.ui.selectedDistrict
+export const getSelectedRegionType = state => state.ui.selectedRegionType
+export const getMousedRegion       = state => state.regions[state.ui.mousedRegionId]
 
 
 
 
 
 ////////////////// Actions //////////////////////
+
+export function setMousedRegionId(id) {
+	return {type: 'SET_MOUSED_REGION', id}
+}
 
 
 export function setDistrictAndRegionType({district, regionType}) {
@@ -32,14 +38,8 @@ export function setDistrictAndRegionType({district, regionType}) {
     }
 
     // fire off 2 ajax requests: one for the region GeoJSON data, and one for the SBA loan data
-    let regionGeometryPromise = $.ajax({
-      url: window.topoUrl,
-      dataType: 'json'
-    })
-    let sbaDataPromise = $.ajax({
-      url: window.regionsUrl,
-      dataType: 'json'
-    })
+    let regionGeometryPromise = fetch(window.topoUrl).then(data => data.json())
+    let sbaDataPromise = fetch(window.regionsUrl).then(data => data.json())
 
     // once both requests have returned...
     return Promise.all([sbaDataPromise, regionGeometryPromise])
@@ -83,7 +83,7 @@ export function setDistrictRegionTypeAndRegions({district, regionType, geometry,
 
 
 export default function regionsReducer(state, action) {
-  const {type, district, regionType, geometry, regions} = action
+  const {type, district, regionType, geometry, regions, id} = action
   switch(type) {
     case 'SET_DISTRICT_REGION_TYPE_AND_REGIONS':
       return Object.assign({}, state, {
@@ -93,6 +93,13 @@ export default function regionsReducer(state, action) {
           selectedDistrict: district,
           selectedRegionType: regionType,
         })
+      })
+
+    case 'SET_MOUSED_REGION':
+      return Object.assign({}, state, {
+      	ui: Object.assign({}, state.ui, {
+      		mousedRegionId: id
+      	})
       })
 
     default: return state

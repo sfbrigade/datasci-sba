@@ -9,7 +9,7 @@ module.exports = function(env) {
   return {
     devtool: PROD ? 'source-map' : 'eval-source-map',
     entry: {
-      index: ['./static_src/js/index']
+      index: [path.join(__dirname, 'static_src/js/index')]
     },
     target: 'web',
     output: {
@@ -30,8 +30,7 @@ module.exports = function(env) {
       rules: [
         {
           test: /\.jsx?$/,
-          include: path.join(__dirname, 'app'),
-          use: ['babel']},
+          use: ['babel-loader']},
         {
           test: /\.css$/,
           use: ['style-loader', 'css-loader']

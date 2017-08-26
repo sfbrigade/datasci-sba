@@ -21,14 +21,16 @@ export function getFieldExtent(state, field) {
   }
   let min = Number.MAX_VALUE
   let max = Number.MIN_VALUE
+  let hasData = false
 
   Object.values(getRegions(state)).forEach(region => {
     if(region[field] != null && !isNaN(region[field])) {
       min = Math.min(min, region[field])
       max = Math.max(max, region[field])
+      hasData = true
     }
   })
-  return [min, max]
+  return hasData ? [min, max] : [0, 1]
 }
 
 

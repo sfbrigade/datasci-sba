@@ -1,13 +1,15 @@
 import {createStore, applyMiddleware} from 'redux'
 import ReduxThunk from 'redux-thunk'
 
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+
 import regionsReducer, {setDistrictAndRegionType} from './redux/regions'
 import colorReducer from './redux/color'
 import filterReducer from './redux/filter'
 
-import renderMap from './views/map'
-import renderColorControls from './views/color'
-import renderFilterControls from './views/filter'
+import App from './views/containers/App'
 
 import {composeReducers} from './utilities'
 
@@ -16,26 +18,6 @@ import {composeReducers} from './utilities'
 
   // this is the "main" reducer that will be exported and plugged into the Redux store
 const rootReducer = composeReducers([regionsReducer, filterReducer, colorReducer])
-
-
-
-// Normally these would be implemented as React components, but until we get a babel/webpack
-// build process set up to enable JSX, we'll implement them using vanilla JS and jQuery.
-//
-// We'll still follow a React-like convention where the rendering is a (mostly) pure function
-// of the state.  But since we don't have React's shadow DOM, we'll keep some external variables to
-// indicate whether the UI has been initialized and avoid initializing it again -- thus our render
-// functions aren't exactly pure, but at least they're deterministic and idempotent.
-// 
-// Also once we set up babel/webpack this could be broken into 3 widgets: Map, ColorControls, FilterControls
-
-
-
-function renderView(state, dispatch) {
-  renderMap(state, dispatch)
-  renderColorControls(state, dispatch)
-  renderFilterControls(state, dispatch)
-}
 
 
 
@@ -72,7 +54,8 @@ window.init = function() {
       filter: {
         filterField: 'sba_per_small_bus',
         filterRange: [0, 1]
-      }
+      },
+      mousedRegionId: undefined
     }
   }
 
@@ -80,9 +63,12 @@ window.init = function() {
 
   var store = createStore(rootReducer, initialState, applyMiddleware(ReduxThunk))
 
-  // normally we would connect the store to a React app, but for now just call the renderView method
-  // which (like React) is a 'pure' function of state
-  store.subscribe(() => renderView(store.getState(), store.dispatch))
+  ReactDOM.render(
+    <Provider store={store}>
+      <App/>
+    </Provider>,
+    document.getElementById('root')
+  )
 
   // kick off an action which sets the district and region types to their defaults and loads the region data
   store.dispatch(setDistrictAndRegionType({}))
