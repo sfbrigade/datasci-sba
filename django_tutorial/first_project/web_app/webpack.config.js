@@ -26,9 +26,8 @@ module.exports = function(env) {
     plugins: PROD ?
     [
       new webpack.DefinePlugin({'process.env.NODE_ENV': JSON.stringify('production')}),
-      copyWebpackPlugin
-      // TODO: UglifyJS isn't working, apparently we need to use a different plugin to handle ES6
-      // new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}})
+      copyWebpackPlugin,
+      new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}})
     ] :
     [
       new webpack.NoEmitOnErrorsPlugin(),
