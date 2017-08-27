@@ -27,7 +27,9 @@ We use NPM to run Webpack, which transforms and bundles the source JS files from
 You can use NPM to run the following scripts:
 1. `npm run build`: builds the JS bundles for local development
 1. `npm run build-production`: builds the JS bundles for production deployment (eg may include minimization)
-1. `npm run watch`: builds the JS bundles for local development, and then continues to watch the JS source files so any changes to them are automatically rebuilt into the JS bundles
+1. `npm run build:watch`: builds the JS bundles for local development, and then continues to watch the JS source files so any changes to them are automatically rebuilt into the JS bundles
+1. `npm run test`: runs the JS unit tests
+1. `npm run test:watch`: runs the JS unit tests and continues to watch the JS files so the tests are re-run whenever the files change
 
 Also, look at `web_app/package.json` to see exactly what these scripts are doing
 
@@ -41,13 +43,13 @@ Run the following commands once, to get everything set up:
 1. Set up a local DB and populate it with data (either by dumping the prod DB or by running the pipeline locally, as described [here](../../pipeline/README.md))
 1. Set the environment variable for your database URL, e.g. `export SBA_DWH='postgresql://username:password@127.0.0.1:5432/postgres'`
 1. Install [Node and NPM](https://www.npmjs.com/get-npm)
-1. From within the `web_app` directory, run `npm install` to load all the required NPM packages
+1. From within the `web_app` directory, run `npm install` to load all the required NPM packages listed in `package.json`
 1. From within the `web_app` directory, run `npm run build` to build the JS bundles for the first time
 
 Then run the following whenever you want to run the app:
 
 1. Run `python manage.py runserver` from within this directory -- this starts the webserver
-1. (optional) Run `npm run watch` from within the `web_app` directory -- this watches your JS source files so that any changes you make in them are immediately reflected in the app, without having to run `npm run build` each time
+1. (optional) Run `npm run build:watch` from within the `web_app` directory -- this watches your JS source files so that any changes you make in them are immediately reflected in the app, without having to run `npm run build` each time
 1. Go to `http://127.0.0.1:8000/app/` in your browser.
 
 The `python manage.py runserver` command should give output like this:
@@ -92,5 +94,20 @@ index.bundle.js  3.98 MB       0  [emitted]  [big]  index
  [402] ./static_src/js/views/containers/MapTooltip.js 1.89 kB {0} [built]
     + 389 hidden modules
 ```
+
+
+## Tests
+
+### Web App Unit Tests
+
+We use Jest to run JS unit tests.  Test files are in `static_src` co-located with the files they're testing -- for instance next to `redux/color.js` there is `redux/color.test.js`.  You can run the tests with `npm run test` from the `web_app` directory, or `npm run test:watch` to run the tests and watch the JS files so the tests are re-run whenever the files change.
+
+### Web App End-to-End Tests
+
+None yet; we should work on getting Selenium or someting similar set up for this.
+
+### API Server Tests
+
+None yet, should be added once we set up Django REST framework.
 
 

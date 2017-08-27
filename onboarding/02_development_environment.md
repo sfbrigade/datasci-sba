@@ -78,6 +78,7 @@ Here are the technologies used in the project, along with some tutorials if you'
 | Jupyter | | Easily share Python analysis with code and results | [Quickstart guide](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/) |
 | Django | 1.11.4 | Python webserver | Read the tutorial [here](https://docs.djangoproject.com/en/1.11/intro/), but install using `conda install django` |
 | Javascript | ES2015 / ES6 | Clientside scripting language | [Tutorial covering modern JS](https://javascript.info/), [Quick reference of ES6 features](http://es6-features.org/) |
+| NPM & Webpack & Babel & Jest | | Build toolchain & testing for JS | |
 | Redux | 3.7.2 | Clientside state management | [Docs](http://redux.js.org/), [Good introductory videos](https://egghead.io/courses/getting-started-with-redux) |
 | React | 15.6.1 | Clientside view rendering | [Tutorial](https://facebook.github.io/react/tutorial/tutorial.html) |
  

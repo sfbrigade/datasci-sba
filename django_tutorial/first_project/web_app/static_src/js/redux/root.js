@@ -13,12 +13,13 @@ import filterReducer, {filterSelectors as fs} from './filter'
 
 
 // since the root reducer combines the initial states of its 3 children, we don't
-// actually need to define an initialState for the root; this is included just so
-// you can understand the shape of the state
+// actually need to populate the whole initialState here, in fact we could just
+// use {}, but we include the key of each state slice so it's easier for devs
+// to understand
 const initialState = {
-  region: {/* initial state from region.js */},
-  color: {/* initial state from color.js */},
-  filter: {/* initial state from filter.js */},
+  region: undefined, // will be populated with initial state from region.js
+  color: undefined, // will be populated with initial state from color.js
+  filter: undefined // will be populated with initial state from filter.js
 }
 
 
@@ -43,7 +44,7 @@ export const getColorState      = state => state.color
 ////////////////// Reducers //////////////////////
 
 
-export default function rootReducer(state, action) {
+export default function rootReducer(state=initialState, action={}) {
   // the region, color, and filter components are almost independent of each other,
   // except that color and filter depend on the region data.  Thus instead of just
   // using combineReducers like we would if they were independent, we instead run

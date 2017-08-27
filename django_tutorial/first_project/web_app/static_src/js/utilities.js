@@ -17,8 +17,9 @@ export class Quantiler {
     // the boundary values between each of the quantiles
     this.thresholds = []
     for(let i = 1; i < numQuantiles; i++) {
-      let index = i * values.length / numQuantiles
-      this.thresholds[i-1] = (values[Math.floor(index)] + values[Math.ceil(index)]) / 2
+      let index = (values.length - 1) * i / numQuantiles
+      let floorIndex = Math.floor(index)
+      this.thresholds[i-1] = values[floorIndex] + (index - floorIndex) * (values[floorIndex+1]-values[floorIndex])
     }
   }
 
@@ -92,8 +93,8 @@ export function getOrderedFields() {
 }
 
 
-export function liftSelectors(selectors, key) {
-  Object.assign({}, ...Object.keys(selectors).map(k => ({[k]: function() {
-    return fs[k](arguments[0][key], ...Array.prototype.slice.call(arguments, 1))
-  }})))
-}
+// export function liftSelectors(selectors, key) {
+//   Object.assign({}, ...Object.keys(selectors).map(k => ({[k]: function() {
+//     return fs[k](arguments[0][key], ...Array.prototype.slice.call(arguments, 1))
+//   }})))
+// }

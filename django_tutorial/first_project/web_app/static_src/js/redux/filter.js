@@ -70,7 +70,7 @@ export function setFilterRange(filterRange) {
  * Note that unlike a normal reducer, this reducer also accepts an optional regionState
  * param since the filter state depends on the region state
  */
-export default function filterReducer(state=initialState, action, regionState) {
+export default function filterReducer(state=initialState, action={}, regionState) {
   const {type,
     filterField=getFilterField(state),
     filterRange} = action

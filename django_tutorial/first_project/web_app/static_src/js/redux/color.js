@@ -40,7 +40,7 @@ export function setColorField(colorField) {
  * Note that unlike a normal reducer, this reducer also accepts an optional regionState
  * param since the color quantiler state depends on the region state
  */
-export default function colorReducer(state=initialState, action, regionState) {
+export default function colorReducer(state=initialState, action={}, regionState) {
   const {type, colorField=getColorField(state)} = action
   switch(type) {
     case 'SET_COLOR_FIELD':

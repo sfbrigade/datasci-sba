@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch'
+import * as api from '../api'
 
 import {fields} from '../utilities'
 
@@ -73,8 +73,8 @@ export function setDistrictAndRegionType({selectedDistrict, selectedRegionType})
   return (dispatch) => {  
 
     // fire off 2 ajax requests: one for the region GeoJSON data, and one for the SBA loan data
-    let regionGeometryPromise = fetch(window.topoUrl).then(data => data.json())
-    let sbaDataPromise = fetch(window.regionsUrl).then(data => data.json())
+    let regionGeometryPromise = api.getGeometry()
+    let sbaDataPromise = api.getRegions()
 
     // once both requests have returned...
     return Promise.all([sbaDataPromise, regionGeometryPromise])
@@ -117,7 +117,7 @@ export function setDistrictRegionTypeAndRegions({selectedDistrict, selectedRegio
 ////////////////// Reducers //////////////////////
 
 
-export default function regionsReducer(state=initialState, action) {
+export default function regionsReducer(state=initialState, action={}) {
   const {type, selectedDistrict, selectedRegionType, geometry, regions, mousedRegionId} = action
   switch(type) {
     case 'SET_DISTRICT_REGION_TYPE_AND_REGIONS':
