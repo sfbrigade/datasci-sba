@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import {getRegionState, getFilterState, getColorState} from '../../redux/root'
 import {getGeometry, getRegions, setMousedRegionId} from '../../redux/regions'
 import {getColorField, getColorQuantiler, getNumColorQuantiles} from '../../redux/color'
 import {getFilterField, getFilterRange} from '../../redux/filter'
@@ -71,13 +72,15 @@ class GoogleMap extends React.Component {
 
 
 const mapStateToProps = state => ({
-  geometry: getGeometry(state),
-  regions: getRegions(state),
-  colorField: getColorField(state),
-  colorQuantiler: getColorQuantiler(state),
-  numColorQuantiles: getNumColorQuantiles(state),
-  filterField: getFilterField(state),
-  filterRange: getFilterRange(state)
+  geometry: getGeometry(getRegionState(state)),
+  regions: getRegions(getRegionState(state)),
+
+  colorField: getColorField(getColorState(state)),
+  colorQuantiler: getColorQuantiler(getColorState(state)),
+  numColorQuantiles: getNumColorQuantiles(getColorState(state)),
+
+  filterField: getFilterField(getFilterState(state)),
+  filterRange: getFilterRange(getFilterState(state))
 })
 
 const mapDispatchToProps = {

@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 
+import { getColorState } from '../../redux/root'
 import {getColorField, setColorField} from '../../redux/color'
 
 import FieldBox from '../components/FieldBox'
@@ -14,7 +15,7 @@ import FieldBox from '../components/FieldBox'
 
 const mapStateToProps = state => ({
   title: 'Color By',
-  value: getColorField(state)
+  value: getColorField(getColorState(state))
 })
 
 const mapDispatchToProps = {

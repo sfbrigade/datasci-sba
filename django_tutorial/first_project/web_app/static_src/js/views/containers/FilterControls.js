@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 
+import { getFilterState, getRegionState } from '../../redux/root'
 import {getFilterField, getFilterRange, getFieldExtent, setFilterField, setFilterRange} from '../../redux/filter'
 
 import FieldBox from '../components/FieldBox'
@@ -23,9 +24,9 @@ function FilterControls(props) {
 
 
 const mapStateToProps = state => ({
-  field: getFilterField(state),
-  filterRange: getFilterRange(state),
-  filterExtent: getFieldExtent(state)
+  field: getFilterField(getFilterState(state)),
+  filterRange: getFilterRange(getFilterState(state)),
+  filterExtent: getFieldExtent(getRegionState(state), getFilterField(getFilterState(state)))
 })
 
 const mapDispatchToProps = {

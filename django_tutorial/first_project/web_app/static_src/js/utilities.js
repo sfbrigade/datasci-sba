@@ -53,22 +53,6 @@ export function round(number, precision=0) {
 
 
 
-/**
- * Utility function that returns a reducer that simply applies all
- * of the given reducers to the state
- * @param {Function[]} reducers
- * @return {Function}
- */
-export function composeReducers(reducers) {
-  return function(state, action) {
-    return reducers.reduce(function(_state, reducer) {
-      return reducer(_state, action)
-    }, state)
-  }
-}
-
-
-
 
 // keeps track of which fields we let the user select for coloring & filtering
 export const fields = {
@@ -107,3 +91,9 @@ export function getOrderedFields() {
   return orderedFields
 }
 
+
+export function liftSelectors(selectors, key) {
+  Object.assign({}, ...Object.keys(selectors).map(k => ({[k]: function() {
+    return fs[k](arguments[0][key], ...Array.prototype.slice.call(arguments, 1))
+  }})))
+}

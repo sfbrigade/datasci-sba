@@ -3,15 +3,50 @@ import fetch from 'isomorphic-fetch'
 import {fields} from '../utilities'
 
 
+/*
+ * Note that the regions controller uses a 'slice' of the global state, i.e. the state
+ * we deal with here is stored in the 'region' field of the global state, or in other
+ * words, stateFromThisFile === globalState.region.
+ */
+
+
+
+////////////////// Initial State //////////////////////
+
+
+const initialState = {
+  regions: {
+    // will be filled in with SBA region data from server
+  },
+  geometry: {
+    // will be filled in with geo data from server
+  },
+  districts: {
+    'SFDO': {
+      userReadableName: 'San Francisco'
+    }
+  },
+  regionTypes: {
+    'zip': {
+      userReadableName: 'ZIP Code'
+    }
+  },
+  selectedDistrict: 'SFDO',
+  selectedRegionType: 'zip',
+  mousedRegionId: undefined
+}
+
+
+
 
 ////////////////// State Selectors //////////////////////
 
 
 export const getRegions            = state => state.regions
 export const getGeometry           = state => state.geometry
-export const getSelectedDistrict   = state => state.ui.selectedDistrict
-export const getSelectedRegionType = state => state.ui.selectedRegionType
-export const getMousedRegion       = state => state.regions[state.ui.mousedRegionId]
+export const getSelectedDistrict   = state => state.selectedDistrict
+export const getSelectedRegionType = state => state.selectedRegionType
+export const getMousedRegion       = state => state.regions[state.mousedRegionId]
 
 
 
@@ -19,23 +54,23 @@ export const getMousedRegion       = state => state.regions[state.ui.mousedRegio
 
 ////////////////// Actions //////////////////////
 
-export function setMousedRegionId(id) {
-	return {type: 'SET_MOUSED_REGION', id}
+export function setMousedRegionId(mousedRegionId) {
+	return {type: 'SET_MOUSED_REGION', mousedRegionId}
 }
 
+export function fetchRegions(state) {
+  return setDistrictAndRegionType({
+    selectedDistrict: getSelectedDistrict(state),
+    selectedRegionType: getSelectedRegionType(state)
+  })
+}
 
-export function setDistrictAndRegionType({district, regionType}) {
+export function setDistrictAndRegionType({selectedDistrict, selectedRegionType}) {
   // This is a slightly more complicated action.  It uses Thunk middleware
   // so returns a function instead of an action object.  We do this so the
   // function can fetch data asynchronously from the server, and then dispatch
   // an action that contains the full geometry and region data from the server
-  return (dispatch, getState) => {  
-    if(district === undefined) {
-      district = getSelectedDistrict(getState())
-    }
-    if(regionType === undefined) {
-      regionType = getSelectedRegionType(getState())
-    }
+  return (dispatch) => {  
 
     // fire off 2 ajax requests: one for the region GeoJSON data, and one for the SBA loan data
     let regionGeometryPromise = fetch(window.topoUrl).then(data => data.json())
@@ -59,7 +94,7 @@ export function setDistrictAndRegionType({district, regionType}) {
         })
 
         // dispatch an action that will set the actual geometry & region data on the state
-        dispatch(setDistrictRegionTypeAndRegions({district, regionType, geometry, regions}))
+        dispatch(setDistrictRegionTypeAndRegions({selectedDistrict, selectedRegionType, geometry, regions}))
 
       })
 
@@ -68,11 +103,11 @@ export function setDistrictAndRegionType({district, regionType}) {
   }
 }
 
-export function setDistrictRegionTypeAndRegions({district, regionType, geometry, regions}) {
+export function setDistrictRegionTypeAndRegions({selectedDistrict, selectedRegionType, geometry, regions}) {
   return {
     type: 'SET_DISTRICT_REGION_TYPE_AND_REGIONS',
-    district,
-    regionType,
+    selectedDistrict,
+    selectedRegionType,
     geometry,
     regions
   }
@@ -82,25 +117,23 @@ export function setDistrictRegionTypeAndRegions({district, regionType, geometry,
 ////////////////// Reducers //////////////////////
 
 
-export default function regionsReducer(state, action) {
-  const {type, district, regionType, geometry, regions, id} = action
+export default function regionsReducer(state=initialState, action) {
+  const {type, selectedDistrict, selectedRegionType, geometry, regions, mousedRegionId} = action
   switch(type) {
     case 'SET_DISTRICT_REGION_TYPE_AND_REGIONS':
-      return Object.assign({}, state, {
+      return {
+        ...state,
         geometry,
         regions,
-        ui: Object.assign({}, state.ui, {
-          selectedDistrict: district,
-          selectedRegionType: regionType,
-        })
-      })
+        selectedDistrict,
+        selectedRegionType
+      }
 
     case 'SET_MOUSED_REGION':
-      return Object.assign({}, state, {
-      	ui: Object.assign({}, state.ui, {
-      		mousedRegionId: id
-      	})
-      })
+      return {
+        ...state,
+        mousedRegionId
+      }
 
     default: return state
   }

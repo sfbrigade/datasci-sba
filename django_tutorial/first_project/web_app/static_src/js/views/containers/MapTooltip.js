@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import { getRegionState } from '../../redux/root'
 import {getMousedRegion} from '../../redux/regions'
 
 import {fields, getOrderedFields, round} from '../../utilities'
@@ -32,7 +33,7 @@ function MapTooltip(props) {
 }
 
 const mapStateToProps = state => ({
-  mousedRegion: getMousedRegion(state)
+  mousedRegion: getMousedRegion(getRegionState(state))
 })
 
 export default connect(mapStateToProps)(MapTooltip)
