@@ -10,7 +10,7 @@ import { round } from '../../utilities'
  */
 export default function SliderWithLabels(props) {
   return (
-    <div>
+    <div className="slider-with-labels">
       <div id="filter-min">{round(props.value[0], 1)}</div>
       <div id="filter-max">{round(props.value[1], 1)}</div>
       <Range {...props}/>

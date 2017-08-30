@@ -93,7 +93,12 @@ export function setDistrictAndRegionType({selectedDistrict, selectedRegionType})
             sbaDatum[field] = parseFloat(sbaDatum[field])
           })
 
+          // HACK: remove a couple spurious data points from the set to get better looking histograms.
+          // TODO: we should be cleaning the data in the pipeline
+          sbaDatum.sba_per_small_bus = Math.min(1, sbaDatum.sba_per_small_bus)
+          
           regions[sbaDatum.region] = sbaDatum
+
         })
 
         // dispatch an action that will set the actual geometry & region data on the state

@@ -48,3 +48,12 @@ html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0; overfl
 .rc-slider {
   clear: both;
 }
+
+.histogram {
+  height: 100px;
+}
+
+.histogram, .slider-with-labels {
+  margin-left: 30px;
+  width: 200px;
+}

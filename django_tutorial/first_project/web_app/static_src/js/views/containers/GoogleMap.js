@@ -6,6 +6,8 @@ import {getGeometry, getRegions, setMousedRegionId} from '../../redux/regions'
 import {getColorField, getColorQuantiler, getNumColorQuantiles} from '../../redux/color'
 import {getFilterField, getFilterRange} from '../../redux/filter'
 
+import { calculateColor } from '../../utilities'
+
 
 /**
  * React component that renders the map with colored regions.  Basically a wrapper around the GoogleMap API.
@@ -114,20 +116,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(GoogleMap)
  */
 function styleFeature(feature, props) {
 
-  // TODO: don't use a red/green color scheme!  use viridis instead?
-
-  var low = [5, 69, 54];  // color of smallest datum
-  var high = [151, 83, 34];   // color of largest datum
-
-  // delta represents where the value sits between the min and max
-  let quantile = props.colorQuantiler.getQuantile(feature.getProperty('colorVariable'))
-
-  var color = [];
-  for (var i = 0; i < 3; i++) {
-    // calculate an integer color based on the delta
-    color[i] = (high[i] - low[i]) * quantile / (props.numColorQuantiles - 1) + low[i];
-  }
-
   // determine whether to show this shape or not
   var showRow = true;
   if (feature.getProperty('colorVariable') == null ||
@@ -144,7 +132,7 @@ function styleFeature(feature, props) {
     strokeWeight: outlineWeight,
     strokeColor: '#fff',
     zIndex: zIndex,
-    fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)',
+    fillColor: calculateColor(feature.getProperty('colorVariable'), props.colorQuantiler),
     fillOpacity: 0.75,
     visible: showRow
   };

@@ -105,3 +105,23 @@ export function getOrderedFields() {
 //     return fs[k](arguments[0][key], ...Array.prototype.slice.call(arguments, 1))
 //   }})))
 // }
+
+
+
+export function calculateColor(value, quantiler) {
+  // TODO: don't use a red/green color scheme!  use viridis instead?
+
+  var low = [5, 69, 54];  // color of smallest datum
+  var high = [151, 83, 34];   // color of largest datum
+
+  // delta represents where the value sits between the min and max
+  let quantile = quantiler.getQuantile(value)
+
+  var color = [];
+  for (var i = 0; i < 3; i++) {
+    // calculate an integer color based on the delta
+    color[i] = (high[i] - low[i]) * quantile / (quantiler.thresholds.length) + low[i];
+  }
+
+  return 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)'
+}
