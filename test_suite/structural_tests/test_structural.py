@@ -43,23 +43,28 @@ def test_run_queries(tpostgres):
     try:
         queries = sorted(os.listdir(STG_ANALYTICS_DIR))
         for q in queries:
-            tpostgres.run_transform_query(os.path.join(STG_ANALYTICS_DIR, q))
+            if q.endswith(".sql"):
+                tpostgres.run_transform_query(os.path.join(STG_ANALYTICS_DIR, q))
 
         queries = sorted(os.listdir(TRG_ANALYTICS_DIR))
         for q in queries:
-            tpostgres.run_transform_query(os.path.join(TRG_ANALYTICS_DIR, q))
+            if q.endswith(".sql"):
+                tpostgres.run_transform_query(os.path.join(TRG_ANALYTICS_DIR, q))
 
         queries = sorted(os.listdir(DOCUMENTATION_DIR))
         for q in queries:
-            tpostgres.run_transform_query(os.path.join(DOCUMENTATION_DIR, q))
+            if q.endswith(".sql"):
+                tpostgres.run_transform_query(os.path.join(DOCUMENTATION_DIR, q))
     except:
         assert False
 
 
 def test_valid_folders_schemas():
-    """Right now this structural test is a bit hacky and assumes that all relevant folders and schemas are located in
+    """Right now this structural test is a bit hacky and assumes that all
 
-    the /pipeline/pipeline_tasks/queries folder. Check that the folders in there are what we expect.
+    relevant folders and schemas are located in the
+    /pipeline/pipeline_tasks/queries folder. Check that the folders in there
+    are what we expect.
     """
     queries_dir = os.path.join(os.path.dirname(__file__), '../../pipeline/pipeline_tasks/queries')
     assert sorted(os.listdir(queries_dir)) == ['documentation', 'stg_analytics', 'trg_analytics']
