@@ -1,4 +1,4 @@
-import {createStore, applyMiddleware} from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import ReduxThunk from 'redux-thunk'
 
 import React from 'react'
@@ -14,7 +14,9 @@ import App from './views/containers/App'
 /** main entry point for the initialization; should be called by google maps API once its JS is loaded */
 window.init = function() {
 
-  const store = createStore(rootReducer, {}, applyMiddleware(ReduxThunk))
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+  const store = createStore(rootReducer, {}, composeEnhancers(applyMiddleware(ReduxThunk)))
 
   ReactDOM.render(
     <Provider store={store}>
