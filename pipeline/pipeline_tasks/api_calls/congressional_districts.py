@@ -21,7 +21,7 @@ def get_congressional_dist_by_addr(df):
 
     for i in range(len(df)):
         address = df.loc[i]['full_address']
-        params = { $api_key, 'address': $address }
+        params = { api_key, 'address': address }
 
         resp = requests.get(url=url, params=params)
 
