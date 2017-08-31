@@ -45,6 +45,9 @@ This should create a new conda environment called `datasci-sba` for you.
 To activate the conda python environment run
 `source activate datasci-sba`
 
+To deactivate the conda python environment run
+`source deactivate`
+
 You need to activate the python environment every time you open a new terminal window.
 
 Now, you want to install all the appropriate requirements.
