@@ -17,11 +17,10 @@ def get_congressional_dist_by_addr(df):
     # Build data: Needs key from API envar, address built from the database.
 
     url = 'https://www.googleapis.com/civicinfo/v2/representatives'
-    api_key = { 'key': os.environ['GOOGLE_STATIC_MAPS_API'] }
 
     for i in range(len(df)):
         address = df.loc[i]['full_address']
-        params = { api_key, 'address': address }
+        params = { 'key': os.environ['GOOGLE_STATIC_MAPS_API'], 'address': address }
 
         resp = requests.get(url=url, params=params)
 
