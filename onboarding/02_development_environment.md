@@ -64,6 +64,10 @@ To download Postgres: http://oscg-downloads.s3.amazonaws.com/packages/PostgreSQL
 
 For further instructions: https://medium.com/@colinrubbert/installing-ruby-on-rails-in-windows-10-w-bash-postgresql-e48e55954fbf
 
+## Running Webapp
+
+The prototype webapp lives in `django_tutorial/first_project`.  You'll need to install some additional libraries if you want to run the webapp locally; see the "Running the webapp locally" section of the [the webapp readme](./django_tutorial/first_project/README.md) for more information.
+
 ## Tech Stack
 
 Here are the technologies used in the project, along with some tutorials if you'd like to learn.

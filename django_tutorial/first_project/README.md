@@ -33,7 +33,7 @@ You can use NPM to run the following scripts:
 
 Also, look at `web_app/package.json` to see exactly what these scripts are doing
 
-## Running it
+## Running the webapp locally
 
 For anyone wanting to run the whole app locally, you can do the following.
 
