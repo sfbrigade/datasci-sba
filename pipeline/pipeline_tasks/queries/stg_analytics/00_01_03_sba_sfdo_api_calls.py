@@ -17,6 +17,7 @@ from sqlalchemy import create_engine
 
 from utilities.db_manager import DBManager
 from pipeline.pipeline_tasks.api_calls import yelp_ratings as yr
+from pipeline.pipeline_tasks.api_calls import congressional_districts as cd
 
 
 def get_args():
@@ -35,6 +36,7 @@ def get_yelp_fields(dbm):
     Keyword Args:
         dbm: DBManager object
     """
+    print('Getting Yelp ratings.')
     sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
     sfdo = sfdo[[
         'sba_sfdo_id',
@@ -68,19 +70,36 @@ def get_congressional_districts(dbm):
     Keyword Args:
         dbm: DBManager object
     """
-    pass
+    print('Getting Congressional Districts from Google Civic Info API')
+    sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
+    sfdo = sfdo[[
+        'sba_sfdo_id',
+        'borr_street',
+        'borr_city',
+        'borr_state',
+        'borr_zip',
+    ]]
+    sfdo['full_address'] = sfdo['borr_street'] + ', '\
+                           + sfdo['borr_city'] + ', '\
+                           + sfdo['borr_state'] + ', '\
+                           + sfdo['borr_zip']
+
+    return cd.get_congressional_dist_by_addr(sfdo)
 
 
 def main():
     """Execute Stuff"""
-    print('Getting Yelp data from Yelp API')
+    print('Getting Data from External APIs (Yelp, Google Civic Info, etc.')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
 
     sfdo_yelp = get_yelp_fields(dbm)
 
+    sfdo_congressional = get_congressional_districts(dbm)
+
     # Eventually we will have to join with geocoded fields table and
     # Congressional District Table before writing back to DB
+    # TODO - need to join sfdp_yelp and sfdo_congressional and save that joined copy
     dbm.write_df_table(
         sfdo_yelp, table_name='sba_sfdo_api_calls', schema='stg_analytics')
 
