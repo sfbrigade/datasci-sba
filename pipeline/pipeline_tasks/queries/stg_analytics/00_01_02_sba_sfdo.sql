@@ -53,6 +53,7 @@ bank_state text,
 bank_zip text,
 sba_guaranteed_approval bigint,
 revolver_status bigint
+-- We also add a surrogate primary key sba_sfdo_id below
 );
 
 insert into stg_analytics.sba_sfdo
@@ -273,6 +274,9 @@ where borr_state = 'CA'
                          'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
   and regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') = 'SAN FRANCISCO DISTRICT OFFICE'
 ;
+
+-- Adding surrogate primary key
+alter table stg_analytics.sba_sfdo add column sba_sfdo_id serial primary key;
 
 -- Creating Indices
 create index on stg_analytics.sba_sfdo (borr_zip);
