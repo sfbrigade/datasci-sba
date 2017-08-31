@@ -4,6 +4,8 @@ import os
 
 import requests
 
+import re
+
 
 def get_congressional_dist_by_addr(df):
     """
@@ -13,25 +15,34 @@ def get_congressional_dist_by_addr(df):
       df: DataFrame with business information to request congressional districts
     """
 
-    # TODO
-    # Build data: Needs key from API envar, address built from the database.
-
     url = 'https://www.googleapis.com/civicinfo/v2/representatives'
 
     for i in range(len(df)):
+        # Each call needs the API key and the address to search
         address = df.loc[i]['full_address']
         params = { 'key': os.environ['GOOGLE_STATIC_MAPS_API'], 'address': address }
 
         resp = requests.get(url=url, params=params)
 
         try:
-            # TODO - parse the resp to get the congressional district and save in the DB
+            # Convert return set to JSON and get the divisions dict, which contains country/state/cd as one of the values.
             results = resp.json()
-            # Need the divisions field and then the state and cd fields from that.
+            divisions = results['divisions']
+            if divisions is not None:
+                keys = divisions.keys()
+                for key in keys:
+                    # Regex match on ocd-division/country:us/state:(two letters)/cd:(digits)
+                    res = re.search('ocd-division/country:us/state:(\w\w)/cd:([0-9]+)', key)
+                    if res:
+                        st = res.group(1)
+                        dist = res.group(2)
+                        print("{} is in district {}-{}".format(address, st, dist))
+                        # TODO - save the district
 
         except:
             pass
 
+        # TODO - remove this to run entire database
         if i > 9:
             break
 
