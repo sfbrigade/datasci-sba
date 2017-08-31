@@ -84,6 +84,7 @@ def get_congressional_districts(dbm):
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
 
+    print('I AM HERE')
     return cd.get_congressional_dist_by_addr(sfdo)
 
 
