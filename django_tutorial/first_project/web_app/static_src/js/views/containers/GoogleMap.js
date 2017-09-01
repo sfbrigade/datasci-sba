@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import {getFeatureState, getFilterState, getColorState} from '../../redux/root'
-import {getGeometry, getFeatures, setMousedFeatureId} from '../../redux/feature'
+import {getGeometry, getFeatures, setMousedFeatureId, FEATURE_TYPE_REGION, FEATURE_TYPE_BUSINESS, getFeatureType } from '../../redux/feature'
 import {getColorField, getColorQuantiler, getNumColorQuantiles} from '../../redux/color'
 import {getFilterField, getFilterRange} from '../../redux/filter'
 
@@ -34,6 +34,8 @@ class GoogleMap extends React.Component {
       e.feature.setProperty('state', 'normal')
       this.props.onMouseover(undefined)
     })
+
+    this.markers = []
   }
 
 
@@ -43,12 +45,39 @@ class GoogleMap extends React.Component {
   componentDidUpdate(prevProps) {
 
     // for performance reasons, only update the features' geometry if it has changed
-    if(prevProps.geometry !== this.props.geometry) {
+    if(prevProps.geometry !== this.props.geometry || prevProps.featureType !== this.props.featureType) {
       this.map.data.forEach((feature) => this.map.data.remove(feature))
-      this.map.data.addGeoJson(this.props.geometry, { idPropertyName: 'GEOID10' })
+      this.markers.forEach(marker => marker.setMap(null))
+      this.markers.length = 0
+
+      switch(this.props.featureType) {
+        case FEATURE_TYPE_REGION:
+          this.map.data.addGeoJson(this.props.geometry, { idPropertyName: 'GEOID10' })
+          break;
+
+        case FEATURE_TYPE_BUSINESS:
+          for(let id in this.props.features) {
+            let feature = this.props.features[id]
+            let marker = new google.maps.Marker({
+              position: feature.position,
+              map: this.map,
+              clickable: true,
+
+              businessId: id
+            })
+            marker.addListener('mouseover', this.createMouseoverListener(feature))
+            marker.addListener('mouseout', this.createMouseoutListener(feature))
+            this.markers.push(marker)
+          }
+          break;
+
+        default:
+          break;
+      }
     }
 
-    // recolor all features
+
+    // update all map features (eg zip code regions)
     this.map.data.forEach((mapFeature) => {
 
       let dataFeature = this.props.features[mapFeature.getId()]
@@ -63,8 +92,24 @@ class GoogleMap extends React.Component {
         }
       }
     })
+
+    // update all markers (ie businesses)
+    this.markers.forEach(marker => {
+      let id = marker.get('businessId')
+      let feature = this.props.features[id]
+      marker.setVisible(feature != null && this.props.filterRange[0] <= feature[this.props.filterField] && feature[this.props.filterField] <= this.props.filterRange[1])
+
+      // TODO: update color of marker per feature[this.props.colorField]
+    })
   }
 
+  createMouseoverListener(feature) {
+    return () => this.props.onMouseover(feature.id)
+  }
+
+  createMouseoutListener(feature) {
+    return () => this.props.onMouseover(undefined)
+  }
 
 
   render() {
@@ -76,6 +121,7 @@ class GoogleMap extends React.Component {
 const mapStateToProps = state => ({
   geometry: getGeometry(getFeatureState(state)),
   features: getFeatures(getFeatureState(state)),
+  featureType: getFeatureType(getFeatureState(state)),
 
   colorField: getColorField(getColorState(state)),
   colorQuantiler: getColorQuantiler(getColorState(state)),
@@ -145,8 +191,8 @@ const googleMapOptions = {
   styles: [{
       'stylers': [{'visibility': 'off'}]
     }, {
-      'featureType': 'road.highway',
-      'stylers': [{'visibility': 'simplified'}]
+      'featureType': 'road',
+      'stylers': [{'visibility': 'on'}]
     }, {
       'featureType': 'administrative',
       'stylers': [{'visibility': 'on'}]

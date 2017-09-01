@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 
 import { getColorState, getFeatureState } from '../../redux/root'
 import {getColorField, setColorField, getColorQuantiler} from '../../redux/color'
-import { getFeatures, getMousedFeature } from '../../redux/feature'
+import { getFeatures, getMousedFeature, getFields, getOrderedFieldKeys } from '../../redux/feature'
 
 import { calculateColor } from '../../utilities'
 
@@ -23,7 +23,8 @@ import Histogram from '../components/Histogram'
 function ColorControls(props) {
   return (
     <div>
-      <FieldBox title="Color By" value={props.field} onChange={props.onChangeField}/>
+      <FieldBox title="Color By" value={props.field} onChange={props.onChangeField}
+        fields={props.fields} orderedFieldKeys={props.orderedFieldKeys}/>
       <Histogram data={props.data} colorFunction={value => calculateColor(value, props.quantiler)}
         lines={props.mousedFeature ? [props.mousedFeature[props.field]] : []}/>
     </div>
@@ -32,6 +33,8 @@ function ColorControls(props) {
 
 
 const mapStateToProps = state => ({
+  fields: getFields(getFeatureState(state)),
+  orderedFieldKeys: getOrderedFieldKeys(getFeatureState(state)),
   field: getColorField(getColorState(state)),
   quantiler: getColorQuantiler(getColorState(state)),
   data: Object.values(getFeatures(getFeatureState(state))).map(feature => feature[getColorField(getColorState(state))]),	// TODO: memoize

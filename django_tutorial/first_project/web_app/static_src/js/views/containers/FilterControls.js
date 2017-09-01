@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 
 import { getFilterState, getFeatureState } from '../../redux/root'
 import {getFilterField, getFilterRange, getFieldExtent, setFilterField, setFilterRange} from '../../redux/filter'
-import { getFeatures } from '../../redux/feature'
+import { getFeatures, getFields, getOrderedFieldKeys } from '../../redux/feature'
 
 import FieldBox from '../components/FieldBox'
 import SliderWithHistogramAndLabels from '../components/SliderWithHistogramAndLabels'
@@ -15,7 +15,8 @@ import SliderWithHistogramAndLabels from '../components/SliderWithHistogramAndLa
 function FilterControls(props) {
   return (
     <div>
-      <FieldBox title="Filter By" value={props.field} onChange={props.onChangeField}/>
+      <FieldBox title="Filter By" value={props.field} onChange={props.onChangeField}
+        fields={props.fields} orderedFieldKeys={props.orderedFieldKeys}/>
       <SliderWithHistogramAndLabels filterExtent={props.filterExtent} filterRange={props.filterRange}
         onChangeRange={props.onChangeRange} data={props.data}/>
     </div>
@@ -24,6 +25,8 @@ function FilterControls(props) {
 
 
 const mapStateToProps = state => ({
+  fields: getFields(getFeatureState(state)),
+  orderedFieldKeys: getOrderedFieldKeys(getFeatureState(state)),
   field: getFilterField(getFilterState(state)),
   filterRange: getFilterRange(getFilterState(state)),
   filterExtent: getFieldExtent(getFeatureState(state), getFilterField(getFilterState(state))),

@@ -1,4 +1,4 @@
-import { getFeatures, SET_DISTRICT_REGION_TYPE_AND_FEATURES } from './feature'
+import { getFeatures, SET_DISTRICT_REGION_TYPE_AND_FEATURES, isValidField, getOrderedFieldKeys } from './feature'
 
 
 /*
@@ -74,12 +74,15 @@ export function setFilterRange(filterRange) {
  * param since the filter state depends on the feature state
  */
 export default function filterReducer(state=initialState, action={}, featureState) {
-  const {type,
+  let {type,
     filterField=getFilterField(state),
     filterRange} = action
   switch(type) {
     case SET_FILTER_FIELD:
     case SET_DISTRICT_REGION_TYPE_AND_FEATURES:
+      if(!isValidField(featureState, filterField)) {
+        filterField = getOrderedFieldKeys(featureState)[0]
+      }
       return {
         ...state,
         filterField,

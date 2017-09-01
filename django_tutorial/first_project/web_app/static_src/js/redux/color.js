@@ -1,4 +1,4 @@
-import { getFeatures, SET_DISTRICT_REGION_TYPE_AND_FEATURES } from './feature'
+import { getFeatures, SET_DISTRICT_REGION_TYPE_AND_FEATURES, isValidField, getOrderedFieldKeys } from './feature'
 import { Quantiler } from '../utilities'
 
 /*
@@ -43,11 +43,14 @@ export function setColorField(colorField) {
  * param since the color quantiler state depends on the feature state
  */
 export default function colorReducer(state=initialState, action={}, featureState) {
-  const {type, colorField=getColorField(state)} = action
+  let {type, colorField=getColorField(state)} = action
   switch(type) {
     case SET_COLOR_FIELD:
     case SET_DISTRICT_REGION_TYPE_AND_FEATURES:
       const features = featureState===undefined ? [] : Object.values(getFeatures(featureState))
+      if(!isValidField(featureState, colorField)) {
+        colorField = getOrderedFieldKeys(featureState)[0]
+      }
       return {
         ...state,
         colorField,
