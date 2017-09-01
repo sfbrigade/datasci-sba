@@ -63,7 +63,7 @@ def get_geocoded_fields(dbm):
     pass
 
 
-def get_congressional_districts(dbm):
+def get_congressional_districts(sfdo):
     """
     Get Congressional Districts fields using helper modules defined in api_calls
 
@@ -71,7 +71,7 @@ def get_congressional_districts(dbm):
         dbm: DBManager object
     """
     print('Getting Congressional Districts from Google Civic Info API')
-    sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
+    
     sfdo = sfdo[[
         'sba_sfdo_id',
         'borr_street',
@@ -83,8 +83,6 @@ def get_congressional_districts(dbm):
                            + sfdo['borr_city'] + ', '\
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
-
-    print('I AM HERE')
     return cd.get_congressional_dist_by_addr(sfdo)
 
 
@@ -93,10 +91,10 @@ def main():
     print('Getting Data from External APIs (Yelp, Google Civic Info, etc.')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
+    sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
 
     sfdo_yelp = get_yelp_fields(dbm)
-
-    sfdo_congressional = get_congressional_districts(dbm)
+    sfdo_congressional = get_congressional_districts(sfdo)
 
     # Eventually we will have to join with geocoded fields table and
     # Congressional District Table before writing back to DB

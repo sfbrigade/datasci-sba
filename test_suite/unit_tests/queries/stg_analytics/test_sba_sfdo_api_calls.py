@@ -1,6 +1,7 @@
 """Unit Test for sba_sfdo_api_calls.py"""
 import datetime
 
+import pandas as pd
 import pytest
 import sqlalchemy as sa
 
@@ -45,18 +46,17 @@ def test_get_congressional_districts(tpostgres, to_insert, comments):
     db_url = tpostgres.postgresql_url  # This returns a local db url string: postgresql://postgres@127.0.0.1:51297/test
     tpostgres.connection.execute(
         sa.insert(tbls.STG_ANALYTICS__SBA_SFDO, values=to_insert))
-
-    sba_sfdo = get_sqla_table(conn, 'stg_analytics.sba_sfdo')
-    select = sa.select([sba_sfdo.c.sba_sfdo_id])\
-               .select_from(sba_sfdo)
-    results = [dict(row) for row in conn.execute(select)]
-
-    dbm = DBManager(db_url)
-    print(dbm.db_url)
-    print('hello')
-    print(conn)
-    print(results)
-
-    dbm.load_table(table_name='sba_sfdo', schema='stg_analytics')
-    # congressional_districts = api_calls.get_congressional_districts(dbm)
-    assert False
+    sfdo = pd.read_sql_table('sba_sfdo', conn, 'stg_analytics')
+    congressional_districts = api_calls.get_congressional_districts(sfdo)
+    expected = pd.DataFrame({
+        'sba_sfdo_id': [1],
+        'borr_street': ['22 4th street'],
+        'borr_city': ['San Francisco'],
+        'borr_state': ['CA'],
+        'borr_zip': ['94103'],
+        'full_address': '22 4th street, San Francisco, CA, 94103'
+    })
+    
+    print(congressional_districts)
+    print(expected)
+    assert congressional_districts.sort_index(axis=1).equals(expected.sort_index(axis=1))

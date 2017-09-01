@@ -20,10 +20,9 @@ def get_congressional_dist_by_addr(df):
     for i in range(len(df)):
         # Each call needs the API key and the address to search
         address = df.loc[i]['full_address']
-        params = { 'key': os.environ['GOOGLE_STATIC_MAPS_API'], 'address': address }
+        params = { 'key': os.environ['GOOGLEAPI'], 'address': address }
 
         resp = requests.get(url=url, params=params)
-
         try:
             # Convert return set to JSON and get the divisions dict, which contains country/state/cd as one of the values.
             results = resp.json()
