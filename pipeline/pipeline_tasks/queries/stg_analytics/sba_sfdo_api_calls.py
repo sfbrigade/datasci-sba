@@ -36,6 +36,10 @@ def get_yelp_fields(dbm):
     Keyword Args:
         dbm: DBManager object
     """
+    if os.environ.get('YELP_ID') is None or os.environ.get('YELP_SECRET') is None:
+        print("Skipping Yelp, authorization envars not defined.")
+        return None
+
     print('Getting Yelp ratings.')
     sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
     sfdo = sfdo[[
@@ -70,6 +74,10 @@ def get_congressional_districts(sfdo):
     Keyword Args:
         dbm: DBManager object
     """
+    if os.environ.get('GOOGLE_STATIC_MAPS_API') is None:
+        print("Skipping Google Civic, API key not set.")
+        return None
+
     print('Getting Congressional Districts from Google Civic Info API')
     
     sfdo = sfdo[[
@@ -96,9 +104,7 @@ def main():
     sfdo_yelp = get_yelp_fields(dbm)
     sfdo_congressional = get_congressional_districts(sfdo)
 
-    # Eventually we will have to join with geocoded fields table and
-    # Congressional District Table before writing back to DB
-    # TODO - need to join sfdp_yelp and sfdo_congressional and save that joined copy
+    # TODO - need to join sfdp_yelp and sfdo_congressional before writing to DB.
     dbm.write_df_table(
         sfdo_yelp, table_name='sba_sfdo_api_calls', schema='stg_analytics')
 

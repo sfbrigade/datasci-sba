@@ -24,7 +24,11 @@ def get_congressional_dist_by_addr(df):
 
         resp = requests.get(url=url, params=params)
         try:
-            # Convert return set to JSON and get the divisions dict, which contains country/state/cd as one of the values.
+            """
+            Convert return set to JSON and get the divisions dict, which
+            contains country/state/cd as one of the values.
+            """
+
             results = resp.json()
             divisions = results['divisions']
             if divisions is not None:
@@ -35,14 +39,10 @@ def get_congressional_dist_by_addr(df):
                     if res:
                         st = res.group(1)
                         dist = res.group(2)
-                        print("{} is in district {}-{}".format(address, st, dist))
-                        # TODO - save the district
+                        dist_txt = st + '-' + dist
+                        df.loc[i, 'civic_dist'] = dist_txt
 
         except:
             pass
-
-        # TODO - remove this to run entire database
-        if i > 9:
-            break
 
     return df
