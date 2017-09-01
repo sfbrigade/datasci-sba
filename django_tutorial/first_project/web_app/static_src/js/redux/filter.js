@@ -1,4 +1,4 @@
-import {getRegions} from './regions'
+import { getRegions, SET_DISTRICT_REGION_TYPE_AND_REGIONS } from './regions'
 
 
 /*
@@ -54,12 +54,15 @@ export function getFieldExtent(regionState, field) {
 
 ////////////////// Action Creators //////////////////////
 
+export const SET_FILTER_FIELD = 'SET_FILTER_FIELD'
+export const SET_FILTER_RANGE = 'SET_FILTER_RANGE'
+
 export function setFilterField(filterField) {
-  return {type: 'SET_FILTER_FIELD', filterField}
+  return {type: SET_FILTER_FIELD, filterField}
 }
 
 export function setFilterRange(filterRange) {
-  return {type: 'SET_FILTER_RANGE', filterRange}
+  return {type: SET_FILTER_RANGE, filterRange}
 }
 
 
@@ -75,15 +78,15 @@ export default function filterReducer(state=initialState, action={}, regionState
     filterField=getFilterField(state),
     filterRange} = action
   switch(type) {
-    case 'SET_FILTER_FIELD':
-    case 'SET_DISTRICT_REGION_TYPE_AND_REGIONS':
+    case SET_FILTER_FIELD:
+    case SET_DISTRICT_REGION_TYPE_AND_REGIONS:
       return {
         ...state,
         filterField,
         filterRange: getFieldExtent(regionState, filterField)
       }
 
-    case 'SET_FILTER_RANGE':
+    case SET_FILTER_RANGE:
       return {
         ...state,
         filterRange

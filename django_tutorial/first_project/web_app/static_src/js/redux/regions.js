@@ -54,6 +54,9 @@ export const getMousedRegion       = state => state.regions[state.mousedRegionId
 
 ////////////////// Actions //////////////////////
 
+export const SET_MOUSED_REGION = 'SET_MOUSED_REGION'
+export const SET_DISTRICT_REGION_TYPE_AND_REGIONS = 'SET_DISTRICT_REGION_TYPE_AND_REGIONS'
+
 export function setMousedRegionId(mousedRegionId) {
 	return {type: 'SET_MOUSED_REGION', mousedRegionId}
 }
@@ -105,7 +108,7 @@ export function setDistrictAndRegionType({selectedDistrict, selectedRegionType})
 
 export function setDistrictRegionTypeAndRegions({selectedDistrict, selectedRegionType, geometry, regions}) {
   return {
-    type: 'SET_DISTRICT_REGION_TYPE_AND_REGIONS',
+    type: SET_DISTRICT_REGION_TYPE_AND_REGIONS,
     selectedDistrict,
     selectedRegionType,
     geometry,
@@ -120,7 +123,7 @@ export function setDistrictRegionTypeAndRegions({selectedDistrict, selectedRegio
 export default function regionsReducer(state=initialState, action={}) {
   const {type, selectedDistrict, selectedRegionType, geometry, regions, mousedRegionId} = action
   switch(type) {
-    case 'SET_DISTRICT_REGION_TYPE_AND_REGIONS':
+    case SET_DISTRICT_REGION_TYPE_AND_REGIONS:
       return {
         ...state,
         geometry,
@@ -129,7 +132,7 @@ export default function regionsReducer(state=initialState, action={}) {
         selectedRegionType
       }
 
-    case 'SET_MOUSED_REGION':
+    case SET_MOUSED_REGION:
       return {
         ...state,
         mousedRegionId

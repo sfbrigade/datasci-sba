@@ -1,5 +1,5 @@
-import {getRegions} from './regions'
-import {Quantiler} from '../utilities'
+import { getRegions, SET_DISTRICT_REGION_TYPE_AND_REGIONS } from './regions'
+import { Quantiler } from '../utilities'
 
 /*
  * Note that the color controller uses a 'slice' of the global state, i.e. the state
@@ -29,8 +29,10 @@ export const getColorQuantiler     = (state) => state.colorQuantiler
 
 ////////////////// Action Creators //////////////////////
 
+export const SET_COLOR_FIELD = 'SET_COLOR_FIELD'
+
 export function setColorField(colorField) {
-  return {type: 'SET_COLOR_FIELD', colorField}
+  return {type: SET_COLOR_FIELD, colorField}
 }
 
 
@@ -43,8 +45,8 @@ export function setColorField(colorField) {
 export default function colorReducer(state=initialState, action={}, regionState) {
   const {type, colorField=getColorField(state)} = action
   switch(type) {
-    case 'SET_COLOR_FIELD':
-    case 'SET_DISTRICT_REGION_TYPE_AND_REGIONS':
+    case SET_COLOR_FIELD:
+    case SET_DISTRICT_REGION_TYPE_AND_REGIONS:
       const regions = regionState===undefined ? [] : Object.values(getRegions(regionState))
       return {
         ...state,
