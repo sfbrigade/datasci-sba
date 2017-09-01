@@ -1,14 +1,14 @@
 import React from 'react'
 import {connect} from 'react-redux'
 
-import { getColorState, getRegionState } from '../../redux/root'
+import { getColorState, getFeatureState } from '../../redux/root'
 import {getColorField, setColorField, getColorQuantiler} from '../../redux/color'
-import { getRegions, getMousedRegion } from '../../redux/regions'
+import { getFeatures, getMousedFeature } from '../../redux/feature'
 
 import { calculateColor } from '../../utilities'
 
 import FieldBox from '../components/FieldBox'
-import RegionHistogram from '../components/RegionHistogram'
+import Histogram from '../components/Histogram'
 
 /*
  * React container for the color dropdown and controls.  Note that for now we
@@ -24,8 +24,8 @@ function ColorControls(props) {
   return (
     <div>
       <FieldBox title="Color By" value={props.field} onChange={props.onChangeField}/>
-      <RegionHistogram data={props.data} colorFunction={value => calculateColor(value, props.quantiler)}
-        lines={props.mousedRegion ? [props.mousedRegion[props.field]] : []}/>
+      <Histogram data={props.data} colorFunction={value => calculateColor(value, props.quantiler)}
+        lines={props.mousedFeature ? [props.mousedFeature[props.field]] : []}/>
     </div>
   )
 }
@@ -34,8 +34,8 @@ function ColorControls(props) {
 const mapStateToProps = state => ({
   field: getColorField(getColorState(state)),
   quantiler: getColorQuantiler(getColorState(state)),
-  data: Object.values(getRegions(getRegionState(state))).map(region => region[getColorField(getColorState(state))]),	// TODO: memoize
-  mousedRegion: getMousedRegion(getRegionState(state))
+  data: Object.values(getFeatures(getFeatureState(state))).map(feature => feature[getColorField(getColorState(state))]),	// TODO: memoize
+  mousedFeature: getMousedFeature(getFeatureState(state))
 })
 
 const mapDispatchToProps = {

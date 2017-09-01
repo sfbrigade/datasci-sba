@@ -1,4 +1,4 @@
-import { getRegions, SET_DISTRICT_REGION_TYPE_AND_REGIONS } from './regions'
+import { getFeatures, SET_DISTRICT_REGION_TYPE_AND_FEATURES } from './feature'
 
 
 /*
@@ -28,21 +28,21 @@ export const getFilterRange        = (state) => state.filterRange
 
 
 /**
- * @param {Object} regionState
+ * @param {Object} featureState
  * @param {String} field
  * @return {number[]} array of length 2, containing min and max values of the given field
- * across all regions
+ * across all features
  */
-export function getFieldExtent(regionState, field) {
+export function getFieldExtent(featureState, field) {
   let min = Number.MAX_VALUE
   let max = Number.MIN_VALUE
   let hasData = false
 
-  if(regionState) {
-    Object.values(getRegions(regionState)).forEach(region => {
-      if(region[field] != null && !isNaN(region[field])) {
-        min = Math.min(min, region[field])
-        max = Math.max(max, region[field])
+  if(featureState) {
+    Object.values(getFeatures(featureState)).forEach(feature => {
+      if(feature[field] != null && !isNaN(feature[field])) {
+        min = Math.min(min, feature[field])
+        max = Math.max(max, feature[field])
         hasData = true
       }
     })
@@ -70,20 +70,20 @@ export function setFilterRange(filterRange) {
 
 
 /**
- * Note that unlike a normal reducer, this reducer also accepts an optional regionState
- * param since the filter state depends on the region state
+ * Note that unlike a normal reducer, this reducer also accepts an optional featureState
+ * param since the filter state depends on the feature state
  */
-export default function filterReducer(state=initialState, action={}, regionState) {
+export default function filterReducer(state=initialState, action={}, featureState) {
   const {type,
     filterField=getFilterField(state),
     filterRange} = action
   switch(type) {
     case SET_FILTER_FIELD:
-    case SET_DISTRICT_REGION_TYPE_AND_REGIONS:
+    case SET_DISTRICT_REGION_TYPE_AND_FEATURES:
       return {
         ...state,
         filterField,
-        filterRange: getFieldExtent(regionState, filterField)
+        filterRange: getFieldExtent(featureState, filterField)
       }
 
     case SET_FILTER_RANGE:

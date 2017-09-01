@@ -1,9 +1,9 @@
 import { Reducer, Selector } from 'redux-testkit';
 import reducer, * as fromColor from './color'
-import { setDistrictRegionTypeAndRegions } from './regions'
+import { setDistrictRegionTypeAndFeatures } from './features'
 
-const mockRegionState = {
-  regions: {
+const mockFeatureState = {
+  features: {
     id0: {
       sba_per_small_bus: 0.1,
       mean_agi: 10000
@@ -50,16 +50,16 @@ describe('color reducer', () => {
 
   it('should handle colorField actions', () => {
     const action = fromColor.setColorField('mean_agi')
-    const state = reducer(undefined, action, mockRegionState)
+    const state = reducer(undefined, action, mockFeatureState)
 
     expect(fromColor.getColorField(state)).toEqual('mean_agi')
     expect(fromColor.getColorQuantiler(state).thresholds[0]).toEqual(11000)  // checks that quantiler was built with sba_per_small_bus
     expect(fromColor.getNumColorQuantiles(state)).toEqual(10)
   })
 
-  it('should handle setting new regions', () => {
-    const action = setDistrictRegionTypeAndRegions({})
-    const state = reducer(undefined, action, mockRegionState)
+  it('should handle setting new features', () => {
+    const action = setDistrictRegionTypeAndFeatures({})
+    const state = reducer(undefined, action, mockFeatureState)
 
     expect(fromColor.getColorField(state)).toEqual('sba_per_small_bus')
     expect(fromColor.getColorQuantiler(state).thresholds[0]).toBeCloseTo(0.11, 2)  // checks that quantiler was built with sba_per_small_bus

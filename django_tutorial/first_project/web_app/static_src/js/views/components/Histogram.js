@@ -16,7 +16,7 @@ const createNextId = () => nextId++
  * Thus our React render method is just a div, and the real work happens in componentDidMount (for
  * initialization) and componentDidUpdate (to do the rendering when the state has changed)
  */
-export default class RegionHistogram extends React.Component {
+export default class Histogram extends React.Component {
 
   constructor(props) {
   	super(props)

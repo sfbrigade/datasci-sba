@@ -1,29 +1,29 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { getRegionState } from '../../redux/root'
-import {getMousedRegion} from '../../redux/regions'
+import { getFeatureState } from '../../redux/root'
+import { getMousedFeature } from '../../redux/feature'
 
 import {fields, getOrderedFields, round} from '../../utilities'
 
 /**
- * Renders the tooltip showing data about a specific region when that region is moused over
+ * Renders the tooltip showing data about a specific feature when that feature is moused over
  */
 function MapTooltip(props) {
-  return props.mousedRegion !== undefined && (
+  return props.mousedFeature !== undefined && (
     <div id="tooltip">
       <table>
         <thead>
           <tr>
 	        <td>Zipcode:</td>
-	        <td>{props.mousedRegion.region}</td>
+	        <td>{props.mousedFeature.region}</td>
 	      </tr>
 	    </thead>
         <tbody>
 	        {getOrderedFields().map(field => (
 	          <tr key={field}>
 	            <td>{fields[field].userReadableName}</td>
-	            <td>{round(props.mousedRegion[field], 1)}</td>
+	            <td>{round(props.mousedFeature[field], 1)}</td>
 	          </tr>
 	        ))}
 	    </tbody>
@@ -33,7 +33,7 @@ function MapTooltip(props) {
 }
 
 const mapStateToProps = state => ({
-  mousedRegion: getMousedRegion(getRegionState(state))
+  mousedFeature: getMousedFeature(getFeatureState(state))
 })
 
 export default connect(mapStateToProps)(MapTooltip)

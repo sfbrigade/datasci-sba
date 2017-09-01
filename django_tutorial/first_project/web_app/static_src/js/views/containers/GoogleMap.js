@@ -1,8 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import {getRegionState, getFilterState, getColorState} from '../../redux/root'
-import {getGeometry, getRegions, setMousedRegionId} from '../../redux/regions'
+import {getFeatureState, getFilterState, getColorState} from '../../redux/root'
+import {getGeometry, getFeatures, setMousedFeatureId} from '../../redux/feature'
 import {getColorField, getColorQuantiler, getNumColorQuantiles} from '../../redux/color'
 import {getFilterField, getFilterRange} from '../../redux/filter'
 
@@ -10,7 +10,7 @@ import { calculateColor } from '../../utilities'
 
 
 /**
- * React component that renders the map with colored regions.  Basically a wrapper around the GoogleMap API.
+ * React component that renders the map with colored features.  Basically a wrapper around the GoogleMap API.
  * 
  * We don't really use React's lifecycle here; instead we depend on GoogleMap's internal update cycle.
  * Thus our React render method is just a div, and the real work happens in componentDidMount (for
@@ -49,17 +49,17 @@ class GoogleMap extends React.Component {
     }
 
     // recolor all features
-    this.map.data.forEach((feature) => {
+    this.map.data.forEach((mapFeature) => {
 
-      let region = this.props.regions[feature.getId()]
-      if(region) {
-        const colorVariable = region[this.props.colorField]
-        const filterVariable = region[this.props.filterField]
+      let dataFeature = this.props.features[mapFeature.getId()]
+      if(dataFeature) {
+        const colorVariable = dataFeature[this.props.colorField]
+        const filterVariable = dataFeature[this.props.filterField]
 
         if(this.props.filterRange[0] <= filterVariable && filterVariable <= this.props.filterRange[1]) {
-          feature.setProperty('colorVariable', colorVariable);    
+          mapFeature.setProperty('colorVariable', colorVariable);    
         } else {
-          feature.setProperty('colorVariable', undefined)
+          mapFeature.setProperty('colorVariable', undefined)
         }
       }
     })
@@ -74,8 +74,8 @@ class GoogleMap extends React.Component {
 
 
 const mapStateToProps = state => ({
-  geometry: getGeometry(getRegionState(state)),
-  regions: getRegions(getRegionState(state)),
+  geometry: getGeometry(getFeatureState(state)),
+  features: getFeatures(getFeatureState(state)),
 
   colorField: getColorField(getColorState(state)),
   colorQuantiler: getColorQuantiler(getColorState(state)),
@@ -86,7 +86,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-  onMouseover: setMousedRegionId
+  onMouseover: setMousedFeatureId
 }
 
 

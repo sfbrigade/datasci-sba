@@ -1,10 +1,10 @@
 import { Reducer, Selector } from 'redux-testkit';
 import reducer, * as fromFilter from './filter'
-import { setDistrictRegionTypeAndRegions } from './regions'
+import { setDistrictRegionTypeAndFeatures } from './feature'
 
 
-const mockRegionState = {
-  regions: {
+const mockFeatureState = {
+  features: {
     id0: {
       sba_per_small_bus: 0.1,
       mean_agi: 10000
@@ -57,7 +57,7 @@ describe('filter reducer', () => {
 
   it('should update filterField', () => {
     const action = fromFilter.setFilterField('mean_agi')
-    const state = reducer(undefined, action, mockRegionState)
+    const state = reducer(undefined, action, mockFeatureState)
 
     expect(fromFilter.getFilterField(state)).toEqual('mean_agi')
     expect(fromFilter.getFilterRange(state)).toEqual([10000, 20000])  // checks that range defaults to full min,max of data
@@ -66,15 +66,15 @@ describe('filter reducer', () => {
   it('should update filterRange', () => {
   	const range = [5, 10]
     const action = fromFilter.setFilterRange(range)
-    const state = reducer(undefined, action, mockRegionState)
+    const state = reducer(undefined, action, mockFeatureState)
 
     expect(fromFilter.getFilterField(state)).toEqual('sba_per_small_bus')	// unchanged from default
     expect(fromFilter.getFilterRange(state)).toEqual(range)
   })
 
-  it('should update filter range when setting new regions', () => {
-    const action = setDistrictRegionTypeAndRegions({})
-    const state = reducer(undefined, action, mockRegionState)
+  it('should update filter range when setting new features', () => {
+    const action = setDistrictRegionTypeAndFeatures({})
+    const state = reducer(undefined, action, mockFeatureState)
 
     expect(fromFilter.getFilterField(state)).toEqual('sba_per_small_bus')
     expect(fromFilter.getFilterRange(state)).toEqual([0.1, 0.2])  // checks that range defaults to full min,max of data
