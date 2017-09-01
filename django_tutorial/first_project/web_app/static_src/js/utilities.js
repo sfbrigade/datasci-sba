@@ -1,7 +1,14 @@
 
 /**
  * Constructs a set of quantile thresholds for an array of data.  Immutable.
- * Meant to be used by creating a Quantiler from the data, then 
+ * Meant to be used by creating a Quantiler from the data, then using
+ * quantiler.getQuantile(value) to get the quantile of any datapoint.
+ *
+ * For instance, suppose we have a bunch of test scores, and we want to tell
+ * a student "you were in the top X% of your class".  We would create a Quantiler
+ * with the test scores (passsing numQuantiles=100 to produce percentiles),
+ * and then e.g. if quantiler.getQuantile(yourTestScore) == 99, it means you're
+ * in the top 1% of your class.
  */
 export class Quantiler {
 
