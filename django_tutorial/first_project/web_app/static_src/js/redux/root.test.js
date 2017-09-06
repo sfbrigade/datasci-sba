@@ -47,7 +47,7 @@ describe('root reducer', () => {
   	// in order to test how the root reducer runs the features reducer first,
   	// then the color & filter reducers
 
-    const action = setDistrictRegionTypeAndFeatures({features: mockFeatures})
+    const action = setDistrictRegionTypeAndFeatures({featureType: 'region', features: mockFeatures})
     const state = reducer(undefined, action)
 
     // check that filter state is updated

@@ -29,19 +29,21 @@ describe('feature actions', () => {
     })
   })
 
-  it('should create an action that loads feature data', () => {
+  it('should create an action that loads region data', () => {
+    const featureType = 'region'
     const selectedDistrict = 'NYC'
     const selectedRegionType = 'cd'
     const features = {data: [{region: 'foo', mean_agi: '10000'}]}
     const geometry = {foo: 'bar'}
     api.getRegions.mockReturnValueOnce(features)
     api.getGeometry.mockReturnValueOnce(geometry)
-    return Thunk(fromFeature.fetchRegions).execute({selectedDistrict, selectedRegionType})
+    return Thunk(fromFeature.fetchFeatures).execute({featureType, selectedDistrict, selectedRegionType})
       .then(dispatches => {
         expect(dispatches[0].isPlainObject()).toBe(true);
         expect(dispatches[0].getType()).toEqual('SET_DISTRICT_REGION_TYPE_AND_FEATURES');
         expect(dispatches[0].getAction()).toEqual({
           type: 'SET_DISTRICT_REGION_TYPE_AND_FEATURES',
+          featureType,
           selectedDistrict,
           selectedRegionType,
           geometry,
@@ -56,12 +58,38 @@ describe('feature actions', () => {
               "total_7a": NaN,
               "total_sba": NaN,
               "total_small_bus": NaN
-          	}
+            }
           }
         });
     })
-
   })
+
+  it('should create an action that loads business data', () => {
+    const featureType = 'business'
+    const selectedDistrict = 'NYC'
+    const selectedRegionType = 'cd'
+    const businesses = {data: [{id: 1, name: 'foo', rating: 10000}]}
+    api.getBusinesses.mockReturnValueOnce(businesses)
+    return Thunk(fromFeature.setFeatureType).execute(featureType, {selectedDistrict, selectedRegionType})
+      .then(dispatches => {
+        expect(dispatches[0].isPlainObject()).toBe(true);
+        expect(dispatches[0].getType()).toEqual('SET_DISTRICT_REGION_TYPE_AND_FEATURES');
+        expect(dispatches[0].getAction()).toEqual({
+          type: 'SET_DISTRICT_REGION_TYPE_AND_FEATURES',
+          featureType,
+          selectedDistrict,
+          selectedRegionType,
+          features: {
+            1: {
+              id: 1,
+              name: 'foo',
+              rating: 10000
+            }
+          }
+        });
+    })
+  })
+
 })
 
 
@@ -73,6 +101,22 @@ describe('feature selectors', () => {
     Selector(fromFeature.getSelectedDistrict).execute(state)
     Selector(fromFeature.getSelectedRegionType).execute(state)
     Selector(fromFeature.getMousedFeature).execute(state)
+    Selector(fromFeature.getFeatureType).execute(state)
+    Selector(fromFeature.getOrderedFieldKeys).execute(state)
+  })
+
+  it('should give field keys, in order by readable name',() => {
+    const state = reducer()
+
+    const stateWithFeatureTypeRegion = {...state, featureType: 'region'}
+    expect(fromFeature.getOrderedFieldKeys(stateWithFeatureTypeRegion)).toEqual([
+      "loan_504_per_small_bus", "loan_7a_per_small_bus", "mean_agi", "total_504", "total_7a", "total_sba", "sba_per_small_bus", "total_small_bus"
+    ])
+
+    const stateWithFeatureTypeBusiness = {...state, featureType: 'business'}
+    expect(fromFeature.getOrderedFieldKeys(stateWithFeatureTypeBusiness)).toEqual([
+      "rating"
+    ])
   })
 })
 
@@ -87,6 +131,7 @@ describe('feature reducer', () => {
     expect(fromFeature.getSelectedDistrict(state)).toEqual('SFDO')
     expect(fromFeature.getSelectedRegionType(state)).toEqual('zip')
     expect(fromFeature.getMousedFeature(state)).toBeUndefined()
+    expect(fromFeature.getFeatureType(state)).toEqual('region')
   })
 
   it('should update feature data', () => {
@@ -94,11 +139,13 @@ describe('feature reducer', () => {
     const selectedRegionType = 'cd'
     const geometry = {geo: 'foo'}
     const features = {features: 'bar'}
+    const featureType = 'business'
     const action = fromFeature.setDistrictRegionTypeAndFeatures({
       selectedDistrict,
       selectedRegionType,
       geometry,
-      features
+      features,
+      featureType
     })
     const state = reducer(undefined, action)
 
@@ -106,6 +153,7 @@ describe('feature reducer', () => {
     expect(fromFeature.getSelectedRegionType(state)).toEqual(selectedRegionType)
     expect(fromFeature.getGeometry(state)).toEqual(geometry)
     expect(fromFeature.getFeatures(state)).toEqual(features)
+    expect(fromFeature.getFeatureType(state)).toEqual(featureType)
   })
 
   it('should update moused feature', () => {
