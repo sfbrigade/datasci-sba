@@ -52,7 +52,7 @@ revolver_status bigint,
 yelp_rating numeric,
 yelp_total_reviews bigint,
 yelp_url text,
-cong_dist text
+congressional_district_google_civic text
 );
 
 insert into stg_analytics.sba_sfdo_all
@@ -105,7 +105,7 @@ select
   api_calls.yelp_rating,
   api_calls.yelp_total_reviews,
   api_calls.yelp_url,
-  api_calls.cong_dist
+  api_calls.congressional_district_google_civic
 from stg_analytics.sba_sfdo as sba_sfdo
   left join stg_analytics.sba_sfdo_api_calls as api_calls
     on sba_sfdo.sba_sfdo_id = api_calls.sba_sfdo_id
