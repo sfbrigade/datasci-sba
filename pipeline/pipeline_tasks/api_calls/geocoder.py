@@ -12,10 +12,10 @@ from utilities.db_manager import DBManager
 
 SBA_DWH = os.getenv('SBA_DWH')
 engine = create_engine(SBA_DWH)
-GOOGLE_API_KEY = os.getenv('GOOGLE_API')
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API')
 
 
-def geocode_address(address, api_key=GOOGLE_API_KEY):
+def geocode_address(address, api_key=GOOGLE_MAPS_API_KEY):
     """Geocodes a single address
 
     Keyword Args:
