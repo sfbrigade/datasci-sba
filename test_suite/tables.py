@@ -378,4 +378,5 @@ STG_ANALYTICS__SBA_SFDO_API_CALLS = sa.Table(
     sa.Column('yelp_rating', sa.Numeric),
     sa.Column('yelp_total_reviews', sa.BigInteger),
     sa.Column('yelp_url', sa.Text),
+    sa.Column('congressional_district_google_civic'),
     schema='stg_analytics')
