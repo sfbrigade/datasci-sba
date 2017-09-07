@@ -21,24 +21,23 @@ zipcode text,
 geo_id text,
 naics2012 text,
 naics2012_ttl text,
-num_establishments numeric
+num_establishments int,
+primary key (zipcode, naics2012)
 );
 
 insert into stg_analytics.census_naics
 
 select
-  zipcode,
-  geo_id,
-  naics2012,
-  naics2012_ttl,
-  sum(cast(estab as int)) as num_establishments
-
-from data_ingest.census__zip_business_patterns
-where empszes_ttl in ('Establishments with 1 to 4 employees', 'Establishments with 5 to 9 employees',
+  census.zipcode,
+  census.geo_id,
+  census.naics2012,
+  census.naics2012_ttl,
+  sum(cast(census.estab as int)) as num_establishments
+from data_ingest.census__zip_business_patterns as census
+  inner join stg_analytics.sba_sfdo_zips as valid_zips
+    on census.zipcode = valid_zips.zipcode
+where census.empszes_ttl in ('Establishments with 1 to 4 employees', 'Establishments with 5 to 9 employees',
                       'Establishments with 10 to 19 employees', 'Establishments with 20 to 49 employees',
                       'Establishments with 100 to 249 employees', 'Establishments with 250 to 499 employees')
-
-  and zipcode::text in (select distinct borr_zip::text from stg_analytics.sba_sfdo)
-
-group by zipcode, geo_id, naics2012, naics2012_ttl
+group by census.zipcode, census.geo_id, census.naics2012, census.naics2012_ttl
 ;

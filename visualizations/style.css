@@ -1,0 +1,19 @@
+svg {
+  width: 100%;
+  height: 100%;
+}
+
+path {
+  fill: none;
+  stroke: #000;
+}
+
+.q0-9 {fill: #f7fbff;}
+.q1-9 {fill: #deebf7;}
+.q2-9 {fill: #c6dbef;}
+.q3-9 {fill: #9ecae1;}
+.q4-9 {fill: #6baed6;}
+.q5-9 {fill: #4292c6;}
+.q6-9 {fill: #2171b5;}
+.q7-9 {fill: #08519c;}
+.q8-9 {fill: #08306b;}

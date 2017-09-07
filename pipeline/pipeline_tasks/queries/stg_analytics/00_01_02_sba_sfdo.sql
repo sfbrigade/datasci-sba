@@ -15,7 +15,7 @@ borr_name text,
 borr_street text,
 borr_city text,
 borr_state text,
-borr_zip bigint,
+borr_zip text,
 gross_approval bigint,
 approval_date timestamp without time zone,
 approval_fiscal_year bigint,
@@ -26,7 +26,7 @@ initial_interest_rate double precision,
 term_in_months bigint,
 naics_code double precision,
 naics_description text,
-franchise_code bigint,
+franchise_code text,
 franchise_name text,
 project_county text,
 project_state text,
@@ -41,7 +41,7 @@ cdc_name text,
 cdc_street text,
 cdc_city text,
 cdc_state text,
-cdc_zip double precision,
+cdc_zip text,
 third_party_lender_name text,
 third_party_lender_city text,
 third_party_lender_state text,
@@ -53,6 +53,7 @@ bank_state text,
 bank_zip text,
 sba_guaranteed_approval bigint,
 revolver_status bigint
+-- We also add a surrogate primary key sba_sfdo_id below
 );
 
 insert into stg_analytics.sba_sfdo
@@ -78,7 +79,7 @@ select
   franchise_name,
   project_county,
   project_state,
-  sba_district_office,
+  regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') as sba_district_office,
   congressional_district,
   business_type,
   loan_status,
@@ -109,6 +110,7 @@ where borr_state = 'CA'
                          'ALAMEDA', 'CONTRA COSTA', 'MARIN',
                          'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
                          'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') = 'SAN FRANCISCO DISTRICT OFFICE'
 ;
 
 insert into stg_analytics.sba_sfdo
@@ -133,7 +135,7 @@ select
   franchise_name,
   project_county,
   project_state,
-  sba_district_office,
+  regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') as sba_district_office,
   congressional_district,
   business_type,
   loan_status,
@@ -162,6 +164,7 @@ where borr_state = 'CA'
                          'ALAMEDA', 'CONTRA COSTA', 'MARIN',
                          'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
                          'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') = 'SAN FRANCISCO DISTRICT OFFICE'
 ;
 
 insert into stg_analytics.sba_sfdo
@@ -186,7 +189,7 @@ select
   franchise_name,
   project_county,
   project_state,
-  sba_district_office,
+  regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') as sba_district_office,
   congressional_district,
   business_type,
   loan_status,
@@ -211,10 +214,11 @@ select
   revolver_status
 from data_ingest.sba__foia_7a_2000_2009
 where borr_state = 'CA'
-and project_county in ('SANTA CRUZ', 'SANTA CLARA', 'SAN MATEO',
-                       'ALAMEDA', 'CONTRA COSTA', 'MARIN',
-                       'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
-                       'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and project_county in ('SANTA CRUZ', 'SANTA CLARA', 'SAN MATEO',
+                         'ALAMEDA', 'CONTRA COSTA', 'MARIN',
+                         'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
+                         'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') = 'SAN FRANCISCO DISTRICT OFFICE'
 ;
 
 insert into stg_analytics.sba_sfdo
@@ -239,7 +243,7 @@ select
   franchise_name,
   project_county,
   project_state,
-  sba_district_office,
+  regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') as sba_district_office,
   congressional_district,
   business_type,
   loan_status,
@@ -268,4 +272,11 @@ where borr_state = 'CA'
                          'ALAMEDA', 'CONTRA COSTA', 'MARIN',
                          'SAN FRANCISCO', 'SOLANO', 'NAPA', 'SONOMA',
                          'LAKE', 'MENDOCINO', 'HUMBOLDT', 'DEL NORTE')
+  and regexp_replace(sba_district_office, '[^(a-zA-Z| )]', '', 'g') = 'SAN FRANCISCO DISTRICT OFFICE'
 ;
+
+-- Adding surrogate primary key
+alter table stg_analytics.sba_sfdo add column sba_sfdo_id serial primary key;
+
+-- Creating Indices
+create index on stg_analytics.sba_sfdo (borr_zip);

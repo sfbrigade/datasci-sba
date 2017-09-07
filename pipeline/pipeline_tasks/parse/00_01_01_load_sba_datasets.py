@@ -4,10 +4,13 @@ Load SBA FOIA datasets
 Source of data:
 """
 import argparse
+import os
 
 import pandas as pd
+import sqlalchemy as sa
 
 from utilities.db_manager import DBManager
+from utilities import util_functions as uf
 
 
 def get_args():
@@ -24,19 +27,87 @@ def load_sba_datasets(dbm, direc):
         dbm: DBManager object
         dir: Directory where files are
     """
-    foia_504_1991_present = pd.read_excel(direc + 'FOIA - 504 (FY1991-Present).xlsx')
-    foia_7a_1991_1999 = pd.read_excel(direc + 'FOIA - 7(a) (FY1991-FY1999).xlsx', skiprows=1)
-    foia_7a_2000_2009 = pd.read_excel(direc + 'FOIA - 7(a)(FY2000-FY2009).xlsx', skiprows=1)
-    foia_7a_2010_present = pd.read_excel(direc + 'FOIA - 7(a) (FY2010-Present).xlsx')
+    print('Reading FOIA 504')
+    foia_504_1991_present = pd.read_excel(
+        os.path.join(direc, 'FOIA - 504 (FY1991-Present).xlsx'))
 
+    print('Reading FOIA 7a 1991-1999')
+    foia_7a_1991_1999 = pd.read_excel(
+        os.path.join(direc, 'FOIA - 7(a) (FY1991-FY1999).xlsx'),
+        skiprows=1)
+
+    print('Reading FOIA 7a 2000-2009')
+    foia_7a_2000_2009 = pd.read_excel(
+        os.path.join(direc, 'FOIA - 7(a)(FY2000-FY2009).xlsx'),
+        skiprows=1)
+
+    print('Reading FOIA 7a 2010-Present')
+    foia_7a_2010_present = pd.read_excel(
+        os.path.join(direc, 'FOIA - 7(a) (FY2010-Present).xlsx'))
+
+    print('Writing FOIA 504')
     dbm.write_df_table(
-        foia_504_1991_present, table_name='sba__foia_504_1991_present', schema='data_ingest')
+        foia_504_1991_present,
+        table_name='sba__foia_504_1991_present',
+        schema='data_ingest',
+        dtype={'Program': sa.String,
+               'BorrZip': sa.String,
+               'CDC_Zip': sa.String,
+               'ThirdPartyLender_Name': sa.String,
+               'ThirdPartyLender_City': sa.String,
+               'ThirdPartyLender_State': sa.String,
+               'DeliveryMethod': sa.String,
+               'FranchiseCode': sa.String,
+               'FranchiseName': sa.String,
+               'ChargeOffDate': sa.Date,})
+
+    print('Writing FOIA 7a 1991-1999')
     dbm.write_df_table(
-        foia_7a_1991_1999, table_name='sba__foia_7a_1991_1999', schema='data_ingest')
+        foia_7a_1991_1999,
+        table_name='sba__foia_7a_1991_1999',
+        schema='data_ingest',
+        dtype={'Program': sa.String,
+               'BorrZip': sa.String,
+               'Bank_Zip': sa.String,
+               'ThirdPartyLender_Name': sa.String,
+               'ThirdPartyLender_City': sa.String,
+               'ThirdPartyLender_State': sa.String,
+               'DeliveryMethod': sa.String,
+               'FranchiseCode': sa.String,
+               'FranchiseName': sa.String,
+               'ChargeOffDate': sa.Date,})
+
+    print('Writing FOIA 7a 2000-2009')
     dbm.write_df_table(
-        foia_7a_2000_2009, table_name='sba__foia_7a_2000_2009', schema='data_ingest')
+        foia_7a_2000_2009,
+        table_name='sba__foia_7a_2000_2009',
+        schema='data_ingest',
+        dtype={'Program': sa.String,
+               'BorrZip': sa.String,
+               'Bank_Zip': sa.String,
+               'ThirdPartyLender_Name': sa.String,
+               'ThirdPartyLender_City': sa.String,
+               'ThirdPartyLender_State': sa.String,
+               'DeliveryMethod': sa.String,
+               'FranchiseCode': sa.String,
+               'FranchiseName': sa.String,
+               'ChargeOffDate': sa.Date,})
+
+    print('Writing FOIA 7a 2010-present')
     dbm.write_df_table(
-        foia_7a_2010_present, table_name='sba__foia_7a_2010_present', schema='data_ingest')
+        foia_7a_2010_present,
+        table_name='sba__foia_7a_2010_present',
+        schema='data_ingest',
+        dtype={'Program': sa.String,
+               'BorrZip': sa.String,
+               'Bank_Zip': sa.String,
+               'ThirdPartyLender_Name': sa.String,
+               'ThirdPartyLender_City': sa.String,
+               'ThirdPartyLender_State': sa.String,
+               'DeliveryMethod': sa.String,
+               'FranchiseCode': sa.String,
+               'FranchiseName': sa.String,
+               'ChargeOffDate': sa.Date,})
 
 
 def main():
@@ -44,7 +115,8 @@ def main():
     print('Parsing FOIA datasets')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    directory = '/Users/VincentLa/git/datasci-sba/src/data/sba/'
+    git_root_dir = uf.get_git_root(os.path.dirname(__file__))
+    directory = os.path.join(git_root_dir, 'src', 'data', 'sba')
     load_sba_datasets(dbm, directory)
 
 

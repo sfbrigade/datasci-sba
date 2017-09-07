@@ -1,7 +1,7 @@
+.cache
 *.pyc
 *.zip
 *.pyc
-*.json
 *.csv
 *.bak
 *.gz
@@ -13,3 +13,6 @@
 *.xlsx
 *.DS_Store
 *.dat
+
+table_def_dump.py
+pg_dump_output.sql

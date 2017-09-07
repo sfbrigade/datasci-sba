@@ -1,21 +1,17 @@
 # Explore the data
 ## SQL
-Use basic SQL to query and explore the data! A version of the data has been uploaded to Mode, a reporting tool, and can be explored:
-https://modeanalytics.com/editor/vincentla/reports/4124e51db598
+Use basic SQL to query and explore the data! We now use Mode Analytics as a frontend tool to query our PostgreSQL database hosted on Microsoft Azure. Ping the #datasci-sba Slack Channel if you need access to Mode.
+https://modeanalytics.com/editor/code_for_san_francisco
 
 ## Data
-This csv contains the San Francisco-area loans from the original FOIA (Freedom of Information Act) data that is cleared for public use:
-https://files.slack.com/files-pri/T0431NL8C-F5P0JLZHB/download/foia_sfdo_504_7a.csv
 
-The FOIA data on the SBA site is divided by loan type and years but also covers a larger geographical area: 
+### Playing with the data locally
+We now have our data loaded into a PostgreSQL database hosted on Microsoft Azure. However, if you want to play with the data locally using spreadsheet software (e.g. Excel), here are some of the data sources:
+1. This csv contains the San Francisco-area loans from the original FOIA (Freedom of Information Act) data that is cleared for public use: https://files.slack.com/files-pri/T0431NL8C-F5P0JLZHB/download/foia_sfdo_504_7a.csv
+2. The FOIA data on the SBA site is divided by loan type and years but also covers a larger geographical area: 
 https://www.sba.gov/about-sba/sba-performance/open-government/foia/frequently-requested-records/sba-7a-504-loan-data-reports
-
-The data is also available on the Data Science team's Azure account here:      
-https://c4sfdatascience.blob.core.windows.net/sba/FOIA%20-%20504%20(FY1991-Present).xlsx
-
-Data Dictionary https://files.slack.com/files-pri/T0431NL8C-F4FQLCV42/download/7a_504_foia_data_dictionary.xlsx
-
-Information about the cities https://files.slack.com/files-pri/T0431NL8C-F4VHWSM28/download/0912_-_city_profiles.xlsx
+3. Data Dictionary https://files.slack.com/files-pri/T0431NL8C-F4FQLCV42/download/7a_504_foia_data_dictionary.xlsx
+4. Information about the cities https://files.slack.com/files-pri/T0431NL8C-F4VHWSM28/download/0912_-_city_profiles.xlsx
 
 
 # Tools used for data exploration, processing, and visualization
