@@ -7,7 +7,7 @@ https://modeanalytics.com/editor/code_for_san_francisco
 
 ### Data Sources:
 
-    1. This csv contains the San Francisco-area loans from the original FOIA (Freedom of Information Act) data that is cleared for public use: https://files.slack.com/files-pri/T0431NL8C-F5P0JLZHB/download/foia_sfdo_504_7a.csv
+    1. This csv contains the San Francisco-area loans from the original FOIA (Freedom of Information Act) data that is cleared for public use: https://files.slack.com/files-pri/T0431NL8C-F5P0JLZHB/download/foia_sfdo_504_7a.csv This data is updated quarterly.
 
     2. The FOIA data on the SBA site is divided by loan type and years but also covers a larger geographical area: 
 
