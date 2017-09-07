@@ -6,6 +6,7 @@ import requests
 
 import re
 
+import pandas as pd
 
 def get_congressional_dist_by_addr(df):
     """
@@ -17,6 +18,12 @@ def get_congressional_dist_by_addr(df):
 
     url = 'https://www.googleapis.com/civicinfo/v2/representatives'
 
+    if df is None or df.empty:
+        print("Incoming dataframe is empty.")
+        return
+
+    df['cong_dist'] = None
+    
     for i in range(len(df)):
         # Each call needs the API key and the address to search
         address = df.loc[i]['full_address']
@@ -40,9 +47,10 @@ def get_congressional_dist_by_addr(df):
                         st = res.group(1)
                         dist = res.group(2)
                         dist_txt = st + '-' + dist
-                        df.loc[i, 'civic_dist'] = dist_txt
+                        df.loc[i, 'cong_dist'] = dist_txt
 
         except:
+            # Some addresses fail (probably format issues), just skip those.
             pass
 
-    return df
+    return pd.DataFrame(data=df, index=None, columns=['sba_sfdo_id', 'cong_dist'])

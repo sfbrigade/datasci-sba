@@ -36,10 +36,6 @@ def get_yelp_fields(dbm):
     Keyword Args:
         dbm: DBManager object
     """
-    if os.environ.get('YELP_ID') is None or os.environ.get('YELP_SECRET') is None:
-        print("Skipping Yelp, authorization envars not defined.")
-        return None
-
     print('Getting Yelp ratings.')
     sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
     sfdo = sfdo[[
@@ -54,6 +50,10 @@ def get_yelp_fields(dbm):
                            + sfdo['borr_city'] + ', '\
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
+    if os.environ.get('YELP_ID') is None or os.environ.get('YELP_SECRET') is None:
+        print("Skipping Yelp, authorization envars not defined.")
+        return sfdo
+
     return yr.get_yelp_ratings(sfdo)
 
 
@@ -67,21 +67,21 @@ def get_geocoded_fields(dbm):
     pass
 
 
-def get_congressional_districts(sfdo):
+def get_congressional_districts(dbm):
     """
     Get Congressional Districts fields using helper modules defined in api_calls
 
     Keyword Args:
         dbm: DBManager object
-    """
-    if os.environ.get('GOOGLE_STATIC_MAPS_API') is None:
-        print("Skipping Google Civic, API key not set.")
-        return None
 
-    print('Getting Congressional Districts from Google Civic Info API')
+    Returns:
     
+    """
+    print('Getting Congressional Districts from Google Civic Info API')
+    sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
     sfdo = sfdo[[
         'sba_sfdo_id',
+        'borr_name',
         'borr_street',
         'borr_city',
         'borr_state',
@@ -91,6 +91,10 @@ def get_congressional_districts(sfdo):
                            + sfdo['borr_city'] + ', '\
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
+    if os.environ.get('GOOGLEAPI') is None:
+        print("Skipping Google Civic, API key not set.")
+        return pd.DataFrame(data=sfdo, index=None, columns=['sba_sfdo_id', 'cong_dist'])
+
     return cd.get_congressional_dist_by_addr(sfdo)
 
 
@@ -99,14 +103,15 @@ def main():
     print('Getting Data from External APIs (Yelp, Google Civic Info, etc.')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-    sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
-
+    if dbm is None:
+        print("Could not connect to database.")
+        return
+    
     sfdo_yelp = get_yelp_fields(dbm)
-    sfdo_congressional = get_congressional_districts(sfdo)
-
-    # TODO - need to join sfdp_yelp and sfdo_congressional before writing to DB.
+    sfdo_congressional = get_congressional_districts(dbm)
+    sfdo_merge = pd.merge(sfdo_yelp, sfdo_congressional, on='sba_sfdo_id', how='left')
     dbm.write_df_table(
-        sfdo_yelp, table_name='sba_sfdo_api_calls', schema='stg_analytics')
+        sfdo_merge, table_name='sba_sfdo_api_calls', schema='stg_analytics')
 
 
 if __name__ == '__main__':
