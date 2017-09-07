@@ -93,7 +93,7 @@ def get_congressional_districts(dbm):
                            + sfdo['borr_zip']
     if os.environ.get('GOOGLEAPI') is None:
         print("Skipping Google Civic, API key not set.")
-        return pd.DataFrame(data=sfdo, index=None, columns=['sba_sfdo_id', 'cong_dist'])
+        return pd.DataFrame(data=sfdo, index=None, columns=['sba_sfdo_id', 'congressional_district_google_civic'])
 
     return cd.get_congressional_dist_by_addr(sfdo)
 
