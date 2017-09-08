@@ -65,6 +65,9 @@ const initialState = {
     [FEATURE_TYPE_BUSINESS]: {
       'rating': {
         userReadableName: 'Rating'
+      },
+      'numEmployees': {
+        userReadableName: 'Number of Employees'
       }
     }
   }
