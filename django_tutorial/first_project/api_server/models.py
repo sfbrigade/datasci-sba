@@ -327,3 +327,53 @@ class SbaFoia7A2010Present(models.Model):
     class Meta:
         managed = False
         db_table = 'sba__foia_7a_2010_present'
+
+class SbaSfdo(models.Model):
+    id = models.AutoField(primary_key=True, auto_created=True)
+    program = models.TextField(blank=True, null=True)
+    borr_name = models.TextField(blank=True, null=True)
+    borr_street = models.TextField(blank=True, null=True)
+    borr_city = models.TextField(blank=True, null=True)
+    borr_state = models.TextField(blank=True, null=True)
+    borr_zip = models.TextField(blank=True, null=True)
+    gross_approval = models.BigIntegerField(blank=True, null=True)
+    approval_date = models.DateTimeField(blank=True, null=True)
+    approval_fiscal_year = models.BigIntegerField(blank=True, null=True)
+    first_disbursement_date = models.DateTimeField(blank=True, null=True)
+    delivery_method = models.TextField(blank=True, null=True)
+    subprogram_description = models.TextField(blank=True, null=True)
+    initial_interest_rate = models.FloatField(blank=True, null=True)
+    term_in_months = models.BigIntegerField(blank=True, null=True)
+    naics_code = models.FloatField(blank=True, null=True)
+    naics_description = models.TextField(blank=True, null=True)
+    franchise_code = models.TextField(blank=True, null=True)
+    franchise_name = models.TextField(blank=True, null=True)
+    project_county = models.TextField(blank=True, null=True)
+    project_state = models.TextField(blank=True, null=True)
+    sba_district_office = models.TextField(blank=True, null=True)
+    congressional_district = models.FloatField(blank=True, null=True)
+    business_type = models.TextField(blank=True, null=True)
+    loan_status = models.TextField(blank=True, null=True)
+    chargeoff_date = models.DateTimeField(blank=True, null=True)
+    gross_chargeoff_amount = models.BigIntegerField(blank=True, null=True)
+    jobs_supported = models.BigIntegerField(blank=True, null=True)
+    cdc_name = models.TextField(blank=True, null=True)
+    cdc_street = models.TextField(blank=True, null=True)
+    cdc_city = models.TextField(blank=True, null=True)
+    cdc_state = models.TextField(blank=True, null=True)
+    cdc_zip = models.TextField(blank=True, null=True)
+    third_party_lender_name = models.TextField(blank=True, null=True)
+    third_party_lender_city = models.TextField(blank=True, null=True)
+    third_party_lender_state = models.TextField(blank=True, null=True)
+    third_party_dollars = models.FloatField(blank=True, null=True)
+    bank_name = models.TextField(blank=True, null=True)
+    bank_street = models.TextField(blank=True, null=True)
+    bank_city = models.TextField(blank=True, null=True)
+    bank_state = models.TextField(blank=True, null=True)
+    bank_zip = models.TextField(blank=True, null=True)
+    sba_guaranteed_approval = models.BigIntegerField(blank=True, null=True)
+    revolver_status = models.BigIntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'sba_sfdo'
