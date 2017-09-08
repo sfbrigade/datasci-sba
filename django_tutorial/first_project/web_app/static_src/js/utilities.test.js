@@ -37,7 +37,7 @@ describe('round', () => {
 describe('getOrderedFields', () => {
 	it('should give field keys, in order by readable name',() => {
 		expect(fromUtilities.getOrderedFields()).toEqual([
-			"total_small_bus", "sba_per_small_bus", "total_sba", "total_7a", "total_504", "mean_agi", "loan_7a_per_small_bus", "loan_504_per_small_bus"
+			"foo", "total_small_bus", "sba_per_small_bus", "total_sba", "total_7a", "total_504", "mean_agi", "loan_7a_per_small_bus", "loan_504_per_small_bus"
 		])
 	})
 })
