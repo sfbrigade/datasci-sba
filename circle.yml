@@ -3,8 +3,6 @@ machine:
     version: 3.6.2
   environment:
     POSTGRES_TESTSERVER: postgresql:///ubuntu
-  node:
-    version: 4.2.6
 
 dependencies:
   override:
