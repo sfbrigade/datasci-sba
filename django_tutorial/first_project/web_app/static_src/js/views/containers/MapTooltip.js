@@ -23,7 +23,7 @@ function MapTooltip(props) {
           {props.featureType === FEATURE_TYPE_BUSINESS && 
             <tr>
               <td>Business:</td>
-              <td>{props.mousedFeature.name}</td>
+              <td>{props.mousedFeature.borr_name}</td>
             </tr>
           }
 	      </thead>

@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
+import random
+
 from api_server.models import SbaRegionLevel, SbaSfdo
 
 
@@ -18,9 +20,17 @@ def regions(request):
 
 
 def businesses(request):
-	"""Another API endpoint"""
+	""" API endpoint returning list of businesses that SBA has loaned to"""
 	result = {
 	    'status': 'success',
-	    'data': [x for x in SbaSfdo.objects.values('id', 'borr_name')]
+	    'data': [addDummyData(x) for x in SbaSfdo.objects.values('id', 'borr_name')]
 	}
 	return JsonResponse(result)
+
+
+def addDummyData(dict):
+    """ HACK: adding random lat/long and yelp rating, until those pull requests are merged and we can use real data"""
+    dict['latitude'] = 37.2 + 1*random.random()
+    dict['longitude'] = -122.5 + 1*random.random()
+    dict['yelp_rating'] = 5*random.random()
+    return dict

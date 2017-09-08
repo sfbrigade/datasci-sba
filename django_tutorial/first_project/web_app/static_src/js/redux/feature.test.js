@@ -115,7 +115,7 @@ describe('feature selectors', () => {
 
     const stateWithFeatureTypeBusiness = {...state, featureType: 'business'}
     expect(fromFeature.getOrderedFieldKeys(stateWithFeatureTypeBusiness)).toEqual([
-      "rating"
+      "yelp_rating"
     ])
   })
 })

@@ -59,7 +59,7 @@ class GoogleMap extends React.Component {
           for(let id in this.props.features) {
             let feature = this.props.features[id]
             let marker = new google.maps.Marker({
-              position: feature.position,
+              position: {lat: feature.latitude, lng: feature.longitude},
               map: this.map,
               clickable: true,
 
