@@ -23,7 +23,7 @@ def businesses(request):
 	""" API endpoint returning list of businesses that SBA has loaned to"""
 	result = {
 	    'status': 'success',
-	    'data': [addDummyData(x) for x in SbaSfdo.objects.values('id', 'borr_name')]
+	    'data': [addDummyData(x) for x in SbaSfdo.objects.values('sba_sfdo_id', 'borr_name')]
 	}
 	return JsonResponse(result)
 
@@ -33,4 +33,5 @@ def addDummyData(dict):
     dict['latitude'] = 37.2 + 1*random.random()
     dict['longitude'] = -122.5 + 1*random.random()
     dict['yelp_rating'] = 5*random.random()
+    dict['id'] = dict['sba_sfdo_id']
     return dict

@@ -329,7 +329,7 @@ class SbaFoia7A2010Present(models.Model):
         db_table = 'sba__foia_7a_2010_present'
 
 class SbaSfdo(models.Model):
-    id = models.AutoField(primary_key=True, auto_created=True)
+    sba_sfdo_id = models.AutoField(primary_key=True, auto_created=True)
     program = models.TextField(blank=True, null=True)
     borr_name = models.TextField(blank=True, null=True)
     borr_street = models.TextField(blank=True, null=True)
