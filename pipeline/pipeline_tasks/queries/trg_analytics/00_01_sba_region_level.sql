@@ -59,7 +59,7 @@ select
   count(*) as total_sba,
   sum((sba.program = '504')::int) as total_504,
   sum((sba.program = '7A')::int) as total_7a
-from stg_analytics.sba_sfdo as sba
+from stg_analytics.sba_sfdo_all as sba
   inner join stg_analytics.sba_sfdo_zips as valid_zips
     on sba.borr_zip = valid_zips.zipcode
   left join stg_analytics.census_naics as census
