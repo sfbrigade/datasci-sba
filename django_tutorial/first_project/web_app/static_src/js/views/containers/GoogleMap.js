@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import '../../markerclusterer'
+
 import {getFeatureState, getFilterState, getColorState} from '../../redux/root'
 import {getGeometry, getFeatures, setMousedFeatureId, FEATURE_TYPE_REGION, FEATURE_TYPE_BUSINESS, getFeatureType } from '../../redux/feature'
 import {getColorField, getColorQuantiler, getNumColorQuantiles} from '../../redux/color'
@@ -36,6 +38,9 @@ class GoogleMap extends React.Component {
     })
 
     this.markers = []
+    this.markerClusterer = new MarkerClusterer(this.map, [],
+      // TODO: don't hotlink google's images, and we should probably create our own that look better
+      {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'})
   }
 
 
@@ -60,7 +65,6 @@ class GoogleMap extends React.Component {
             let feature = this.props.features[id]
             let marker = new google.maps.Marker({
               position: {lat: feature.latitude, lng: feature.longitude},
-              map: this.map,
               clickable: true,
 
               businessId: id
@@ -69,6 +73,7 @@ class GoogleMap extends React.Component {
             marker.addListener('mouseout', this.createMouseoutListener(feature))
             this.markers.push(marker)
           }
+
           break;
 
         default:
@@ -93,14 +98,13 @@ class GoogleMap extends React.Component {
       }
     })
 
-    // update all markers (ie businesses)
-    this.markers.forEach(marker => {
-      let id = marker.get('businessId')
-      let feature = this.props.features[id]
-      marker.setVisible(feature != null && this.props.filterRange[0] <= feature[this.props.filterField] && feature[this.props.filterField] <= this.props.filterRange[1])
+    // TODO: we're currently clearing and re-adding all markers; there is probably a more efficient way to do this
+    this.markerClusterer.clearMarkers()
+    this.markerClusterer.addMarkers(this.markers.filter(marker => {
+      let feature = this.props.features[marker.get('businessId')]
+      return feature != null && this.props.filterRange[0] <= feature[this.props.filterField] && feature[this.props.filterField] <= this.props.filterRange[1]
+    }))
 
-      // TODO: update color of marker per feature[this.props.colorField]
-    })
   }
 
   createMouseoverListener(feature) {
