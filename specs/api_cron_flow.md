@@ -3,8 +3,8 @@
 ## Problem Statement
 
 Some of the extern APIs that we use may not allow us to process all of
-our data records in a single batch. If we exceed some request limit in
-a short time, our access may be throttled or suspended.
+our data records in a single batch. If we send too many requests to
+the API in a short time, our access may be throttled or suspended.
 
 ## Background and Significance
 
@@ -22,7 +22,7 @@ we try to update all the ratings in a single run, the API providers
 may throttle our access.
 
 The request is to be able to chunk the output into small batches and
-schedule a cron job to update on a cycle until all records have been
+schedule a cron job to run repeatedly until all records have been
 attempted.
 
 ## Final Result
@@ -31,7 +31,7 @@ For this project, we will make changes to the script to allow it to
 run a specific set of records and then exit. We will provide the
 capability to keep track of which records have been attempted and
 which have not. We will also provide an example of a cron scheduling
-job that would permite the entire database to be refreshed over a
+job that would permit the entire database to be refreshed over a
 period of hours or days.
 
 ## Proposed Approach
@@ -44,23 +44,24 @@ could be named something like '--max_attempts'. I suggest another
 argument to force it to restart with the first record, something like
 '--reset_last_attempt'.
 
-When the API control script is done, it should update the cache or
-database table to indicate the last record it has processed. We should
-store the sba_sfdo_id value since these are unique and easily
-processed.
+When the API control script is done, it should update the cache file
+or database table to indicate the last record it has processed. We
+should use the sba_sfdo_id to track the last processed record, since
+these are unique and easily processed.
 
-The API control script will need to lookup from a cache or simple
+The API control script will need to lookup from a cache file or simple
 database table the last successful record processed. It should skip
 any records <= to the last processed key.
 
 If --max_attempts is specified, then once the script has updated that
-number of records, it should update the last processed key and exit.
+number of records, it should update the last processed key in the
+cache file or table and exit.
 
-Storing the last processed record in the cache may be overkill. It
-could be stored on the user's hard drive and overwritten when the
-script completes another iteration. It depends on whether we want
-several computers to churn through records on the same copy of the
-data or not.
+Storing the last processed record in a database table may be
+overkill. It could be stored in a cache file (text format) on the
+user's hard drive and updated when the script completes another
+iteration. Using a table would make it easier to have multiple
+computer updating the API flows in separate batches.
 
 ### Cron job
 
@@ -77,6 +78,5 @@ expose the API keys.
 Also, caution should be used when manipulating the cron file so as not
 to overwrite existing cron jobs (if any).
 
-This article has a good
-[https://www.pantz.org/software/cron/croninfo.html](cron explanation).
+This article has a good [cron explanation](https://www.pantz.org/software/cron/croninfo.html).
 
