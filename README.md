@@ -51,5 +51,8 @@ Two major challenges from office perspective
 |Zlatan   |z   |
 |Dianna Yau |dyau   |
 |Vincent La|vincela14 |
+|Chris Van Dusen |cvandusen |
 |Gregory Boyer|boyer |
 |Michael Mathews|makfan |
+|Benjamin Elias|benzo |
+|Adam Donovan|avdonovan |

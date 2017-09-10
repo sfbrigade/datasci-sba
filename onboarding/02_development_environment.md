@@ -30,26 +30,37 @@ The following below aren't absolutely necessary, but are pretty helpful.
 
 ## Setting Up Python Environment
 A useful guide to conda environments: https://conda.io/docs/using/envs.html
-The two important files are:
-1. https://github.com/sfbrigade/datasci-sba/blob/master/environment.yml
-2. https://github.com/sfbrigade/datasci-sba/blob/master/requirements.txt
 
-To clone the appropriate python environment, run
-`conda env create -f environment.yml`
-from the root directory.
+There are two important files [environment.yml](../environment.yml) and [requirements.txt](../requirements.txt). The `environment.yml` file is a file that contains all the requirements for the Anaconda environment. Remember, that Anaconda is Python centric, but not Python exclusive, which means we can use Anaconda to manage packages for other things, such as Django or even R. The `requirements.txt` file is for python specific package dependencies.
 
-See https://conda.io/docs/using/envs.html#use-environment-from-file for more information.
+1. To clone the appropriate python environment, run, from the root directory (See https://conda.io/docs/using/envs.html#use-environment-from-file for more information):
+```
+conda env create -f environment.yml
+```
 
 This should create a new conda environment called `datasci-sba` for you.
 
-To activate the conda python environment run
-`source activate datasci-sba`
+2. To activate the conda python environment run
+```
+source activate datasci-sba
+```
 
 You need to activate the python environment every time you open a new terminal window.
 
-Now, you want to install all the appropriate requirements.
+3. Install all the appropriate python requirements.
+```
+pip install -r requirements.txt
+```
 
-`pip install -r requirements.txt`
+4. Updating environments -- in the future, to update Anaconda environment, you can run
+```
+conda env update -n=datasci-sba -f=environment.yml
+```
+
+To update python requirements,
+```
+pip install -r requirements.txt
+```
 
 ## Installing Postgres locally
 Installing postgres locally is technically optional, but will be really useful if you want to use `psql` command line tool. 
