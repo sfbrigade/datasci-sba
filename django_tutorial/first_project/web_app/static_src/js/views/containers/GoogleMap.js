@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import '../../markerclusterer'
+import 'js-marker-clusterer'
 
 import {getFeatureState, getFilterState, getColorState} from '../../redux/root'
 import {getGeometry, getFeatures, setMousedFeatureId, FEATURE_TYPE_REGION, FEATURE_TYPE_BUSINESS, getFeatureType } from '../../redux/feature'
