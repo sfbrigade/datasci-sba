@@ -5,7 +5,7 @@ import React from 'react'
  */
 export default function FieldBox(props) {
   return (
-    <div>
+    <div className="testy">
       <h2>{props.title}</h2>
       <select value={props.value} onChange={e => props.onChange(e.target.value)}>
         {props.orderedFieldKeys.map( key => <option value={key} key={key}>{props.fields[key].userReadableName}</option> )}
