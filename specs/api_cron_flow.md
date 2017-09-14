@@ -121,3 +121,8 @@ to overwrite existing cron jobs (if any).
 
 This article has a good [cron explanation](https://www.pantz.org/software/cron/croninfo.html).
 
+#### Sample Cron Entries
+
+00 01 * * * /bin/bash <root>/sfdo_api_wrapper --yelp --older_than 14 --max_attempts 5000
+00 02 * * * /bin/bash <root>/sfdo_api_wrapper --civics --older_than 21 --max_attempts 10000
+00 03 * * * /bin/bash <root>/sfdp_api_wrapper --geocode --older_than 30 --max_attempts 2400
