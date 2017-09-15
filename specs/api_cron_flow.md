@@ -6,7 +6,9 @@ Some of the external APIs that we use may not allow us to process all
 of our data records in a single batch. If we send too many requests to
 the API in a short time, our access may be throttled or suspended. We
 need to be able to update the various external APIs in a reasonable
-fashion.
+fashion. In addition, some of the APIs may limit how long we can store
+the data on our servers, which necessitates refreshing the data
+periodically. This set of changes will address both needs.
 
 ## Background and Significance
 
@@ -30,6 +32,10 @@ limit.
 The request is to be able to chunk the output into small batches and
 schedule a cron job to run repeatedly until all records have been
 attempted.
+
+As a benefit, we will also be able to refresh the data periodically,
+as some of the API providers may set limits on the way we can store
+their data.
 
 ## Final Result
 
@@ -68,30 +74,30 @@ The API control script will support the following new arguments.
 At least one of the following must be specified (all three may be
 specified if desired):
 
---yelp: indicates that the script should update the Yelp entries.
+`--yelp`: indicates that the script should update the Yelp entries.
 
---civics: indicates that the script should update the Congressional
+`--civics`: indicates that the script should update the Congressional
   district entries.
 
---geocode: indicates tha the script should update the Geocode
+`--geocode`: indicates tha the script should update the Geocode
   entries. Optional, if not specified these records are unchanged.
 
 The following are optional but recomended:
 
---max_attempts <integer>: indicates the maximum number of records to
+`--max_attempts <integer>`: indicates the maximum number of records to
   select for updating. The program will select records which have
   never been updated first, and then sort others by last update
   time. If not specified, all records will be selected for update,
   subject to the --older_than value.
 
---older_than <days>: indicates that only records older than the
+`--older_than <days>`: indicates that only records older than the
   specified number of days will be selected for update. If not
   specified, then records will be selected from oldest to most recent
   subject to the --max_attempts value.
 
 The following is optional:
 
---reset_update_time: indicates that the last update time is to be
+`--reset_update_time`: indicates that the last update time is to be
   cleared, which means all records will be attempted in this and
   future executions of the API update process until each has been
   attempted.
@@ -128,3 +134,16 @@ This article has a good [cron explanation](https://www.pantz.org/software/cron/c
 00 02 * * * /bin/bash <root>/sfdo_api_wrapper --civics --older_than 21 --max_attempts 10000
 00 03 * * * /bin/bash <root>/sfdp_api_wrapper --geocode --older_than 30 --max_attempts 2400
 ```
+
+## Open Issues
+
+1. An open item is to determine the server to run this cron
+process. We hope the Azure server can support it, but we need to
+research this.
+
+2. Some of the APIs may be incomplete for the upcoming MVP delivery.
+
+3. We should document the limits of each API as it is incorporated
+into the pipeline, and the script should set that limit as the default
+chunk size. Perhaps the --max_attempts flag should be restricted to <=
+the known API limit.
