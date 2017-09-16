@@ -25,7 +25,7 @@ def _str2bool(v):
 
 def get_args():
     """ Use argparse to pare command line arguments. """
-    parser = argparse.ArgumentParser(description='Runner for API tasks')
+    parser = argparse.ArgumentParser(description='Control script to run external API tasks')
     parser.add_argument('--db_url',
                         help='Database url string to the db.',
                         type=str,
@@ -47,7 +47,7 @@ def get_args():
                         default=False,
                         help='Reset the API update time on all records')
 
-    api_selection = parser.add_argument_group('API Selection')
+    api_selection = parser.add_argument_group('API Selection', 'At least one API Selection is required, but all may be selected.')
     api_selection.add_argument('--yelp',
                                type=_str2bool,
                                nargs='?',
@@ -67,9 +67,12 @@ def get_args():
                                default=False,
                                help='Run the Geocode API process',
                                required=False)
+    #parser.print_help()
     args = parser.parse_args()
     if not (args.civics or args.geocode or args.yelp):
-        parser.error("No APIs selected to run.")
+        print("No APIs selected to run.")
+        parser.print_help()
+        parser.exit(2);
     return args
 
 def main():
