@@ -26,3 +26,9 @@ To understand what this is doing:
 2. `--db_url`: is the option name for the database URL. We read this in using the `argparse` module in `pipeline_runner.py`.
 3. `$SBA_DWH`: the environment variable for our database URL. This assumes you've set the database URL as an environment variable. If you have trouble doing this, or if you need to know our database credentials, please ping the #datasci-sba slack channel.
 
+## Open Issues
+
+The external API calls should be removed from the pipeline_runner
+flow, as they have limits on the number of calls they can
+support. Mike will remove this when the batch control scripts are
+completed.
