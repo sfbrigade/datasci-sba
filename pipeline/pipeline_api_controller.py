@@ -98,49 +98,44 @@ def main():
         older_than = args.older_than
     else:
         older_than = -1
-    print("Should process {} records from those older than {} days. Will {}reset update time".format(max_records, older_than, reset_str))
     if args.yelp:
         yelp_params = yc.get_params(max_records, older_than)
-        print("Should process Yelp: max of {} records and older than {} days.".format(yelp_params["max_records"], yelp_params["max_days_to_store"]))
         yelp_ids = yc.get_record_ids(yelp_params)
-        if yelp_ids is not None and len(yelp_ids) > 0:
-            print("Should update Yelp.")
-        else:
+        if yelp_ids is None or len(yelp_ids) <= 0:
             print("Could not get Yelp records to update.")
             if yelp_ids is None:
                 print("Internal error.")
             else:
                 print("Empty record list.")
-            #return
-        # TODO: pass the yelp ID list to the script that actually calls the API and updates the data set.
+            return
+        status = yc.process_ids(yelp_ids)
+        # TODO - handle status
     if args.civics:
         civics_params = civc.get_params(max_records, older_than)
         print("Should process Google Civics: max of {} records and older than {} days.".format(civics_params["max_records"], civics_params["max_days_to_store"]))
         civics_ids = civc.get_record_ids(yelp_params)
-        if civics_ids is not None and len(civics_ids) > 0:
-            print("Should update Google Civics.")
-        else:
+        if civics_ids is None or len(civics_ids) <= 0:
             print("Could not get Google Civics records to update.")
             if civics_ids is None:
                 print("Internal error.")
             else:
                 print("Empty record list.")
-            #return
-        # TODO: pass the Google Civics ID list to the script that actually calls the API and updates the data set.
+            return
+        status = civc.process_ids(civics_ids)
+        # TODO - handle status
     if args.geocode:
         geocode_params = geoc.get_params(max_records, older_than)
         print("Should process Geocode: max of {} records and older than {} days.".format(geocode_params["max_records"], geocode_params["max_days_to_store"]))
         geocode_ids = geoc.get_record_ids(yelp_params)
-        if geocode_ids is not None and len(geocode_ids) > 0:
-            print("Should update Geocode.")
-        else:
+        if geocode_ids is None or len(geocode_ids) <= 0:
             print("Could not get Geocode records to update.")
             if geocode_ids is None:
                 print("Internal error.")
             else:
                 print("Empty record list.")
-            #return
-        # TODO: pass the Geocode ID list to the script that actually calls the API and updates the data set.
+            return
+        status = geoc.process_ids(geocode_ids)
+        # TODO - handle status
 
 
 # LOTS STILL TO DO, primarily need to factor out the APIs so they can

@@ -12,5 +12,17 @@ def get_params(max_records, older_than):
 
 
 def get_record_ids(params):
+    max_records = params["max_records"]
+    max_days_to_store = params["max_days_to_store"]
+    print("Return up to {} records that have not been updated in at least {} days.".format(max_records, max_days_to_store))
+    # TODO - connect to the DB, needs the credentials
     records = []
+    for i in range(1, max_records + 1):
+        records.append(i)
     return records
+
+
+def process_ids(records):
+    # TODO - call the API and update the data set based on the IDs provided.
+    print("Enter process_ids for {} records.".format(len(records)))
+    return None
