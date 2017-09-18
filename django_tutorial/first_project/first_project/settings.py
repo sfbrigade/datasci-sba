@@ -92,7 +92,7 @@ DATABASES = {
         'HOST': PARSED_DBURI.hostname,
         'PORT': '5432',
         'OPTIONS': {
-            'options': '-c search_path=data_ingest,stg_analytics,trg_analytics',
+            'options': '-c search_path=data_ingest,stg_analytics,trg_analytics,sandbox',
             'sslmode': 'require',
         }
     }

@@ -1,4 +1,4 @@
-from django.db.models import Avg
+from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
@@ -20,18 +20,38 @@ def regions(request):
 
 
 def businesses(request):
-	""" API endpoint returning list of businesses that SBA has loaned to"""
-	result = {
-	    'status': 'success',
-	    'data': [addDummyData(x) for x in SbaSfdo.objects.values('sba_sfdo_id', 'borr_name')]
-	}
-	return JsonResponse(result)
+    """ API endpoint returning list of businesses that SBA has loaned to"""
 
+    # We basically want to join the sba_sfdo table with sba__google_places_loan_data.
+    # But for the MVP, since we're keeping the latter table separate in the 'sandbox' schema and there's
+    # no foreign key connecting the two tables, we can't easily use the django model, so do a raw query instead
+    with connection.cursor() as cursor:
+        cursor.execute("""SELECT
+            sba_sfdo.sba_sfdo_id AS id,
+            sba_sfdo.borr_name,
+            sba_sfdo.borr_city,
+            sba_sfdo.borr_zip,
+            sba_sfdo.delivery_method,
+            sba_sfdo.project_county,
+            sba_sfdo.congressional_district,
+            sba_sfdo.jobs_supported,
+            sba_sfdo.gross_approval,
+            sba__google_places_loan_data.dstklatitude AS latitude,
+            sba__google_places_loan_data.dstklong AS longitude,
+            sba__google_places_loan_data.googlerating AS google_rating,
+            extract(year from first_disbursement_date) AS year
+            FROM sba_sfdo
+            LEFT JOIN sba__google_places_loan_data
+            ON UPPER(sba_sfdo.borr_name) = UPPER(sba__google_places_loan_data.borrname)
+        """)
 
-def addDummyData(dict):
-    """ HACK: adding random lat/long and yelp rating, until those pull requests are merged and we can use real data"""
-    dict['latitude'] = 37.2 + 1*random.random()
-    dict['longitude'] = -122.5 + 1*random.random()
-    dict['yelp_rating'] = 5*random.random()
-    dict['id'] = dict['sba_sfdo_id']
-    return dict
+        # if we just did 'rows = cursor.fetchall()' each row would be an array; use the cursor's description
+        # to build a dict from each row instead
+        desc = cursor.description
+        rows = [ dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall() ]
+
+    result = {
+        'status': 'success',
+        'data': rows
+    }
+    return JsonResponse(result)

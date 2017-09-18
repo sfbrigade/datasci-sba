@@ -63,8 +63,8 @@ const initialState = {
       }
     },
     [FEATURE_TYPE_BUSINESS]: {
-      'yelp_rating': {
-        userReadableName: 'Yelp Rating'
+      'google_rating': {
+        userReadableName: 'Google Rating'
       }
     }
   }

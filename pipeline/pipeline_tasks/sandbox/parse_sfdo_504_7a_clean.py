@@ -31,9 +31,9 @@ def load_data(dbm, direc):
         dbm: DBManager object
         direc: Directory where files are
     """
-    df = pd.read_csv(os.path.join(direc, 'SFDO_504_7A-clean.csv'))
+    df = pd.read_csv(os.path.join(direc, 'sba_google_places_loan_data.csv'))
     dbm.write_df_table(
-        df, table_name='sba__sfdo_504_7a_clean', schema='sandbox')
+        df, table_name='sba__google_places_loan_data', schema='sandbox')
 
 
 def main():

@@ -63,15 +63,17 @@ class GoogleMap extends React.Component {
         case FEATURE_TYPE_BUSINESS:
           for(let id in this.props.features) {
             let feature = this.props.features[id]
-            let marker = new google.maps.Marker({
-              position: {lat: feature.latitude, lng: feature.longitude},
-              clickable: true,
+            if(feature.latitude && feature.longitude) {
+              let marker = new google.maps.Marker({
+                position: {lat: feature.latitude, lng: feature.longitude},
+                clickable: true,
 
-              businessId: id
-            })
-            marker.addListener('mouseover', this.createMouseoverListener(feature))
-            marker.addListener('mouseout', this.createMouseoutListener(feature))
-            this.markers.push(marker)
+                businessId: id
+              })
+              marker.addListener('mouseover', this.createMouseoverListener(feature))
+              marker.addListener('mouseout', this.createMouseoutListener(feature))
+              this.markers.push(marker)
+            }
           }
 
           break;
