@@ -111,10 +111,3 @@ None yet; we should work on getting Selenium or someting similar set up for this
 ### API Server Tests
 
 None yet, should be added once we set up Django REST framework.
-
-### Style Guides
-JavaScript: [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
-React: [Airbnb React Style Guide](https://github.com/airbnb/javascript/tree/master/react)
-CSS & Sass: [Airbnb CSS & Sass Style Guide](https://github.com/airbnb/css)
-
-

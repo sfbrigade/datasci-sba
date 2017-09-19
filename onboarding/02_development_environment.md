@@ -96,7 +96,15 @@ Here are the technologies used in the project, along with some tutorials if you'
 | Yarn & Webpack & Babel & Jest | | Build toolchain & testing for JS | |
 | Redux | 3.7.2 | Clientside state management | [Docs](http://redux.js.org/), [Good introductory videos](https://egghead.io/courses/getting-started-with-redux) |
 | React | 15.6.1 | Clientside view rendering | [Tutorial](https://facebook.github.io/react/tutorial/tutorial.html) |
- 
+
+## Style Guides
+
+JavaScript: [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
+React: [Airbnb React Style Guide](https://github.com/airbnb/javascript/tree/master/react)
+CSS & Sass: [Airbnb CSS & Sass Style Guide](https://github.com/airbnb/css)
+
+
+
 | Previous | Next |
 |:---------|-----:|
 | [Exploring the Data](./01_exploring_the_data.md) | [Tips and Tricks](./03_tips_and_tricks.md) |
