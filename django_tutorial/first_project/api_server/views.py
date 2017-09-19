@@ -5,7 +5,7 @@ from django.views.decorators.http import require_GET
 
 import random
 
-from api_server.models import SbaRegionLevel, SbaSfdo
+from api_server.models import SbaRegionLevel, SbaSfdo, SbaGoogleApiData
 
 
 @require_GET
@@ -21,37 +21,34 @@ def regions(request):
 
 def businesses(request):
     """ API endpoint returning list of businesses that SBA has loaned to"""
-
-    # We basically want to join the sba_sfdo table with sba__google_places_loan_data.
-    # But for the MVP, since we're keeping the latter table separate in the 'sandbox' schema and there's
-    # no foreign key connecting the two tables, we can't easily use the django model, so do a raw query instead
-    with connection.cursor() as cursor:
-        cursor.execute("""SELECT
-            sba_sfdo.sba_sfdo_id AS id,
-            sba_sfdo.borr_name,
-            sba_sfdo.borr_city,
-            sba_sfdo.borr_zip,
-            sba_sfdo.delivery_method,
-            sba_sfdo.project_county,
-            sba_sfdo.congressional_district,
-            sba_sfdo.jobs_supported,
-            sba_sfdo.gross_approval,
-            sba__google_places_loan_data.dstklatitude AS latitude,
-            sba__google_places_loan_data.dstklong AS longitude,
-            sba__google_places_loan_data.googlerating AS google_rating,
-            extract(year from first_disbursement_date) AS year
-            FROM sba_sfdo
-            LEFT JOIN sba__google_places_loan_data
-            ON UPPER(sba_sfdo.borr_name) = UPPER(sba__google_places_loan_data.borrname)
-        """)
-
-        # if we just did 'rows = cursor.fetchall()' each row would be an array; use the cursor's description
-        # to build a dict from each row instead
-        desc = cursor.description
-        rows = [ dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall() ]
-
+    rows = [serialize(row) for row in SbaGoogleApiData.objects.select_related('sba_sfdo').all()]
     result = {
         'status': 'success',
         'data': rows
     }
     return JsonResponse(result)
+
+
+def serialize(sba_google_api_data):
+    """Returns a dict serialization of the given object, including only fields the client needs"""
+    result = {}
+
+    # we're basically combining fields from 2 different joined tables, and massaging the field names
+    # a bit to match what our API definition expects.
+    # TODO: when we add in Django REST framework, this should be handled by a real serializer
+
+    # copy some keys from the sba_google_api_data table
+    for key in ['latitude', 'longitude', 'google_rating']:
+        result[key] = getattr(sba_google_api_data, key)
+
+    # copy some keys from the sba_sfdo table
+    for key in ['borr_name', 'borr_city', 'borr_zip', 'delivery_method', 'project_county',
+                'congressional_district', 'jobs_supported', 'gross_approval']:
+        result[key] = getattr(sba_google_api_data.sba_sfdo, key)
+
+    # a couple special cases for fields that need to be rename or run some function on the data
+    result['id'] = sba_google_api_data.sba_sfdo.sba_sfdo_id
+    if sba_google_api_data.sba_sfdo.first_disbursement_date is not None:
+        result['year'] = sba_google_api_data.sba_sfdo.first_disbursement_date.year
+
+    return result
