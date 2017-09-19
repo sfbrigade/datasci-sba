@@ -102,6 +102,7 @@ Here are the technologies used in the project, along with some tutorials if you'
 JavaScript: [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
 React: [Airbnb React Style Guide](https://github.com/airbnb/javascript/tree/master/react)
 CSS & Sass: [Airbnb CSS & Sass Style Guide](https://github.com/airbnb/css)
+Python: [PEP8](https://www.python.org/dev/peps/pep-0008/)
 
 
 
