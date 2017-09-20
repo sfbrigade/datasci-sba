@@ -78,7 +78,7 @@ class Metrics extends React.Component {
           onSubmit={() => this.handleSubmit()}
           />
 
-        {this.props.filteredBusinesses.length > 0 &&
+        {Object.keys(this.props.filteredBusinesses).length > 0 &&
           <div>
             <MetricsTextSection
               selectedRegionType={this.props.selectedRegionType}
@@ -94,7 +94,7 @@ class Metrics extends React.Component {
           </div>
         }
 
-        {this.props.filteredBusinesses.length == 0 &&
+        {Object.keys(this.props.filteredBusinesses).length == 0 &&
           <div>No results found</div>
         }
       </div>

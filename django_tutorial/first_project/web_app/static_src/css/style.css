@@ -1,4 +1,4 @@
-html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0;  }
 
 .nicebox {
   position: absolute;
@@ -57,3 +57,6 @@ html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0; overfl
   margin-left: 30px;
   width: 200px;
 }
+
+
+

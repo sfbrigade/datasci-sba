@@ -106,7 +106,8 @@ export const isValidField         = (state, field) => getFields(state)[field] !=
 
 
 /**
- * @return {Object[]} all the businesses that match the selected metrics filters
+ * @return {Object} all the businesses that match the selected metrics filters, as a map
+ * from id to business JSON object
  */
 export const getFilteredBusinesses = createSelector(
   getFeatureType,
@@ -116,9 +117,17 @@ export const getFilteredBusinesses = createSelector(
   getSelectedYear,
   (featureType, features, selectedRegionType, selectedRegion, selectedYear) => {
     if(featureType !== FEATURE_TYPE_BUSINESS)
-      return []
-    else return Object.values(features).filter(business => business[selectedRegionType] == selectedRegion
-      && (!selectedYear || business.year >= 2017-selectedYear))
+      return {}
+    else {
+      const filter = feature => feature[selectedRegionType] == selectedRegion && (!selectedYear || feature.year >= 2017-selectedYear)
+      let result = {}
+      for(let id in features) {
+        if(filter(features[id])) {
+          result[id] = features[id]
+        }
+      }
+      return result
+    }
   })
 
 /**

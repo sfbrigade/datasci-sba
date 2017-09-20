@@ -13,7 +13,7 @@ export default function MetricsTableSection(props) {
           <td>Google Rating</td>
         </tr>
         {/* TODO: do a real sortable table, don't just slice */}
-        {props.filteredBusinesses.slice(0, 10).map((business, index) => 
+        {Object.values(props.filteredBusinesses).slice(0, 10).map((business, index) => 
           <tr key={index}>
             <td>{index+1}</td>
             <td>{business.borr_name}</td>

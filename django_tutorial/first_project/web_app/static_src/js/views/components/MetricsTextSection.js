@@ -3,10 +3,10 @@ import {connect} from 'react-redux'
 
 
 export default function MetricsTextSection(props) {
-
-  let numBusinesses = props.filteredBusinesses.length
-  let numEmployees = props.filteredBusinesses.reduce((total, business) => business.jobs_supported + total, 0)
-  let capitalDelivered = props.filteredBusinesses.reduce((total, business) => business.gross_approval + total, 0)
+  let filteredBusinessesAsArray = Object.values(props.filteredBusinesses)
+  let numBusinesses = filteredBusinessesAsArray.length
+  let numEmployees = filteredBusinessesAsArray.reduce((total, business) => business.jobs_supported + total, 0)
+  let capitalDelivered = filteredBusinessesAsArray.reduce((total, business) => business.gross_approval + total, 0)
 
   return (
     <div>
