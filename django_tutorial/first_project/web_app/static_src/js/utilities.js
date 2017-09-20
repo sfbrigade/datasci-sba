@@ -62,44 +62,6 @@ export function round(number, precision=0) {
 
 
 
-// keeps track of which fields we let the user select for coloring & filtering
-export const fields = {
-  'sba_per_small_bus': {
-    userReadableName: 'Total SBA Loans per Small Business'
-  },
-  'loan_504_per_small_bus': {
-    userReadableName: '504 Loans per Small Biz'
-  },
-  'loan_7a_per_small_bus': {
-    userReadableName: '7a Loans per Small Biz'
-  },
-  'mean_agi': {
-    userReadableName: 'Mean AGI'
-  },
-  'total_7a': {
-    userReadableName: 'Total 7a Loans'
-  },
-  'total_504': {
-    userReadableName: 'Total 504 Loans'
-  },
-  'total_sba': {
-    userReadableName: 'Total SBA Loans'
-  },
-  'total_small_bus': {
-    userReadableName: 'Total Small Businesses'
-  }
-}
-
-/**
- * @return {String[]} all the keys in the 'fields' object, ordered by their user-readable names
- */
-export function getOrderedFields() {
-  let orderedFields = Object.keys(fields)
-  orderedFields.sort((a, b) => fields[a].userReadableName < fields[b].userReadableName)
-  return orderedFields
-}
-
-
 // export function liftSelectors(selectors, key) {
 //   Object.assign({}, ...Object.keys(selectors).map(k => ({[k]: function() {
 //     return fs[k](arguments[0][key], ...Array.prototype.slice.call(arguments, 1))

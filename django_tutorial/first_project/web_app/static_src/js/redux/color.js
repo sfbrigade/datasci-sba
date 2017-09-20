@@ -1,4 +1,4 @@
-import { getRegions, SET_DISTRICT_REGION_TYPE_AND_REGIONS } from './regions'
+import { getFeatures, SET_DISTRICT_REGION_TYPE_AND_FEATURES, isValidField, getOrderedFieldKeys } from './feature'
 import { Quantiler } from '../utilities'
 
 /*
@@ -39,20 +39,23 @@ export function setColorField(colorField) {
 ////////////////// Reducers //////////////////////
 
 /**
- * Note that unlike a normal reducer, this reducer also accepts an optional regionState
- * param since the color quantiler state depends on the region state
+ * Note that unlike a normal reducer, this reducer also accepts an optional featureState
+ * param since the color quantiler state depends on the feature state
  */
-export default function colorReducer(state=initialState, action={}, regionState) {
-  const {type, colorField=getColorField(state)} = action
+export default function colorReducer(state=initialState, action={}, featureState) {
+  let {type, colorField=getColorField(state)} = action
   switch(type) {
     case SET_COLOR_FIELD:
-    case SET_DISTRICT_REGION_TYPE_AND_REGIONS:
-      const regions = regionState===undefined ? [] : Object.values(getRegions(regionState))
+    case SET_DISTRICT_REGION_TYPE_AND_FEATURES:
+      const features = featureState===undefined ? [] : Object.values(getFeatures(featureState))
+      if(!isValidField(featureState, colorField)) {
+        colorField = getOrderedFieldKeys(featureState)[0]
+      }
       return {
         ...state,
         colorField,
         colorQuantiler: new Quantiler(
-          regions.map(region => region[colorField]),
+          features.map(feature => feature[colorField]),
           getNumColorQuantiles(state))
       }
 

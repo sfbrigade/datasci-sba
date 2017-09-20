@@ -5,8 +5,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 
-import rootReducer, { getRegionState } from './redux/root'
-import { fetchRegions } from './redux/regions'
+import rootReducer, { getFeatureState } from './redux/root'
+import { fetchFeatures } from './redux/feature'
 
 import App from './views/containers/App'
 
@@ -26,6 +26,6 @@ window.init = function() {
   )
 
   // kick off an action which sets the district and region types to their defaults and loads the region data
-  store.dispatch(fetchRegions(getRegionState(store.getState())))
+  store.dispatch(fetchFeatures(getFeatureState(store.getState())))
 }
 

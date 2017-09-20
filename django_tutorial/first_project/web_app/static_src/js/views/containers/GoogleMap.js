@@ -1,8 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import {getRegionState, getFilterState, getColorState} from '../../redux/root'
-import {getGeometry, getRegions, setMousedRegionId} from '../../redux/regions'
+import 'js-marker-clusterer'
+
+import {getFeatureState, getFilterState, getColorState} from '../../redux/root'
+import {getGeometry, getFeatures, setMousedFeatureId, FEATURE_TYPE_REGION, FEATURE_TYPE_BUSINESS, getFeatureType } from '../../redux/feature'
 import {getColorField, getColorQuantiler, getNumColorQuantiles} from '../../redux/color'
 import {getFilterField, getFilterRange} from '../../redux/filter'
 
@@ -10,7 +12,7 @@ import { calculateColor } from '../../utilities'
 
 
 /**
- * React component that renders the map with colored regions.  Basically a wrapper around the GoogleMap API.
+ * React component that renders the map with colored features.  Basically a wrapper around the GoogleMap API.
  * 
  * We don't really use React's lifecycle here; instead we depend on GoogleMap's internal update cycle.
  * Thus our React render method is just a div, and the real work happens in componentDidMount (for
@@ -34,6 +36,11 @@ class GoogleMap extends React.Component {
       e.feature.setProperty('state', 'normal')
       this.props.onMouseover(undefined)
     })
+
+    this.markers = []
+    this.markerClusterer = new MarkerClusterer(this.map, [],
+      // TODO: don't hotlink google's images, and we should probably create our own that look better
+      {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'})
   }
 
 
@@ -43,28 +50,70 @@ class GoogleMap extends React.Component {
   componentDidUpdate(prevProps) {
 
     // for performance reasons, only update the features' geometry if it has changed
-    if(prevProps.geometry !== this.props.geometry) {
+    if(prevProps.geometry !== this.props.geometry || prevProps.featureType !== this.props.featureType) {
       this.map.data.forEach((feature) => this.map.data.remove(feature))
-      this.map.data.addGeoJson(this.props.geometry, { idPropertyName: 'GEOID10' })
+      this.markers.forEach(marker => marker.setMap(null))
+      this.markers.length = 0
+
+      switch(this.props.featureType) {
+        case FEATURE_TYPE_REGION:
+          this.map.data.addGeoJson(this.props.geometry, { idPropertyName: 'GEOID10' })
+          break;
+
+        case FEATURE_TYPE_BUSINESS:
+          for(let id in this.props.features) {
+            let feature = this.props.features[id]
+            let marker = new google.maps.Marker({
+              position: {lat: feature.latitude, lng: feature.longitude},
+              clickable: true,
+
+              businessId: id
+            })
+            marker.addListener('mouseover', this.createMouseoverListener(feature))
+            marker.addListener('mouseout', this.createMouseoutListener(feature))
+            this.markers.push(marker)
+          }
+
+          break;
+
+        default:
+          break;
+      }
     }
 
-    // recolor all features
-    this.map.data.forEach((feature) => {
 
-      let region = this.props.regions[feature.getId()]
-      if(region) {
-        const colorVariable = region[this.props.colorField]
-        const filterVariable = region[this.props.filterField]
+    // update all map features (eg zip code regions)
+    this.map.data.forEach((mapFeature) => {
+
+      let dataFeature = this.props.features[mapFeature.getId()]
+      if(dataFeature) {
+        const colorVariable = dataFeature[this.props.colorField]
+        const filterVariable = dataFeature[this.props.filterField]
 
         if(this.props.filterRange[0] <= filterVariable && filterVariable <= this.props.filterRange[1]) {
-          feature.setProperty('colorVariable', colorVariable);    
+          mapFeature.setProperty('colorVariable', colorVariable);    
         } else {
-          feature.setProperty('colorVariable', undefined)
+          mapFeature.setProperty('colorVariable', undefined)
         }
       }
     })
+
+    // TODO: we're currently clearing and re-adding all markers; there is probably a more efficient way to do this
+    this.markerClusterer.clearMarkers()
+    this.markerClusterer.addMarkers(this.markers.filter(marker => {
+      let feature = this.props.features[marker.get('businessId')]
+      return feature != null && this.props.filterRange[0] <= feature[this.props.filterField] && feature[this.props.filterField] <= this.props.filterRange[1]
+    }))
+
   }
 
+  createMouseoverListener(feature) {
+    return () => this.props.onMouseover(feature.id)
+  }
+
+  createMouseoutListener(feature) {
+    return () => this.props.onMouseover(undefined)
+  }
 
 
   render() {
@@ -74,8 +123,9 @@ class GoogleMap extends React.Component {
 
 
 const mapStateToProps = state => ({
-  geometry: getGeometry(getRegionState(state)),
-  regions: getRegions(getRegionState(state)),
+  geometry: getGeometry(getFeatureState(state)),
+  features: getFeatures(getFeatureState(state)),
+  featureType: getFeatureType(getFeatureState(state)),
 
   colorField: getColorField(getColorState(state)),
   colorQuantiler: getColorQuantiler(getColorState(state)),
@@ -86,7 +136,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-  onMouseover: setMousedRegionId
+  onMouseover: setMousedFeatureId
 }
 
 
@@ -145,8 +195,8 @@ const googleMapOptions = {
   styles: [{
       'stylers': [{'visibility': 'off'}]
     }, {
-      'featureType': 'road.highway',
-      'stylers': [{'visibility': 'simplified'}]
+      'featureType': 'road',
+      'stylers': [{'visibility': 'on'}]
     }, {
       'featureType': 'administrative',
       'stylers': [{'visibility': 'on'}]

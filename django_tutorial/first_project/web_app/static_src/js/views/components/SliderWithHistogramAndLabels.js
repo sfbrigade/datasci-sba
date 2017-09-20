@@ -5,7 +5,7 @@ import 'rc-slider/assets/index.css';
 
 import { round } from '../../utilities'
 
-import RegionHistogram from './RegionHistogram'
+import Histogram from './Histogram'
 import SliderWithLabels from './SliderWithLabels'
 
 /**
@@ -22,7 +22,7 @@ export default class SliderWithHistogramAndLabels extends React.Component {
   render() {
     return (
       <div>
-        <RegionHistogram
+        <Histogram
           data={this.props.data}
           colorFunction={this.histogramColorFunction}
           lines={this.props.filterRange}/>
