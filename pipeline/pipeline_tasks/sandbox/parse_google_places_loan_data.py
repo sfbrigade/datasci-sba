@@ -6,7 +6,7 @@ That being said, just for the September 2017 MVP, we are going to use a "cleaned
 dataset that is already geocoded (somewhat manually) by Noah.
 
 Source of data:
-https://sfbrigade.slack.com/files/U317MMLE6/F403ZETLH/sfdo_504_7a-clean.csv
+https://files.slack.com/files-pri/T0431NL8C-F757ACNHM/download/sba_google_places_loan_data.csv
 """
 
 import argparse
@@ -31,9 +31,9 @@ def load_data(dbm, direc):
         dbm: DBManager object
         direc: Directory where files are
     """
-    df = pd.read_csv(os.path.join(direc, 'SFDO_504_7A-clean.csv'))
+    df = pd.read_csv(os.path.join(direc, 'sba_google_places_loan_data.csv'))
     dbm.write_df_table(
-        df, table_name='sba__sfdo_504_7a_clean', schema='sandbox')
+        df, table_name='sba__google_places_loan_data', schema='sandbox')
 
 
 def main():
