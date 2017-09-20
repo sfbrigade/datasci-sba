@@ -16,6 +16,9 @@ import { createSelector } from 'reselect'
 export const FEATURE_TYPE_BUSINESS = 'business'
 export const FEATURE_TYPE_REGION = 'region'
 
+// these are the possible values of the selectedRegionType field of the state;
+// note they should match the correspnding field on each business object, e.g.
+// business[REGION_TYPE_ZIP] should give the zip code of that business
 export const REGION_TYPE_ZIP = 'borr_zip'
 export const REGION_TYPE_CITY = 'borr_city'
 export const REGION_TYPE_COUNTY = 'project_county'
@@ -102,6 +105,9 @@ export const getOrderedFieldKeys   = state => {
 export const isValidField         = (state, field) => getFields(state)[field] !== undefined
 
 
+/**
+ * @return {Object[]} all the businesses that match the selected metrics filters
+ */
 export const getFilteredBusinesses = createSelector(
   getFeatureType,
   getFeatures,
@@ -115,6 +121,11 @@ export const getFilteredBusinesses = createSelector(
       && (!selectedYear || business.year >= 2017-selectedYear))
   })
 
+/**
+ * @return {String -> String[]} map from each of the region types (eg REGION_TYPE_ZIP and others) to an
+ * ordered array of the regions we actually see in the data.  For instance, the REGION_TYPE_CITY field might have
+ * ['Sacramento', 'San Francisco']
+ */
 export const getAvailableRegionsByRegionType = createSelector(
   getFeatures,
   (features) => {

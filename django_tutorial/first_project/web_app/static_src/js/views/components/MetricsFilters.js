@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 
 
 /**
- * React container showing a dropdown to choose between showing regions and businesses
+ * React component powering the dropdown selection on the Metrics tab
  */
 export default function MetricsFilters(props) {
   const onChange = e => props.onChange(e.target.name, e.target.value)

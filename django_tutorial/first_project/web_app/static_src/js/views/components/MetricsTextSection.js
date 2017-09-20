@@ -2,9 +2,6 @@ import React from 'react'
 import {connect} from 'react-redux'
 
 
-/**
- * React container showing a dropdown to choose between showing regions and businesses
- */
 export default function MetricsTextSection(props) {
 
   let numBusinesses = props.filteredBusinesses.length
