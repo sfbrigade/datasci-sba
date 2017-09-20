@@ -7,7 +7,9 @@ machine:
 dependencies:
   override:
     - pip install -q -r requirements.txt
+    - npm --prefix django_tutorial/first_project/web_app/ install
 
 test:
   override:
     - py.test
+    - npm --prefix django_tutorial/first_project/web_app/ test
