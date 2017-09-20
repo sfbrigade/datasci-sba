@@ -7,6 +7,7 @@ import FilterControls from './FilterControls'
 import GoogleMap from './GoogleMap'
 import MapTooltip from './MapTooltip'
 import FeatureTypeSelector from './FeatureTypeSelector'
+import Metrics from './Metrics'
 
 /**
  * Main container for the React app
@@ -14,6 +15,8 @@ import FeatureTypeSelector from './FeatureTypeSelector'
 function App(props) {
   return (
     <div>
+      <Metrics/>
+      {/* TODO: toggle this part on/off w/ router
       <div id="controls" className="nicebox">
         <FeatureTypeSelector/>
         <hr/>
@@ -24,6 +27,7 @@ function App(props) {
         <MapTooltip/>
       </div>
       <GoogleMap/>
+      */}
     </div>
   )
 }

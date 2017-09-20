@@ -1,5 +1,7 @@
 import * as api from '../api'
 
+import { createSelector } from 'reselect'
+
 
 /*
  * Note that the features controller uses a 'slice' of the global state, i.e. the state
@@ -14,8 +16,13 @@ import * as api from '../api'
 export const FEATURE_TYPE_BUSINESS = 'business'
 export const FEATURE_TYPE_REGION = 'region'
 
+export const REGION_TYPE_ZIP = 'borr_zip'
+export const REGION_TYPE_CITY = 'borr_city'
+export const REGION_TYPE_COUNTY = 'project_county'
+export const REGION_TYPE_CONGRESSIONAL_DISTRICT = 'congressional_district'
+
 const initialState = {
-  featureType: FEATURE_TYPE_REGION,
+  featureType: FEATURE_TYPE_BUSINESS,
   features: {
     // will be filled in with SBA feature data from server
   },
@@ -27,13 +34,10 @@ const initialState = {
       userReadableName: 'San Francisco'
     }
   },
-  regionTypes: {
-    'zip': {
-      userReadableName: 'ZIP Code'
-    }
-  },
   selectedDistrict: 'SFDO',
-  selectedRegionType: 'zip',
+  selectedRegionType: REGION_TYPE_COUNTY,
+  selectedRegion: undefined,
+  selectedYear: 25,
   mousedFeatureId: undefined,
   fields: {
     [FEATURE_TYPE_REGION]: {
@@ -81,6 +85,8 @@ export const getFeatures           = state => state.features
 export const getGeometry           = state => state.geometry
 export const getSelectedDistrict   = state => state.selectedDistrict
 export const getSelectedRegionType = state => state.selectedRegionType
+export const getSelectedRegion     = state => state.selectedRegion
+export const getSelectedYear       = state => state.selectedYear
 export const getMousedFeature      = state => state.features[state.mousedFeatureId]
 export const getFields             = state => state.fields[state.featureType]
 
@@ -96,12 +102,38 @@ export const getOrderedFieldKeys   = state => {
 export const isValidField         = (state, field) => getFields(state)[field] !== undefined
 
 
+export const getFilteredBusinesses = createSelector(
+  getFeatureType,
+  getFeatures,
+  getSelectedRegionType,
+  getSelectedRegion,
+  getSelectedYear,
+  (featureType, features, selectedRegionType, selectedRegion, selectedYear) => {
+    if(featureType !== FEATURE_TYPE_BUSINESS)
+      return []
+    else return Object.values(features).filter(business => business[selectedRegionType] == selectedRegion
+      && (!selectedYear || business.year >= 2017-selectedYear))
+  })
 
+export const getAvailableRegionsByRegionType = createSelector(
+  getFeatures,
+  (features) => {
+    let result = {}
+    for(let regionType of [REGION_TYPE_ZIP, REGION_TYPE_COUNTY, REGION_TYPE_CITY, REGION_TYPE_CONGRESSIONAL_DISTRICT]) {
+      let uniqueRegions = {}
+      Object.values(features).forEach(business => uniqueRegions[business[regionType]] = true)
+      let orderedRegions = Object.keys(uniqueRegions)
+      orderedRegions.sort()
+      result[regionType] = orderedRegions
+    }
+    return result
+  })
 
 ////////////////// Actions //////////////////////
 
 export const SET_MOUSED_FEATURE = 'SET_MOUSED_FEATURE'
 export const SET_DISTRICT_REGION_TYPE_AND_FEATURES = 'SET_DISTRICT_REGION_TYPE_AND_FEATURES'
+export const SET_METRICS_FILTERS = 'SET_METRICS_FILTERS'
 
 export function setMousedFeatureId(mousedFeatureId) {
 	return {type: SET_MOUSED_FEATURE, mousedFeatureId}
@@ -190,12 +222,23 @@ export function setDistrictRegionTypeAndFeatures({featureType, selectedDistrict,
   }
 }
 
+export function setMetricsFilters({selectedRegionType, selectedRegion, selectedYear}) {
+  // TODO: need to fetch geometry for new region type??
+  return {
+    type: SET_METRICS_FILTERS,
+    selectedRegionType,
+    selectedRegion,
+    selectedYear
+  }
+}
+
 
 ////////////////// Reducers //////////////////////
 
 
 export default function featureReducer(state=initialState, action={}) {
-  const {type, selectedDistrict, selectedRegionType, geometry, features, mousedFeatureId, featureType} = action
+  const {type, selectedDistrict, selectedRegionType, geometry,
+    features, mousedFeatureId, featureType, selectedRegion, selectedYear} = action
   switch(type) {
     case SET_DISTRICT_REGION_TYPE_AND_FEATURES:
       return {
@@ -211,6 +254,14 @@ export default function featureReducer(state=initialState, action={}) {
       return {
         ...state,
         mousedFeatureId
+      }
+
+    case SET_METRICS_FILTERS:
+      return {
+        ...state,
+        selectedRegionType,
+        selectedRegion,
+        selectedYear
       }
 
     default: return state
