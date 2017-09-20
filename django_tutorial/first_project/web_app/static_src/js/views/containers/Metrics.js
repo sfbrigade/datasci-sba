@@ -3,6 +3,9 @@ import {connect} from 'react-redux'
 
 import MetricsFilters from '../components/MetricsFilters'
 import MetricsTextSection from '../components/MetricsTextSection'
+import MetricsTableSection from '../components/MetricsTableSection'
+import MetricsMapSection from '../components/MetricsMapSection'
+import MetricsVisualizationSection from '../components/MetricsVisualizationSection'
 
 import { getFeatureState } from '../../redux/root'
 import { getAvailableRegionsByRegionType, getSelectedRegionType, getSelectedRegion, getSelectedYear,
@@ -76,16 +79,24 @@ class Metrics extends React.Component {
           />
 
         {this.props.filteredBusinesses.length > 0 &&
-          <MetricsTextSection
-            selectedRegionType={this.props.selectedRegionType}
-            selectedRegion={this.props.selectedRegion}
-            selectedYear={this.props.selectedYear}
-            filteredBusinesses={this.props.filteredBusinesses}/>
-      }
+          <div>
+            <MetricsTextSection
+              selectedRegionType={this.props.selectedRegionType}
+              selectedRegion={this.props.selectedRegion}
+              selectedYear={this.props.selectedYear}
+              filteredBusinesses={this.props.filteredBusinesses}/>
+            <MetricsVisualizationSection
+              filteredBusinesses={this.props.filteredBusinesses}/>
+            <MetricsMapSection
+              filteredBusinesses={this.props.filteredBusinesses}/>
+            <MetricsTableSection
+              filteredBusinesses={this.props.filteredBusinesses}/>
+          </div>
+        }
 
-      {this.props.filteredBusinesses.length == 0 &&
-        <div>No results found</div>
-      }
+        {this.props.filteredBusinesses.length == 0 &&
+          <div>No results found</div>
+        }
       </div>
     )
   }
