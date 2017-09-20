@@ -1,6 +1,8 @@
 machine:
   python:
     version: 3.6.2
+  node:
+    version: 4.8.4
   environment:
     POSTGRES_TESTSERVER: postgresql:///ubuntu
 
