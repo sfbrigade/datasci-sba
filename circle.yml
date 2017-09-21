@@ -1,13 +1,17 @@
 machine:
   python:
     version: 3.6.2
+  node:
+    version: 4.8.4
   environment:
     POSTGRES_TESTSERVER: postgresql:///ubuntu
 
 dependencies:
   override:
     - pip install -q -r requirements.txt
+    - npm --prefix django_tutorial/first_project/web_app/ install
 
 test:
   override:
     - py.test
+    - npm --prefix django_tutorial/first_project/web_app/ test
