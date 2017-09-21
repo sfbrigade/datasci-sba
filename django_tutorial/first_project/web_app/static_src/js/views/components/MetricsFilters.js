@@ -9,7 +9,7 @@ export default function MetricsFilters(props) {
   const onChange = e => props.onChange(e.target.name, e.target.value)
   return (
     <h1>
-      <span>Show the value SBA has provided in the</span>
+      <span>Show the impact SBA has provided in the</span>
 
       <select name="selectedRegionType" value={props.selectedRegionType} onChange={onChange}>
         {Object.keys(props.availableRegionTypes).map(regionType =>
@@ -18,7 +18,7 @@ export default function MetricsFilters(props) {
       </select>
 
       <select name="selectedRegion" value={props.selectedRegion} onChange={onChange}>
-        {props.availableRegions.map(region => 
+        {props.availableRegions.map(region =>
           <option value={region} key={region}>{region}</option>
         )}
       </select>
@@ -36,4 +36,3 @@ export default function MetricsFilters(props) {
     </h1>
   )
 }
-
