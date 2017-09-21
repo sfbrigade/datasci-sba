@@ -1,4 +1,5 @@
 .cache
+.cache/v/cache/lastfailed
 *.pyc
 *.zip
 *.pyc

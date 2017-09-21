@@ -17,6 +17,7 @@ from sqlalchemy import create_engine
 
 from utilities.db_manager import DBManager
 from pipeline.pipeline_tasks.api_calls import yelp_ratings as yr
+from pipeline.pipeline_tasks.api_calls import congressional_districts as cd
 
 
 def get_args():
@@ -35,6 +36,7 @@ def get_yelp_fields(dbm):
     Keyword Args:
         dbm: DBManager object
     """
+    print('Getting Yelp ratings.')
     sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
     sfdo = sfdo[[
         'sba_sfdo_id',
@@ -48,6 +50,10 @@ def get_yelp_fields(dbm):
                            + sfdo['borr_city'] + ', '\
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
+    if os.environ.get('YELP_ID') is None or os.environ.get('YELP_SECRET') is None:
+        print("Skipping Yelp, authorization envars not defined.")
+        return sfdo
+
     return yr.get_yelp_ratings(sfdo)
 
 
@@ -67,22 +73,45 @@ def get_congressional_districts(dbm):
 
     Keyword Args:
         dbm: DBManager object
+
+    Returns:
+    
     """
-    pass
+    print('Getting Congressional Districts from Google Civic Info API')
+    sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
+    sfdo = sfdo[[
+        'sba_sfdo_id',
+        'borr_name',
+        'borr_street',
+        'borr_city',
+        'borr_state',
+        'borr_zip',
+    ]]
+    sfdo['full_address'] = sfdo['borr_street'] + ', '\
+                           + sfdo['borr_city'] + ', '\
+                           + sfdo['borr_state'] + ', '\
+                           + sfdo['borr_zip']
+    if os.environ.get('GOOGLEAPI') is None:
+        print("Skipping Google Civic, API key not set.")
+        return pd.DataFrame(data=sfdo, index=None, columns=['sba_sfdo_id', 'congressional_district_google_civic'])
+
+    return cd.get_congressional_dist_by_addr(sfdo)
 
 
 def main():
     """Execute Stuff"""
-    print('Getting Yelp data from Yelp API')
+    print('Getting Data from External APIs (Yelp, Google Civic Info, etc.')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
-
+    if dbm is None:
+        print("Could not connect to database.")
+        return
+    
     sfdo_yelp = get_yelp_fields(dbm)
-
-    # Eventually we will have to join with geocoded fields table and
-    # Congressional District Table before writing back to DB
+    sfdo_congressional = get_congressional_districts(dbm)
+    sfdo_merge = pd.merge(sfdo_yelp, sfdo_congressional, on='sba_sfdo_id', how='left')
     dbm.write_df_table(
-        sfdo_yelp, table_name='sba_sfdo_api_calls', schema='stg_analytics')
+        sfdo_merge, table_name='sba_sfdo_api_calls', schema='stg_analytics')
 
 
 if __name__ == '__main__':
