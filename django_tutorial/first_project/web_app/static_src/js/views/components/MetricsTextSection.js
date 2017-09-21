@@ -9,7 +9,7 @@ export default function MetricsTextSection(props) {
   let capitalDelivered = filteredBusinessesAsArray.reduce((total, business) => business.gross_approval + total, 0)
 
   return (
-    <div>
+    <div className="metrics-section">
       <h2>Metrics</h2>
       <p>In the last {props.selectedYear} years in {props.selectedRegion}...</p>
       <p>SBA has distributed {numBusinesses} loans</p>

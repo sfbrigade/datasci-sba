@@ -8,8 +8,8 @@ import {connect} from 'react-redux'
 export default function MetricsFilters(props) {
   const onChange = e => props.onChange(e.target.name, e.target.value)
   return (
-    <div>
-      <span>Show the value SBA has provided in</span>
+    <h1>
+      <span>Show the value SBA has provided in the</span>
 
       <select name="selectedRegionType" value={props.selectedRegionType} onChange={onChange}>
         {Object.keys(props.availableRegionTypes).map(regionType =>
@@ -33,7 +33,7 @@ export default function MetricsFilters(props) {
 
       <input type="submit" value="Submit" onClick={props.onSubmit}/>
 
-    </div>
+    </h1>
   )
 }
 

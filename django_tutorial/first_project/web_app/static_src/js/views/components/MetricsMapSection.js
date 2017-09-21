@@ -7,7 +7,7 @@ import GoogleMap from './GoogleMap'
 
 export default function MetricsMapSection(props) {
   return (
-    <div>
+    <div className="metrics-section">
       <h2>Map</h2>
       <div style={{height:'400px'}}>
         <GoogleMap

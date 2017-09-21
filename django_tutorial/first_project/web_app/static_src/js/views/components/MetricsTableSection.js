@@ -29,7 +29,7 @@ export default class MetricsTableSection extends React.Component {
     businesses.sort(this.comparator)
     businesses = businesses.slice(0, this.state.numRows)
     return (
-      <div>
+      <div className="metrics-section">
         <h2>Table</h2>
         <div>
           <span>View</span>

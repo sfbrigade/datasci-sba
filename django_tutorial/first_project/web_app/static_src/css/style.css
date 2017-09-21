@@ -59,4 +59,16 @@ html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0;  }
 }
 
 
+.metrics-section-container {
+  display: -webkit-flex;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
 
+.metrics-section {
+  width: 50%;
+  height: 200px;
+  padding: 50px
+  box-sizing: content-box;
+}

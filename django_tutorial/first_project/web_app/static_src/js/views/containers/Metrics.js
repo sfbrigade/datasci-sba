@@ -34,7 +34,8 @@ class Metrics extends React.Component {
     this.state = {
       selectedRegionType: props.selectedRegionType,
       selectedYear: props.selectedYear,
-      selectedRegion: props.selectedRegion || props.availableRegionsByRegionType[props.selectedRegionType][0]
+      selectedRegion: props.selectedRegion || props.availableRegionsByRegionType[props.selectedRegionType][0],
+      hasSubmitted: false	// tells whether the user has hit the "submit" button at all, to avoid showing "no results" msg on page load
     }
 
     this.availableRegionTypes = {
@@ -61,6 +62,7 @@ class Metrics extends React.Component {
   }
 
   handleSubmit() {
+  	this.setState({hasSubmitted: true})
     this.props.setMetricsFilters(this.state)
   }
 
@@ -79,7 +81,7 @@ class Metrics extends React.Component {
           />
 
         {Object.keys(this.props.filteredBusinesses).length > 0 &&
-          <div>
+          <div className="metrics-section-container">
             <MetricsTextSection
               selectedRegionType={this.props.selectedRegionType}
               selectedRegion={this.props.selectedRegion}
@@ -94,8 +96,8 @@ class Metrics extends React.Component {
           </div>
         }
 
-        {Object.keys(this.props.filteredBusinesses).length == 0 &&
-          <div>No results found</div>
+        {Object.keys(this.props.filteredBusinesses).length == 0 && this.state.hasSubmitted &&
+          <div>No SBA loans found matching your criteria</div>
         }
       </div>
     )
