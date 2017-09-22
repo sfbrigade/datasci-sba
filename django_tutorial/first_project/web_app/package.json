@@ -45,7 +45,6 @@
     "rc-slider": "^8.3.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-flexbox-grid": "^1.1.5",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-thunk": "^2.1.0",

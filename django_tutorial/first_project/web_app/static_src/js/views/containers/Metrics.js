@@ -81,30 +81,18 @@ class Metrics extends React.Component {
           />
 
         {Object.keys(this.props.filteredBusinesses).length > 0 &&
-          <div className="metrics-section-container container">
-            <div className="row">
-              <div className="col-md-6">
-                <MetricsTextSection
-                  selectedRegionType={this.props.selectedRegionType}
-                  selectedRegion={this.props.selectedRegion}
-                  selectedYear={this.props.selectedYear}
-                  filteredBusinesses={this.props.filteredBusinesses}/>
-              </div>
-              <div className="col-md-6">
-                <MetricsVisualizationSection
-                  filteredBusinesses={this.props.filteredBusinesses}/>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <MetricsMapSection
-                  filteredBusinesses={this.props.filteredBusinesses}/>
-              </div>
-              <div className="col-md-6">
-                <MetricsTableSection
-                  filteredBusinesses={this.props.filteredBusinesses}/>
-              </div>
-            </div>
+          <div className="metrics-section-container">
+            <MetricsTextSection
+              selectedRegionType={this.props.selectedRegionType}
+              selectedRegion={this.props.selectedRegion}
+              selectedYear={this.props.selectedYear}
+              filteredBusinesses={this.props.filteredBusinesses}/>
+            <MetricsVisualizationSection
+              filteredBusinesses={this.props.filteredBusinesses}/>
+            <MetricsMapSection
+              filteredBusinesses={this.props.filteredBusinesses}/>
+            <MetricsTableSection
+              filteredBusinesses={this.props.filteredBusinesses}/>
           </div>
         }
 
