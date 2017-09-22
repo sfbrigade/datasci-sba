@@ -31,6 +31,7 @@ export default function MetricsFilters(props) {
           <option value={year} key={year}>{year} years</option>
         )}
       </select>
+
       <RaisedButton onClick={props.onSubmit} label="Submit"></RaisedButton>
     </h2>
   )

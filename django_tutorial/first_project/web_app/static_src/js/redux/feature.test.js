@@ -115,7 +115,7 @@ describe('feature selectors', () => {
 
     const stateWithFeatureTypeBusiness = {...state, featureType: 'business'}
     expect(fromFeature.getOrderedFieldKeys(stateWithFeatureTypeBusiness)).toEqual([
-      "yelp_rating"
+      "google_rating"
     ])
   })
 })
@@ -129,9 +129,9 @@ describe('feature reducer', () => {
     expect(fromFeature.getFeatures(state)).toEqual({})
     expect(fromFeature.getGeometry(state)).toEqual({})
     expect(fromFeature.getSelectedDistrict(state)).toEqual('SFDO')
-    expect(fromFeature.getSelectedRegionType(state)).toEqual('zip')
+    expect(fromFeature.getSelectedRegionType(state)).toEqual('project_county')
     expect(fromFeature.getMousedFeature(state)).toBeUndefined()
-    expect(fromFeature.getFeatureType(state)).toEqual('region')
+    expect(fromFeature.getFeatureType(state)).toEqual('business')
   })
 
   it('should update feature data', () => {
