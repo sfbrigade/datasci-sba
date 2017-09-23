@@ -1,11 +1,11 @@
-from django.db.models import Avg
+from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
 import random
 
-from api_server.models import SbaRegionLevel, SbaSfdo
+from api_server.models import SbaRegionLevel, SbaSfdo, SbaGoogleApiData
 
 
 @require_GET
@@ -20,18 +20,35 @@ def regions(request):
 
 
 def businesses(request):
-	""" API endpoint returning list of businesses that SBA has loaned to"""
-	result = {
-	    'status': 'success',
-	    'data': [addDummyData(x) for x in SbaSfdo.objects.values('sba_sfdo_id', 'borr_name')]
-	}
-	return JsonResponse(result)
+    """ API endpoint returning list of businesses that SBA has loaned to"""
+    rows = [serialize(row) for row in SbaGoogleApiData.objects.select_related('sba_sfdo').all()]
+    result = {
+        'status': 'success',
+        'data': rows
+    }
+    return JsonResponse(result)
 
 
-def addDummyData(dict):
-    """ HACK: adding random lat/long and yelp rating, until those pull requests are merged and we can use real data"""
-    dict['latitude'] = 37.2 + 1*random.random()
-    dict['longitude'] = -122.5 + 1*random.random()
-    dict['yelp_rating'] = 5*random.random()
-    dict['id'] = dict['sba_sfdo_id']
-    return dict
+def serialize(sba_google_api_data):
+    """Returns a dict serialization of the given object, including only fields the client needs"""
+    result = {}
+
+    # we're basically combining fields from 2 different joined tables, and massaging the field names
+    # a bit to match what our API definition expects.
+    # TODO: when we add in Django REST framework, this should be handled by a real serializer
+
+    # copy some keys from the sba_google_api_data table
+    for key in ['latitude', 'longitude', 'google_rating']:
+        result[key] = getattr(sba_google_api_data, key)
+
+    # copy some keys from the sba_sfdo table
+    for key in ['borr_name', 'borr_city', 'borr_zip', 'delivery_method', 'project_county',
+                'congressional_district', 'jobs_supported', 'gross_approval']:
+        result[key] = getattr(sba_google_api_data.sba_sfdo, key)
+
+    # a couple special cases for fields that need to be rename or run some function on the data
+    result['id'] = sba_google_api_data.sba_sfdo.sba_sfdo_id
+    if sba_google_api_data.sba_sfdo.first_disbursement_date is not None:
+        result['year'] = sba_google_api_data.sba_sfdo.first_disbursement_date.year
+
+    return result

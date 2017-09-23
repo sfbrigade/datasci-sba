@@ -1,5 +1,7 @@
 import * as api from '../api'
 
+import { createSelector } from 'reselect'
+
 
 /*
  * Note that the features controller uses a 'slice' of the global state, i.e. the state
@@ -14,8 +16,18 @@ import * as api from '../api'
 export const FEATURE_TYPE_BUSINESS = 'business'
 export const FEATURE_TYPE_REGION = 'region'
 
+// these are the possible values of the selectedRegionType field of the state;
+// note they should match the correspnding field on each business object, e.g.
+// business[REGION_TYPE_ZIP] should give the zip code of that business
+export const REGION_TYPE_ZIP = 'borr_zip'
+export const REGION_TYPE_CITY = 'borr_city'
+export const REGION_TYPE_COUNTY = 'project_county'
+export const REGION_TYPE_CONGRESSIONAL_DISTRICT = 'congressional_district'
+
 const initialState = {
-  featureType: FEATURE_TYPE_REGION,
+  // HACK: switching the default feature type to region when showing the map.
+  // this should be replaced once we're using react-router to toggle between map and metrics
+  featureType: window.location.query === '?map' ? FEATURE_TYPE_REGION : FEATURE_TYPE_BUSINESS,
   features: {
     // will be filled in with SBA feature data from server
   },
@@ -27,13 +39,10 @@ const initialState = {
       userReadableName: 'San Francisco'
     }
   },
-  regionTypes: {
-    'zip': {
-      userReadableName: 'ZIP Code'
-    }
-  },
   selectedDistrict: 'SFDO',
-  selectedRegionType: 'zip',
+  selectedRegionType: REGION_TYPE_COUNTY,
+  selectedRegion: undefined,
+  selectedYear: 25,
   mousedFeatureId: undefined,
   fields: {
     [FEATURE_TYPE_REGION]: {
@@ -63,8 +72,8 @@ const initialState = {
       }
     },
     [FEATURE_TYPE_BUSINESS]: {
-      'yelp_rating': {
-        userReadableName: 'Yelp Rating'
+      'google_rating': {
+        userReadableName: 'Google Rating'
       }
     }
   }
@@ -81,6 +90,8 @@ export const getFeatures           = state => state.features
 export const getGeometry           = state => state.geometry
 export const getSelectedDistrict   = state => state.selectedDistrict
 export const getSelectedRegionType = state => state.selectedRegionType
+export const getSelectedRegion     = state => state.selectedRegion
+export const getSelectedYear       = state => state.selectedYear
 export const getMousedFeature      = state => state.features[state.mousedFeatureId]
 export const getFields             = state => state.fields[state.featureType]
 
@@ -96,12 +107,55 @@ export const getOrderedFieldKeys   = state => {
 export const isValidField         = (state, field) => getFields(state)[field] !== undefined
 
 
+/**
+ * @return {Object} all the businesses that match the selected metrics filters, as a map
+ * from id to business JSON object
+ */
+export const getFilteredBusinesses = createSelector(
+  getFeatureType,
+  getFeatures,
+  getSelectedRegionType,
+  getSelectedRegion,
+  getSelectedYear,
+  (featureType, features, selectedRegionType, selectedRegion, selectedYear) => {
+    if(featureType !== FEATURE_TYPE_BUSINESS)
+      return {}
+    else {
+      const filter = feature => feature[selectedRegionType] == selectedRegion && (!selectedYear || feature.year >= 2017-selectedYear)
+      let result = {}
+      for(let id in features) {
+        if(filter(features[id])) {
+          result[id] = features[id]
+        }
+      }
+      return result
+    }
+  })
 
+/**
+ * @return {String -> String[]} map from each of the region types (eg REGION_TYPE_ZIP and others) to an
+ * ordered array of the regions we actually see in the data.  For instance, the REGION_TYPE_CITY field might have
+ * ['Sacramento', 'San Francisco']
+ */
+export const getAvailableRegionsByRegionType = createSelector(
+  getFeatures,
+  (features) => {
+    let result = {}
+    for(let regionType of [REGION_TYPE_ZIP, REGION_TYPE_COUNTY, REGION_TYPE_CITY, REGION_TYPE_CONGRESSIONAL_DISTRICT]) {
+      let uniqueRegions = {}
+      Object.values(features).forEach(business => uniqueRegions[business[regionType]] = true)
+      let orderedRegions = Object.keys(uniqueRegions)
+      orderedRegions.sort()
+      result[regionType] = orderedRegions
+    }
+    return result
+  })
 
 ////////////////// Actions //////////////////////
 
 export const SET_MOUSED_FEATURE = 'SET_MOUSED_FEATURE'
 export const SET_DISTRICT_REGION_TYPE_AND_FEATURES = 'SET_DISTRICT_REGION_TYPE_AND_FEATURES'
+export const SET_METRICS_FILTERS = 'SET_METRICS_FILTERS'
 
 export function setMousedFeatureId(mousedFeatureId) {
 	return {type: SET_MOUSED_FEATURE, mousedFeatureId}
@@ -190,12 +244,23 @@ export function setDistrictRegionTypeAndFeatures({featureType, selectedDistrict,
   }
 }
 
+export function setMetricsFilters({selectedRegionType, selectedRegion, selectedYear}) {
+  // TODO: need to fetch geometry for new region type??
+  return {
+    type: SET_METRICS_FILTERS,
+    selectedRegionType,
+    selectedRegion,
+    selectedYear
+  }
+}
+
 
 ////////////////// Reducers //////////////////////
 
 
 export default function featureReducer(state=initialState, action={}) {
-  const {type, selectedDistrict, selectedRegionType, geometry, features, mousedFeatureId, featureType} = action
+  const {type, selectedDistrict, selectedRegionType, geometry,
+    features, mousedFeatureId, featureType, selectedRegion, selectedYear} = action
   switch(type) {
     case SET_DISTRICT_REGION_TYPE_AND_FEATURES:
       return {
@@ -211,6 +276,14 @@ export default function featureReducer(state=initialState, action={}) {
       return {
         ...state,
         mousedFeatureId
+      }
+
+    case SET_METRICS_FILTERS:
+      return {
+        ...state,
+        selectedRegionType,
+        selectedRegion,
+        selectedYear
       }
 
     default: return state

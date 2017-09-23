@@ -377,3 +377,13 @@ class SbaSfdo(models.Model):
     class Meta:
         managed = False
         db_table = 'sba_sfdo'
+
+class SbaGoogleApiData(models.Model):
+    sba_sfdo = models.ForeignKey('SbaSfdo', blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
+    google_rating = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'sba_google_api_data'

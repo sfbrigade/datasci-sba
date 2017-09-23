@@ -1,4 +1,4 @@
-html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0;  }
 
 .nicebox {
   position: absolute;
@@ -56,4 +56,19 @@ html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0; overfl
 .histogram, .slider-with-labels {
   margin-left: 30px;
   width: 200px;
+}
+
+
+.metrics-section-container {
+  display: -webkit-flex;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.metrics-section {
+  width: 50%;
+  height: 200px;
+  padding: 50px
+  box-sizing: content-box;
 }
