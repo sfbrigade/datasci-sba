@@ -14,7 +14,7 @@ export default function MetricsMapSection(props) {
         <GoogleMap
           featureType={FEATURE_TYPE_BUSINESS}
           features={props.filteredBusinesses}
-          useClusterer={false}
+          useClusterer={true}
           useFilter={false}
           onMouseover={(featureId) => {if(featureId) console.log(props.filteredBusinesses[featureId].borr_name)}}/>
       </div>
