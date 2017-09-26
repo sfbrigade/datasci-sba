@@ -7,6 +7,8 @@ machine:
     POSTGRES_TESTSERVER: postgresql:///ubuntu
 
 dependencies:
+  cache_directories:
+    - "django_tutorial/first_project/web_app/node_modules"
   override:
     - pip install -q -r requirements.txt
     - npm --prefix django_tutorial/first_project/web_app/ install
