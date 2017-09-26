@@ -118,7 +118,7 @@ export const getFilteredBusinesses = createSelector(
   getSelectedRegion,
   getSelectedYear,
   (featureType, features, selectedRegionType, selectedRegion, selectedYear) => {
-    if(featureType !== FEATURE_TYPE_BUSINESS)
+    if(featureType !== FEATURE_TYPE_BUSINESS || selectedRegion == null)
       return {}
     else {
       const filter = feature => feature[selectedRegionType] == selectedRegion && (!selectedYear || feature.year >= 2017-selectedYear)
