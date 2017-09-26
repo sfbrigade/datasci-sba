@@ -97,6 +97,24 @@ tempdata/ca_zips_geo.json  2.96 MB          [emitted]  [big]
     + 852 hidden modules
 ```
 
+## Hosting
+
+We're currently hosting the MVP on a free-tier AWS server.  See the slack channel for the URL, and ping someone if you want credentials to access the server.
+
+The server just has a clone of the git repo in ~/datasci-sba.  To deploy a new version, you can cd into it, fetch whatever branch you want (currently september-mvp) and then run the following to start the server:
+```
+cd ~/datasci-sba/django_tutorial/first_project
+sudo pkill -f python3
+npm --prefix web_app run build
+export SBA_DWH='FILL IN DB CREDS HERE'
+nohup sudo -E bash -c 'python3 manage.py runserver 0.0.0.0:80' &
+```
+
+This is a pretty hackish solution, and there are a number of things we'll want to do after the MVP:
+1. Switch to Azure (or maybe a more managed hosting solution, like Heroku?)
+1. We really shouldn't be running Django as root on port 80, but instead use Apache/WSGI as a webserver.
+1. Ideally we'd run 'build-production' instead of 'build' for the JS build, but the former causes our free-tier AWS instance to run out of memory!
+1. Integrate with a real deployment process (eg CircleCI)
 
 ## Tests
 
