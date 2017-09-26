@@ -1,5 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
+import RaisedButton from 'material-ui/RaisedButton'
 
 
 /**
@@ -8,7 +9,7 @@ import {connect} from 'react-redux'
 export default function MetricsFilters(props) {
   const onChange = e => props.onChange(e.target.name, e.target.value)
   return (
-    <h1>
+    <h2>
       <span>Show the impact SBA has provided in the</span>
 
       <select name="selectedRegionType" value={props.selectedRegionType} onChange={onChange}>
@@ -18,7 +19,7 @@ export default function MetricsFilters(props) {
       </select>
 
       <select name="selectedRegion" value={props.selectedRegion} onChange={onChange}>
-        {props.availableRegions.map(region =>
+        {props.availableRegions.map(region => 
           <option value={region} key={region}>{region}</option>
         )}
       </select>
@@ -31,8 +32,8 @@ export default function MetricsFilters(props) {
         )}
       </select>
 
-      <input type="submit" value="Submit" onClick={props.onSubmit}/>
-
-    </h1>
+      <RaisedButton onClick={props.onSubmit} label="Submit"></RaisedButton>
+    </h2>
   )
 }
+

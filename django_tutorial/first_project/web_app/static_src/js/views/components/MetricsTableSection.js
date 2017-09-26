@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 
 export default class MetricsTableSection extends React.Component {
 
@@ -29,42 +29,44 @@ export default class MetricsTableSection extends React.Component {
     businesses.sort(this.comparator)
     businesses = businesses.slice(0, this.state.numRows)
     return (
-      <div className="metrics-section">
-        <h2>Table</h2>
-        <div>
-          <span>View</span>
-          <select value={this.state.numRows} name="numRows" onChange={this.handleChange}>
-            {[5, 10, 20, 100].map(numRows =>
-              <option value={numRows} key={numRows}>Top {numRows}</option>
-            )}
-          </select>
-          <span>businesses ranked by</span>
-          <select value={this.state.sortBy} name="sortBy" onChange={this.handleChange}>
-            <option value="jobs_supported">Jobs Supported</option>
-            <option value="google_rating">Google Rating</option>
-          </select>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Business</th>
-              <th>Jobs Supported</th>
-              <th>Google Rating</th>
-            </tr>
-          </thead>
-          <tbody>
-            {businesses.map((business, index) => 
-              <tr key={index}>
-                <td>{index+1}</td>
-                <td>{business.borr_name}</td>
-                <td>{business.jobs_supported}</td>
-                <td>{business.google_rating}</td>
+      <Card className="metrics-section">
+        <CardHeader title="Table"></CardHeader>
+        <CardText>
+          <div>
+            <span>View</span>
+            <select value={this.state.numRows} name="numRows" onChange={this.handleChange}>
+              {[5, 10, 20, 100].map(numRows =>
+                <option value={numRows} key={numRows}>Top {numRows}</option>
+              )}
+            </select>
+            <span>businesses ranked by</span>
+            <select value={this.state.sortBy} name="sortBy" onChange={this.handleChange}>
+              <option value="jobs_supported">Jobs Supported</option>
+              <option value="google_rating">Google Rating</option>
+            </select>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Business</th>
+                <th>Jobs Supported</th>
+                <th>Google Rating</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {businesses.map((business, index) => 
+                <tr key={index}>
+                  <td>{index+1}</td>
+                  <td>{business.borr_name}</td>
+                  <td>{business.jobs_supported}</td>
+                  <td>{business.google_rating}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </CardText>
+      </Card>
     )
   }
 }

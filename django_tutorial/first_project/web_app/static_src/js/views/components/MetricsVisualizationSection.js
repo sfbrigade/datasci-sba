@@ -1,13 +1,15 @@
 import React from 'react'
 import {connect} from 'react-redux'
-
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 
 export default function MetricsVisualizationSection(props) {
   return (
-    <div className="metrics-section">
-      <h2>Dataviz Header</h2>
-      <div>TODO</div>
-    </div>
+    <Card className="metrics-section">
+      <CardHeader title="Dataviz Header"></CardHeader>
+      <CardText>
+        <div>TODO</div>
+        </CardText>
+    </Card>
   )
 }
 

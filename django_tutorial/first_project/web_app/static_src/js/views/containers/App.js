@@ -2,6 +2,8 @@ import React from 'react'
 
 import { connect } from 'react-redux'
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 import ColorControls from './ColorControls'
 import FilterControls from './FilterControls'
 import GoogleMap from '../components/GoogleMap'
@@ -19,27 +21,29 @@ import {getFilterField, getFilterRange} from '../../redux/filter'
  */
 function App(props) {
   return (
-    <div>
-      {/* HACK: have /app/?map serve the old map, while /app/ serves the metrics
-      TODO: toggle this part on/off w/ router, instead of this hack with window.location */}
-      {window.location.search === '?map' ||
-        <Metrics/>
-      }
-      {window.location.search === '?map' &&
-        <div style={{height: '100%'}}>
-          <div id="controls" className="nicebox">
-            <FeatureTypeSelector/>
-            <hr/>
-            <ColorControls/>
-            <hr/>
-            <FilterControls/>
-            <hr/>
-            <MapTooltip/>
+    <MuiThemeProvider>
+      <div>
+        {/* HACK: have /app/?map serve the old map, while /app/ serves the metrics
+        TODO: toggle this part on/off w/ router, instead of this hack with window.location */}
+        {window.location.search === '?map' ||
+          <Metrics/>
+        }
+        {window.location.search === '?map' &&
+          <div style={{height: '100%'}}>
+            <div id="controls" className="nicebox">
+              <FeatureTypeSelector/>
+              <hr/>
+              <ColorControls/>
+              <hr/>
+              <FilterControls/>
+              <hr/>
+              <MapTooltip/>
+            </div>
+            <GoogleMap {...props} useFilter={true} useClusterer={true}/>
           </div>
-          <GoogleMap {...props} useFilter={true} useClusterer={true}/>
-        </div>
-      }
-    </div>
+        }
+      </div>
+    </MuiThemeProvider>
   )
 }
 
