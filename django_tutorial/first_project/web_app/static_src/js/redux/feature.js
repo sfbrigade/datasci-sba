@@ -27,7 +27,7 @@ export const REGION_TYPE_CONGRESSIONAL_DISTRICT = 'congressional_district'
 const initialState = {
   // HACK: switching the default feature type to region when showing the map.
   // this should be replaced once we're using react-router to toggle between map and metrics
-  featureType: window.location.query === '?map' ? FEATURE_TYPE_REGION : FEATURE_TYPE_BUSINESS,
+  featureType: window.location.search === '?map' ? FEATURE_TYPE_REGION : FEATURE_TYPE_BUSINESS,
   features: {
     // will be filled in with SBA feature data from server
   },
