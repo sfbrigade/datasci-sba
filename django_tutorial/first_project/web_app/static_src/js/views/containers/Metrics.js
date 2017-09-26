@@ -68,7 +68,7 @@ class Metrics extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="metrics">
         <MetricsFilters
           availableRegionTypes={this.availableRegionTypes}
           selectedRegionType={this.state.selectedRegionType}

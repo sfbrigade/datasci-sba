@@ -6,7 +6,7 @@ That being said, just for the September 2017 MVP, we are going to use a "cleaned
 dataset that is already geocoded (somewhat manually) by Noah.
 
 Source of data:
-https://sfbrigade.slack.com/files/U317MMLE6/F403ZETLH/sfdo_504_7a-clean.csv
+https://files.slack.com/files-pri/T0431NL8C-F757ACNHM/download/sba_google_places_loan_data.csv
 """
 
 import argparse

@@ -1,4 +1,11 @@
-html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0;  }
+html, body {
+  height: 100%;
+  margin: 10px;
+  padding: 0;
+  background: #eee;
+}
+
+#root, #root>div, #map { height: 100%; margin: 0; padding: 0; }
 
 .nicebox {
   position: absolute;
@@ -58,17 +65,39 @@ html, body, #root, #root>div, #map { height: 100%; margin: 0; padding: 0;  }
   width: 200px;
 }
 
+.metrics {
+  margin: 0 auto;
+  /* TODO: use a real grid system instead of forcing 1280px width for these */
+  max-width: 1280px;
+}
+
+.metrics-filters {
+  text-align: center;
+}
+
+.metrics-filters .metrics-filters-text {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 15px;
+  font-size: 24px;
+}
+
+.metrics-filters .metrics-filters-button {
+  vertical-align: top;
+  margin-top: 10px;
+}
 
 .metrics-section-container {
   display: -webkit-flex;
   display: flex;
-  width: 100%;
   flex-wrap: wrap;
+  width: 1310px;
 }
 
 .metrics-section {
   width: 50%;
-  height: 200px;
-  padding: 50px
+  max-width: 625px;
+  min-height: 200px;
   box-sizing: content-box;
+  margin: 30px 30px 0 0;
 }
