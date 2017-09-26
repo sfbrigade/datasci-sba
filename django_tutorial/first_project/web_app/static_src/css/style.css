@@ -1,4 +1,10 @@
-html, body { height: 100%; margin: 10px; padding: 0;  }
+html, body {
+  height: 100%;
+  margin: 10px;
+  padding: 0;
+  background: #eee;
+}
+
 #root, #root>div, #map { height: 100%; margin: 0; padding: 0; }
 
 .nicebox {
@@ -59,11 +65,28 @@ html, body { height: 100%; margin: 10px; padding: 0;  }
   width: 200px;
 }
 
+.metrics-filters {
+  text-align: center;
+}
+
+.metrics-filters .metrics-filters-text {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 15px;
+  font-size: 24px;
+}
+
+.metrics-filters .metrics-filters-button {
+  vertical-align: top;
+  margin-top: 10px;
+}
+
 .metrics-section-container {
   display: -webkit-flex;
   display: flex;
   width: 100%;
   flex-wrap: wrap;
+  margin-top: 30px;
 }
 
 .metrics-section {
