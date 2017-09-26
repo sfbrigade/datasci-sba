@@ -5,7 +5,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
-import { routerMiddleware, ConnectedRouter } from 'react-router-redux'
 
 import rootReducer, { getFeatureState } from './redux/root'
 import { fetchFeatures } from './redux/feature'
@@ -16,11 +15,9 @@ import App from './views/containers/App'
 /** main entry point for the initialization; should be called by google maps API once its JS is loaded */
 window.init = function() {
   const middleware = [
-    ReduxThunk,
-    routerMiddleware(history)
+    ReduxThunk
   ]
 
-  export const history = createHistory()
 
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -28,9 +25,9 @@ window.init = function() {
 
   ReactDOM.render(
     <Provider store={store}>
-      <ConnectedRouter history={history}>
+      <BrowserRouter>
         <App/>
-      </ConnectedRouter>
+      </BrowserRouter>
     </Provider>,
     document.getElementById('root')
   )

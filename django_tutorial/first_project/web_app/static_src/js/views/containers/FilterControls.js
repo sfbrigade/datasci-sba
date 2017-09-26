@@ -15,7 +15,7 @@ import SliderWithHistogramAndLabels from '../components/SliderWithHistogramAndLa
 function FilterControls(props) {
   return (
     <div>
-      <FieldBox title="Filter Bydsfsd" value={props.field} onChange={props.onChangeField}
+      <FieldBox title="Filter" value={props.field} onChange={props.onChangeField}
         fields={props.fields} orderedFieldKeys={props.orderedFieldKeys}/>
       <SliderWithHistogramAndLabels filterExtent={props.filterExtent} filterRange={props.filterRange}
         onChangeRange={props.onChangeRange} data={props.data}/>
