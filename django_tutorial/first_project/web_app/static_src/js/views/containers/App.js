@@ -5,16 +5,44 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Metrics from './Metrics'
 import Map from './Map'
 
+import AppBar from 'material-ui/AppBar'
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem'
+// import NavItem from 'material-ui/NavItem'
+
+import FontIcon from 'material-ui/FontIcon';
+import {red500, yellow500, blue500} from 'material-ui/styles/colors';
+
+const iconStyles = {
+  marginRight: 24,
+  marginTop: 5,
+  fontSize: '40px',
+  color: '#fff'
+};
 
 /* Main container for the React app */
 function App() {
   return (
     <MuiThemeProvider>
       <div>
-        <nav>
-          <NavLink to="/app" activeClassName="active">Metrics</NavLink>
-          <NavLink to="/app/map" activeClassName="active">Map</NavLink>
-        </nav>
+        {/* <AppBar
+        title="SBA App"
+        iconClassNameRight="muidocs-icon-navigation-expand-more"
+      /> */}
+
+      <AppBar
+        title="SBA Appsdf"
+        iconElementRight = {
+          <div>
+            <NavLink to="/app" activeClassName="active">
+              <FontIcon className="material-icons" style={iconStyles}>insert_chart</FontIcon>
+            </NavLink>
+            <NavLink to="/app/map" activeClassName="active">
+              <FontIcon className="material-icons" style={iconStyles}>place</FontIcon>
+            </NavLink>
+          </div>
+
+        } />
         <switch>
           <Route path="/app" exact component={Metrics} />
           <Route path="/app/map" exact component={Map} />
