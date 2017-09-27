@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import ReduxThunk from 'redux-thunk'
+import logger from 'redux-logger'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -11,13 +12,16 @@ import { fetchFeatures } from './redux/feature'
 
 import App from './views/containers/App'
 
+if (process.env.NODE_ENV === `development`) {
+  const { logger } = require(`redux-logger`);
+}
 
 /** main entry point for the initialization; should be called by google maps API once its JS is loaded */
 window.init = function() {
-  const middleware = [
-    ReduxThunk
-  ]
 
+  const middleware = [ReduxThunk]
+
+  middleware.push(logger);
 
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
