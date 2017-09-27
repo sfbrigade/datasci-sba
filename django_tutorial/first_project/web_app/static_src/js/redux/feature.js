@@ -31,9 +31,9 @@ const initialState = {
   features: {
     // will be filled in with SBA feature data from server
   },
-  geometry: {
-    // will be filled in with geo data from server
-  },
+  // geometry will be filled in with geo data from server, note it's undefined not empty object so GoogleMap can easily
+  // tell the difference between when it has data and does not have data
+  geometry: undefined,
   districts: {
     'SFDO': {
       userReadableName: 'San Francisco'

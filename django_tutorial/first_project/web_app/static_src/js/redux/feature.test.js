@@ -127,7 +127,7 @@ describe('feature reducer', () => {
     const state = reducer()
 
     expect(fromFeature.getFeatures(state)).toEqual({})
-    expect(fromFeature.getGeometry(state)).toEqual({})
+    expect(fromFeature.getGeometry(state)).toBeUndefined()
     expect(fromFeature.getSelectedDistrict(state)).toEqual('SFDO')
     expect(fromFeature.getSelectedRegionType(state)).toEqual('project_county')
     expect(fromFeature.getMousedFeature(state)).toBeUndefined()
