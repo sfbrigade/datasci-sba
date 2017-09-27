@@ -65,7 +65,9 @@ export default class GoogleMap extends React.Component {
 
       switch(this.props.featureType) {
         case FEATURE_TYPE_REGION:
-          this.map.data.addGeoJson(this.props.geometry, { idPropertyName: 'GEOID10' })
+          if(this.props.geometry != null) { 
+            this.map.data.addGeoJson(this.props.geometry, { idPropertyName: 'GEOID10' })
+          }
           break;
 
         case FEATURE_TYPE_BUSINESS:
