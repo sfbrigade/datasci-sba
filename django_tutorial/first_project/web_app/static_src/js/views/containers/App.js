@@ -25,24 +25,19 @@ function App() {
   return (
     <MuiThemeProvider>
       <div>
-        {/* <AppBar
-        title="SBA App"
-        iconClassNameRight="muidocs-icon-navigation-expand-more"
-      /> */}
-
-      <AppBar
-        title="SBA Appsdf"
-        iconElementRight = {
-          <div>
-            <NavLink to="/app" activeClassName="active">
-              <FontIcon className="material-icons" style={iconStyles}>insert_chart</FontIcon>
-            </NavLink>
-            <NavLink to="/app/map" activeClassName="active">
-              <FontIcon className="material-icons" style={iconStyles}>place</FontIcon>
-            </NavLink>
-          </div>
-
-        } />
+        <AppBar
+          title="SBA"
+          iconElementRight = {
+            <div>
+              <NavLink to="/app" activeClassName="active">
+                <FontIcon className="material-icons" style={iconStyles}>insert_chart</FontIcon>
+              </NavLink>
+              <NavLink to="/app/map" activeClassName="active">
+                <FontIcon className="material-icons" style={iconStyles}>place</FontIcon>
+              </NavLink>
+            </div>
+          }
+        />
         <switch>
           <Route path="/app" exact component={Metrics} />
           <Route path="/app/map" exact component={Map} />
