@@ -1,8 +1,8 @@
 html, body {
   height: 100%;
-  margin: 10px;
+  margin: 0;
   padding: 0;
-  background: #eee;
+  background: #efefef;
 }
 
 #root, #root>div, #map { height: 100%; margin: 0; padding: 0; }
@@ -67,11 +67,11 @@ html, body {
 
 .metrics {
   margin: 0 auto;
-  /* TODO: use a real grid system instead of forcing 1280px width for these */
-  max-width: 1280px;
+  max-width: 100%;
 }
 
 .metrics-filters {
+  margin: 3em 0;
   text-align: center;
 }
 
@@ -85,19 +85,36 @@ html, body {
 .metrics-filters .metrics-filters-button {
   vertical-align: top;
   margin-top: 10px;
+  background: #2396F3;
 }
 
 .metrics-section-container {
   display: -webkit-flex;
   display: flex;
   flex-wrap: wrap;
-  width: 1310px;
+  width: 100%;
 }
 
 .metrics-section {
-  width: 50%;
+  width: 47%;
   max-width: 625px;
   min-height: 200px;
   box-sizing: content-box;
-  margin: 30px 30px 0 0;
+  box-shadow: none !important;
+  border: 1px solid #C9C9C9;
+  margin: 1em;
+}
+
+.metrics-text-container {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+}
+
+.metrics-text-icon-container {
+  width: 33%;
+  display: inline-block;
+  text-align: center;
+  color: #3D3D3D;
 }

@@ -20,6 +20,11 @@ const iconStyles = {
   color: '#fff'
 };
 
+const appBarStyles = {
+  backgroundColor: '#2296F3',
+
+};
+
 /* Main container for the React app */
 function App() {
   return (
@@ -27,6 +32,7 @@ function App() {
       <div>
         <AppBar
           title="SBA"
+          style={appBarStyles}
           iconElementRight = {
             <div>
               <NavLink to="/app" activeClassName="active">

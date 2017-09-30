@@ -15,11 +15,10 @@ export default function MetricsFilters(props) {
     return (e, key, value) => props.onChange(name, value)
   }
   return (
-    <Card className="metrics-filters">
-      <CardTitle>
-      <span className="metrics-filters-text">Show the value SBA has provided in the</span>
+    <div className="metrics-filters">
 
       <DropDownMenu name="selectedRegionType" value={props.selectedRegionType} onChange={createOnChange("selectedRegionType")} style={{fontSize: '20px'}}>
+        <MenuItem value="false" primaryText="Select Region Type"/>
         {Object.keys(props.availableRegionTypes).map(regionType =>
           <MenuItem value={regionType} key={regionType} primaryText={props.availableRegionTypes[regionType]}/>
         )}
@@ -27,22 +26,21 @@ export default function MetricsFilters(props) {
 
       <DropDownMenu name="selectedRegion" value={props.selectedRegion} onChange={createOnChange("selectedRegion")} style={{fontSize: '20px', width: '300px'}}
           autoWidth={false}>
-        {props.availableRegions.map(region => 
+          <MenuItem value="false" primaryText="Select Subregion"/>
+        {props.availableRegions.map(region =>
           <MenuItem value={region} key={region} primaryText={region}/>
         )}
       </DropDownMenu>
 
-      <span className="metrics-filters-text">in the last</span>
-
       <DropDownMenu name="selectedYear" value={props.selectedYear} onChange={createOnChange("selectedYear")} style={{fontSize: '20px'}}>
+      <MenuItem value="false" primaryText="Select Number of Years"/>
         {props.availableYears.map(year =>
           <MenuItem value={year} key={year} primaryText={year + " years"}/>
         )}
       </DropDownMenu>
 
       <RaisedButton onClick={props.onSubmit} label="Submit" primary={true} className="metrics-filters-button"/>
-      </CardTitle>
-    </Card>
+    </div>
   )
 }
 
