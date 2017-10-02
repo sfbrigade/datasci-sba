@@ -8,7 +8,7 @@ import GoogleMap from './GoogleMap'
 
 export default function MetricsMapSection(props) {
   return (
-    <Card className="metrics-section">
+    <Card className="metrics-section metrics-map">
       <CardHeader title="Map"></CardHeader>
       <div style={{height:'400px'}}>
         <GoogleMap

@@ -4,7 +4,7 @@ import {Card, CardHeader, CardText} from 'material-ui/Card';
 
 export default function MetricsVisualizationSection(props) {
   return (
-    <Card className="metrics-section">
+    <Card className="metrics-section metrics-viz">
       <CardHeader title="Dataviz Header"></CardHeader>
       <CardText>
         <div>TODO</div>

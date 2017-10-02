@@ -8,12 +8,13 @@ import Map from './Map'
 import AppBar from 'material-ui/AppBar'
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem'
+import FlatButton from 'material-ui/FlatButton';
 // import NavItem from 'material-ui/NavItem'
 
 import FontIcon from 'material-ui/FontIcon';
 import {red500, yellow500, blue500} from 'material-ui/styles/colors';
 
-const iconStyles = {
+const linkStyles = {
   marginRight: 24,
   marginTop: 5,
   fontSize: '40px',
@@ -33,13 +34,14 @@ function App() {
         <AppBar
           title="SBA"
           style={appBarStyles}
+          iconElementLeft = {<div></div>}
           iconElementRight = {
             <div>
               <NavLink to="/app" activeClassName="active">
-                <FontIcon className="material-icons" style={iconStyles}>insert_chart</FontIcon>
+                <FlatButton label="Metrics" style={linkStyles} />
               </NavLink>
               <NavLink to="/app/map" activeClassName="active">
-                <FontIcon className="material-icons" style={iconStyles}>place</FontIcon>
+                <FlatButton label="Map" style={linkStyles} />
               </NavLink>
             </div>
           }

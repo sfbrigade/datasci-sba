@@ -78,7 +78,7 @@ class Metrics extends React.Component {
           selectedYear={this.state.selectedYear}
           onChange={(name, value) => this.handleChange(name, value)}
           onSubmit={() => this.handleSubmit()}
-          />
+        />
 
         {Object.keys(this.props.filteredBusinesses).length > 0 &&
           <div className="metrics-section-container">
@@ -89,9 +89,9 @@ class Metrics extends React.Component {
               filteredBusinesses={this.props.filteredBusinesses}/>
             <MetricsVisualizationSection
               filteredBusinesses={this.props.filteredBusinesses}/>
-            <MetricsMapSection
-              filteredBusinesses={this.props.filteredBusinesses}/>
             <MetricsTableSection
+              filteredBusinesses={this.props.filteredBusinesses}/>
+            <MetricsMapSection
               filteredBusinesses={this.props.filteredBusinesses}/>
           </div>
         }

@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 
 import {Card, CardTitle} from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'
-import DropDownMenu from 'material-ui/DropDownMenu'
+// import DropDownMenu from 'material-ui/DropDownMenu'
+import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 
 
@@ -16,30 +17,28 @@ export default function MetricsFilters(props) {
   }
   return (
     <div className="metrics-filters">
-
-      <DropDownMenu name="selectedRegionType" value={props.selectedRegionType} onChange={createOnChange("selectedRegionType")} style={{fontSize: '20px'}}>
-        <MenuItem value="false" primaryText="Select Region Type"/>
+      <span className="metrics-filters-text">Show the value SBA has provided in</span>
+      <SelectField className="metrics-filter-select" name="selectedRegionType" floatingLabelText="Select Region Type" value={props.selectedRegionType} onChange={createOnChange("selectedRegionType")} style={{textAlign: 'left', fontSize: '20px'}}>
         {Object.keys(props.availableRegionTypes).map(regionType =>
           <MenuItem value={regionType} key={regionType} primaryText={props.availableRegionTypes[regionType]}/>
         )}
-      </DropDownMenu>
+      </SelectField>
 
-      <DropDownMenu name="selectedRegion" value={props.selectedRegion} onChange={createOnChange("selectedRegion")} style={{fontSize: '20px', width: '300px'}}
-          autoWidth={false}>
-          <MenuItem value="false" primaryText="Select Subregion"/>
+      <SelectField className="metrics-filter-select" name="selectedRegion" floatingLabelText="Select Region" value={props.selectedRegion} onChange={createOnChange("selectedRegion")} style={{textAlign: 'left', fontSize: '20px'}} autoWidth={false}>
         {props.availableRegions.map(region =>
           <MenuItem value={region} key={region} primaryText={region}/>
         )}
-      </DropDownMenu>
+      </SelectField>
+        <br />
+      <span className="metrics-filters-text">in the last</span>
 
-      <DropDownMenu name="selectedYear" value={props.selectedYear} onChange={createOnChange("selectedYear")} style={{fontSize: '20px'}}>
-      <MenuItem value="false" primaryText="Select Number of Years"/>
+      <SelectField className="metrics-filter-select" name="selectedYear" floatingLabelText="Select Year" value={props.selectedYear} onChange={createOnChange("selectedYear")} style={{textAlign: 'left', fontSize: '20px'}}>
         {props.availableYears.map(year =>
           <MenuItem value={year} key={year} primaryText={year + " years"}/>
         )}
-      </DropDownMenu>
+      </SelectField>
 
-      <RaisedButton onClick={props.onSubmit} label="Submit" primary={true} className="metrics-filters-button"/>
+      <RaisedButton onClick={props.onSubmit} label="Submit" primary={true} className="metrics-filters-button" style={{backgroundColor: '#00E676'}}/>
     </div>
   )
 }

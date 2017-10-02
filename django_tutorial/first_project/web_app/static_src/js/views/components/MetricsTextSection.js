@@ -12,12 +12,12 @@ const iconStyles = {
 
 export default function MetricsTextSection(props) {
   let filteredBusinessesAsArray = Object.values(props.filteredBusinesses)
-  let numBusinesses = filteredBusinessesAsArray.length
-  let numEmployees = filteredBusinessesAsArray.reduce((total, business) => business.jobs_supported + total, 0)
+  let numBusinesses = filteredBusinessesAsArray.length.toLocaleString();
+  let numEmployees = filteredBusinessesAsArray.reduce((total, business) => business.jobs_supported + total, 0).toLocaleString();
   let capitalDelivered = filteredBusinessesAsArray.reduce((total, business) => business.gross_approval + total, 0).toLocaleString();
 
   return (
-    <Card className="metrics-section">
+    <Card className="metrics-section metrics-text">
       <CardHeader title="Metrics"></CardHeader>
       <CardText className="metrics-text-container">
 
