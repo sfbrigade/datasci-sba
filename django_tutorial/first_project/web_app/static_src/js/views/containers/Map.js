@@ -13,7 +13,7 @@ import MapTooltip from './MapTooltip'
 import FeatureTypeSelector from './FeatureTypeSelector'
 import Metrics from './Metrics'
 
-const Map = ({props}) => {
+const Map = (props) => {
   return (
     <div style={{height: '100%'}}>
       <div id="controls" className="nicebox">
