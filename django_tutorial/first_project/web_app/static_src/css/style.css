@@ -3,6 +3,7 @@ html, body {
   margin: 0;
   padding: 0;
   background: #efefef;
+  color: #3D3D3D;
 }
 
 #root, #root>div, #map { height: 100%; margin: 0; padding: 0; }
@@ -97,6 +98,7 @@ html, body {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  margin-bottom: 3em;
 }
 
 .metrics-section {
@@ -122,6 +124,7 @@ html, body {
 }
 
 .metrics-table {
+  padding-top: 1em;
   background: #fff;
 }
 
@@ -134,14 +137,15 @@ html, body {
   display: inline-block;
   margin: 0 1.5em;
   position: relative;
-  bottom: 1.1em;
+  bottom: 1.7em;
+  color: #7D7D7D;
 }
 
 @media only screen and (min-width: 1050px) {
 
-  .metrics-text, .metrics-viz {
+  .metrics-text, .metrics-viz, .metrics-table, .metrics-map {
     display: inline-block;
-    width: 45%;
+    width: 47%;
   }
 
   .metrics-viz {

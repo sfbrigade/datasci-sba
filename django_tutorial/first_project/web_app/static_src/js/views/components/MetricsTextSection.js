@@ -18,7 +18,7 @@ export default function MetricsTextSection(props) {
 
   return (
     <Card className="metrics-section metrics-text">
-      <CardHeader title="Metrics"></CardHeader>
+      <CardHeader title="Metrics" />
       <CardText className="metrics-text-container">
 
       <div className="metrics-text-icon-container">

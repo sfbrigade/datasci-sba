@@ -49,7 +49,7 @@ class Metrics extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.availableRegionsByRegionType !== this.props.availableRegionsByRegionType) {
-      this.setState({selectedRegion: nextProps.availableRegionsByRegionType[this.state.selectedRegionType][0]})
+      this.setState({selectedRegion: nextProps.availableRegionsByRegionType[this.state.selectedRegionType][0]});
     }
   }
 

@@ -59,7 +59,6 @@ export default class MetricsTableSection extends React.Component {
   }
 
   handleChange(e) {
-    console.log(e);
     if (!isNaN(e.target.textContent)) {
       const numRows = parseInt(e.target.textContent);
       this.setState({ numRows: numRows });
@@ -68,7 +67,6 @@ export default class MetricsTableSection extends React.Component {
     } else if (e.target.textContent === 'Jobs Supported') {
       this.setState({ sortBy: 'jobs_supported' });
     }
-
   }
 
   render() {
@@ -78,7 +76,6 @@ export default class MetricsTableSection extends React.Component {
 
     return (
       <div className="metrics-section metrics-table">
-      <CardHeader>Table of Businesses</CardHeader>
         <div className="metrics-table-filter">
           <span>View top</span>
 
