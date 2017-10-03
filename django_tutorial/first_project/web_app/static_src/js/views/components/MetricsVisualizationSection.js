@@ -45,26 +45,26 @@ export default class MetricsVisualizationSection extends Component {
       series: undefined
     };
 
-    this.formatData = this.formatData.bind(this);
   }
 
-  componentDidMount() {
-    this.formatData();
-  }
-
-  formatData() {
+  getSeries() {
     let arrayOfProps = Object.values(this.props.filteredBusinesses);
-    let formattedArr = arrayOfProps.map(biz => {
-      return [new Date(biz.year, 1, 1).getTime(), biz.jobs_supported];
+    let yearToSumOfValues = {}
+    arrayOfProps.forEach(biz => {
+      if(!isNaN(biz.jobs_supported) && !isNaN(biz.year)) {
+        yearToSumOfValues[biz.year] = (yearToSumOfValues[biz.year] || 0) + biz.jobs_supported
+      }
     })
+    let formattedArr = []
+    for(let year in yearToSumOfValues) {
+      formattedArr.push([new Date(year, 1, 1).getTime(), yearToSumOfValues[year]])
+    }
     formattedArr.sort((a, b) => a[0] - b[0]);
-    console.log(formattedArr);
-    const series = new TimeSeries({
+    return new TimeSeries({
       name: "SBA over time",
       columns: ["time", "value"],
       points: formattedArr
     });
-    this.setState({ series });
   }
 
   handleTrackerChanged(tracker) {
@@ -76,56 +76,31 @@ export default class MetricsVisualizationSection extends Component {
   }
 
   render() {
-    if (this.state.series === undefined) {
+    let series = this.getSeries()
+    if (series === undefined) {
       return ( <div>Loading</div> );
     } else {
-      console.log('range', this.state.series.range());
       return (
         <Card className="metrics-section metrics-viz">
         <CardHeader title="Dataviz Header" />
         <Resizable>
-        <ChartContainer timeRange={this.state.series.range()} format="%b '%y">
-            <ChartRow height="100%">
+        <ChartContainer timeRange={series.range()} format="'%y">
+            <ChartRow height="300">
                 <YAxis
                     id="jobs"
                     label="Jobs Created"
-                    min={this.state.series.min()}
-                    max={this.state.series.max()}
+                    min={0}
+                    max={series.max()}
                     width="100"
+                    type="linear"
                 />
                 <Charts>
-                    <LineChart axis="year" series={this.state.series} style={style} />
-                    <Baseline
-                        axis="jobs created"
-                        style={baselineStyleLite}
-                        value={this.state.series.max()}
-                        label="Max"
-                        position="right"
-                    />
-                    <Baseline
-                        axis="jobs created"
-                        style={baselineStyleLite}
-                        value={this.state.series.min()}
-                        label="Min"
-                        position="right"
-                    />
-                    <Baseline
-                        axis="jobs created"
-                        style={baselineStyleLite}
-                        value={this.state.series.avg() - this.state.series.stdev()}
-                    />
-                    <Baseline
-                        axis="jobs created"
-                        style={baselineStyleLite}
-                        value={this.state.series.avg() + this.state.series.stdev()}
-                    />
-                    <Baseline
-                        axis="jobs created"
-                        style={baselineStyle}
-                        value={this.state.series.avg()}
-                        label="Avg"
-                        position="right"
-                    />
+                    <LineChart
+                      axis="jobs"
+                      series={series}
+                      columns={["value"]}
+                      style={style}
+                      interpolation="curveBasis" />
                   </Charts>
                 </ChartRow>
             </ChartContainer>
