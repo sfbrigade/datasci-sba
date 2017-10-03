@@ -106,10 +106,10 @@ export default class MetricsTableSection extends React.Component {
             enableSelectAll={this.state.enableSelectAll}
           >
             <TableRow>
-              <TableHeaderColumn>Rank</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '20%'}}>Rank</TableHeaderColumn>
               <TableHeaderColumn>Business</TableHeaderColumn>
-              <TableHeaderColumn>Jobs Supported</TableHeaderColumn>
-              <TableHeaderColumn>Google Rating</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '22%'}}>Jobs Supported</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '22%'}}>Google Rating</TableHeaderColumn>
             </TableRow>
           </TableHeader>
           <TableBody
@@ -120,10 +120,10 @@ export default class MetricsTableSection extends React.Component {
           >
             {businesses.map((business, index) => (
               <TableRow key={index}>
-                <TableRowColumn>{index + 1}</TableRowColumn>
+                <TableRowColumn style={{width: '20%'}}>{index + 1}</TableRowColumn>
                 <TableRowColumn>{business.borr_name}</TableRowColumn>
-                <TableRowColumn>{business.jobs_supported}</TableRowColumn>
-                <TableRowColumn>{business.google_rating}</TableRowColumn>
+                <TableRowColumn style={{width: '20%'}}>{business.jobs_supported}</TableRowColumn>
+                <TableRowColumn style={{width: '20%'}}>{business.google_rating}</TableRowColumn>
               </TableRow>
               ))}
           </TableBody>

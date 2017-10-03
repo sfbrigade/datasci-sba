@@ -17,7 +17,7 @@ export default function MetricsFilters(props) {
   }
   return (
     <div className="metrics-filters">
-      <span className="metrics-filters-text">Show the value SBA has provided in</span>
+      <div className="metrics-filters-text">Show the value SBA has provided in</div>
       <SelectField className="metrics-filter-select" name="selectedRegionType" floatingLabelText="Select Region Type" value={props.selectedRegionType} onChange={createOnChange("selectedRegionType")} style={{textAlign: 'left', fontSize: '20px'}}>
         {Object.keys(props.availableRegionTypes).map(regionType =>
           <MenuItem value={regionType} key={regionType} primaryText={props.availableRegionTypes[regionType]}/>
@@ -29,8 +29,8 @@ export default function MetricsFilters(props) {
           <MenuItem value={region} key={region} primaryText={region}/>
         )}
       </SelectField>
-        <br />
-      <span className="metrics-filters-text">in the last</span>
+
+      <div className="metrics-filters-text">in the last</div>
 
       <SelectField className="metrics-filter-select" name="selectedYear" floatingLabelText="Select Year" value={props.selectedYear} onChange={createOnChange("selectedYear")} style={{textAlign: 'left', fontSize: '20px'}}>
         {props.availableYears.map(year =>
