@@ -31,7 +31,29 @@ function App() {
   return (
     <MuiThemeProvider>
       <div>
+        {/* HACK: have /app/?map serve the old map, while /app/ serves the metrics
+        TODO: toggle this part on/off w/ router, instead of this hack with window.location */}
         <AppBar
+          title="SBA"
+          style={appBarStyles}
+          iconElementLeft = {<div></div>}
+          iconElementRight = {
+            <div>
+              <a href="/app">
+                <FlatButton label="Metrics" style={linkStyles} />
+              </a>
+              <a href="/app?map">
+                <FlatButton label="Map" style={linkStyles} />
+              </a>
+            </div>
+          }
+        />
+        {window.location.search === '?map' || <Metrics/>}
+        {window.location.search === '?map' && <Map/>}
+
+        {/* Here is the react-router code that we should use once the map issues and state sharing
+        are fixed */}
+        {/*<AppBar
           title="SBA"
           style={appBarStyles}
           iconElementLeft = {<div></div>}
@@ -49,7 +71,7 @@ function App() {
         <switch>
           <Route path="/app" exact component={Metrics} />
           <Route path="/app/map" exact component={Map} />
-        </switch>
+        </switch>*/}
       </div>
     </MuiThemeProvider>
   )
