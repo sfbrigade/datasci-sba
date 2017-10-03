@@ -8,8 +8,8 @@ import GoogleMap from './GoogleMap'
 
 export default function MetricsMapSection(props) {
   return (
-    <Card className="metrics-section">
-      <CardHeader title="Map"></CardHeader>
+    <Card className="metrics-section metrics-map">
+      <CardHeader title="Map" />
       <div style={{height:'400px'}}>
         <GoogleMap
           featureType={FEATURE_TYPE_BUSINESS}
