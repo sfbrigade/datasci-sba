@@ -115,14 +115,14 @@ def main():
 
     # Define list of files you want to run
     tasks = [
-        'queries/stg_analytics/00_00_create_schema',
-        'queries/stg_analytics/00_01_01_sba_sfdo_zips',
-        'queries/stg_analytics/00_01_02_sba_sfdo',
-        'queries.stg_analytics.00_01_03_sba_sfdo_api_calls.py',
-        'queries/stg_analytics/00_01_04_sba_sfdo_all',
-        'queries/stg_analytics/00_02_irs_income',
-        'queries/stg_analytics/00_03_census_naics',
-        'queries/trg_analytics/00_01_sba_region_level',
+        # 'queries/stg_analytics/00_00_create_schema',
+        # 'queries/stg_analytics/00_01_01_sba_sfdo_zips',
+        # 'queries/stg_analytics/00_01_02_sba_sfdo',
+        'queries.stg_analytics.sba_sfdo_api_calls.py',
+        # 'queries/stg_analytics/00_01_04_sba_sfdo_all',
+        # 'queries/stg_analytics/00_02_irs_income',
+        # 'queries/stg_analytics/00_03_census_naics',
+        # 'queries/trg_analytics/00_01_sba_region_level',
     ]
 
     if args.run_parse:
