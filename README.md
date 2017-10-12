@@ -57,3 +57,5 @@ Two major challenges from office perspective
 |Benjamin Elias|benzo |
 |Adam Donovan|avdonovan |
 |Amit Ranan|amitranan |
+|Kenny Nieh|kenny.n |
+|Brianna Bischofberger|Brianna_b |
