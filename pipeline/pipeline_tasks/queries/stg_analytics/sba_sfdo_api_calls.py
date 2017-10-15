@@ -17,6 +17,7 @@ from sqlalchemy import create_engine
 
 from utilities.db_manager import DBManager
 from pipeline.pipeline_tasks.api_calls import yelp_ratings as yr
+from pipeline.pipeline_tasks.api_calls import geocoder as geo
 
 
 def get_args():
@@ -58,7 +59,20 @@ def get_geocoded_fields(dbm):
     Keyword Args:
         dbm: DBManager object
     """
-    pass
+    sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
+    sfdo = sfdo[[
+        'sba_sfdo_id',
+        'borr_name',
+        'borr_street',
+        'borr_city',
+        'borr_state',
+        'borr_zip',
+    ]]
+    sfdo['full_address'] = sfdo['borr_street'] + ', '\
+                           + sfdo['borr_city'] + ', '\
+                           + sfdo['borr_state'] + ', '\
+                           + sfdo['borr_zip']
+    return geo.geocode_table(sfdo.head())
 
 
 def get_congressional_districts(dbm):
@@ -71,18 +85,34 @@ def get_congressional_districts(dbm):
     pass
 
 
+
 def main():
     """Execute Stuff"""
-    print('Getting Yelp data from Yelp API')
     args = get_args()
     dbm = DBManager(db_url=args.db_url)
 
-    sfdo_yelp = get_yelp_fields(dbm)
+    columns = [[
+        'sba_sfdo_id',
+        'borr_name',
+        'borr_street',
+        'borr_city',
+        'borr_state',
+        'borr_zip',
+        'full_address'
+    ]]
 
-    # Eventually we will have to join with geocoded fields table and
-    # Congressional District Table before writing back to DB
-    dbm.write_df_table(
-        sfdo_yelp, table_name='sba_sfdo_api_calls', schema='stg_analytics')
+    # print('Getting Yelp data from Yelp API')
+    # sfdo_yelp = get_yelp_fields(dbm)
+
+    # print('Getting Geocoded fields from Google Maps API')
+    sfdo_geocoded = get_geocoded_fields(dbm)
+    print(sfdo_geocoded)
+    # sfdo_combined = sfdo_yelp.merge(sfdo_geocoded, on=columns)
+
+    # # Eventually we will have to join with geocoded fields table and
+    # # Congressional District Table before writing back to DB
+    # dbm.write_df_table(
+    #     sfdo_combined, table_name='sba_sfdo_api_calls', schema='stg_analytics')
 
 
 if __name__ == '__main__':
