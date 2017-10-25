@@ -26,6 +26,7 @@ export default class GoogleMap extends React.Component {
    */
   componentDidMount() {
     this.map = new google.maps.Map(document.getElementById('map'), googleMapOptions);
+    this.infoWindow = new google.maps.InfoWindow({})
 
     this.map.data.setStyle(feature => styleFeature(feature, this.props))
     this.map.data.addListener('mouseover', e => {
@@ -83,6 +84,7 @@ export default class GoogleMap extends React.Component {
               })
               marker.addListener('mouseover', this.createMouseoverListener(feature))
               marker.addListener('mouseout', this.createMouseoutListener(feature))
+              marker.addListener('click', this.createClickListener(feature, marker))
               this.markers.push(marker)
             }
           }
@@ -147,6 +149,18 @@ export default class GoogleMap extends React.Component {
 
   createMouseoutListener(feature) {
     return () => this.props.onMouseover(undefined)
+  }
+
+  createClickListener(feature, marker) {
+    return () => {
+      // TODO: use proper templating/escaping
+      this.infoWindow.setContent(`
+          ${feature.borr_name}:
+          $${feature.gross_approval ? feature.gross_approval.toLocaleString() : 'N/A'}
+          disbursed in ${feature.year}
+          ${feature.jobs_supported ? ' supporting ' + feature.jobs_supported.toLocaleString() + ' jobs' : ''}`)
+      this.infoWindow.open(this.map, marker)
+    }
   }
 
 
