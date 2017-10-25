@@ -1,6 +1,21 @@
 """
 Control functions for Google Civics external API
 """
+import os
+
+
+
+def check_credentials():
+    # Check that all required envars are set.
+    try:
+        if os.environ['GOOGLEAPI'] is None:
+            print("No GOOGLEAPI")
+            return False
+    except:
+        print("No GOOGLEAPI")
+        return False
+    return True
+
 
 def get_params(max_records, older_than):
     params = { 'max_records': 25000, 'max_days_to_store': 21 }

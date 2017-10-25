@@ -98,8 +98,31 @@ def main():
         older_than = args.older_than
     else:
         older_than = -1
+
+    do_yelp = False
     if args.yelp:
+        if yc.check_credentials() is False:
+            print("Warning: Yelp credentials not set, cannot process.")
+        else:
+            do_yelp = True
+
+    do_civics = False
+    if args.civics:
+        if civc.check_credentials() is False:
+            print("Warning: Google Civics credentials not set, cannot process.")
+        else:
+            do_civics = True
+
+    do_geocode = False
+    if args.geocode:
+        if geoc.check_credentials() is False:
+            print("Warning: Geocode credentials not set, cannot process.")
+        else:
+            do_geocode = True
+            
+    if do_yelp:
         yelp_params = yc.get_params(max_records, older_than)
+        yelp_params['db_url'] = args.db_url
         yelp_ids = yc.get_record_ids(yelp_params)
         if yelp_ids is None or len(yelp_ids) <= 0:
             print("Could not get Yelp records to update.")
@@ -107,13 +130,14 @@ def main():
                 print("Internal error.")
             else:
                 print("Empty record list.")
-            return
-        status = yc.process_ids(yelp_ids)
-        # TODO - handle status
-    if args.civics:
+                return
+            status = yc.process_ids(yelp_params, yelp_ids)
+            # TODO - handle status
+                
+    if do_civics:
+        print("Google Civics is true.")
         civics_params = civc.get_params(max_records, older_than)
-        print("Should process Google Civics: max of {} records and older than {} days.".format(civics_params["max_records"], civics_params["max_days_to_store"]))
-        civics_ids = civc.get_record_ids(yelp_params)
+        civics_ids = civc.get_record_ids(civics_params)
         if civics_ids is None or len(civics_ids) <= 0:
             print("Could not get Google Civics records to update.")
             if civics_ids is None:
@@ -123,10 +147,10 @@ def main():
             return
         status = civc.process_ids(civics_ids)
         # TODO - handle status
-    if args.geocode:
+
+    if do_geocode:
         geocode_params = geoc.get_params(max_records, older_than)
-        print("Should process Geocode: max of {} records and older than {} days.".format(geocode_params["max_records"], geocode_params["max_days_to_store"]))
-        geocode_ids = geoc.get_record_ids(yelp_params)
+        geocode_ids = geoc.get_record_ids(geocode_params)
         if geocode_ids is None or len(geocode_ids) <= 0:
             print("Could not get Geocode records to update.")
             if geocode_ids is None:

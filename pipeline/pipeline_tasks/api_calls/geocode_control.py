@@ -2,6 +2,14 @@
 Control functions for Geocode external API
 """
 
+
+
+def check_credentials():
+    # Check that all required envars are set.
+    # None known at this point
+    return True
+
+
 def get_params(max_records, older_than):
     params = { 'max_records': 2500, 'max_days_to_store': 30 }
     if max_records > 0:
