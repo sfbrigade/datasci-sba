@@ -32,7 +32,7 @@ SECRET_KEY = '*r2f$*@ornl4ka4@^6c4r+%7oh#=3p8ulqdxst#h1t)mav_7=j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ec2-54-175-133-20.compute-1.amazonaws.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -92,7 +93,7 @@ DATABASES = {
         'HOST': PARSED_DBURI.hostname,
         'PORT': '5432',
         'OPTIONS': {
-            'options': '-c search_path=data_ingest,stg_analytics,trg_analytics',
+            'options': '-c search_path=data_ingest,stg_analytics,trg_analytics,sandbox',
             'sslmode': 'require',
         }
     }

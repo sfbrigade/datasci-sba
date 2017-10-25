@@ -75,6 +75,10 @@ To download Postgres: http://oscg-downloads.s3.amazonaws.com/packages/PostgreSQL
 
 For further instructions: https://medium.com/@colinrubbert/installing-ruby-on-rails-in-windows-10-w-bash-postgresql-e48e55954fbf
 
+## Running Webapp
+
+The prototype webapp lives in `django_tutorial/first_project`.  You'll need to install some additional libraries if you want to run the webapp locally; see the "Running the webapp locally" section of the [the webapp readme](./django_tutorial/first_project/README.md) for more information.
+
 ## Tech Stack
 
 Here are the technologies used in the project, along with some tutorials if you'd like to learn.
@@ -89,8 +93,18 @@ Here are the technologies used in the project, along with some tutorials if you'
 | Jupyter | | Easily share Python analysis with code and results | [Quickstart guide](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/) |
 | Django | 1.11.4 | Python webserver | Read the tutorial [here](https://docs.djangoproject.com/en/1.11/intro/), but install using `conda install django` |
 | Javascript | ES2015 / ES6 | Clientside scripting language | [Tutorial covering modern JS](https://javascript.info/), [Quick reference of ES6 features](http://es6-features.org/) |
+| Yarn & Webpack & Babel & Jest | | Build toolchain & testing for JS | |
 | Redux | 3.7.2 | Clientside state management | [Docs](http://redux.js.org/), [Good introductory videos](https://egghead.io/courses/getting-started-with-redux) |
-| jQuery | 3.2.1 | Clientside DOM manipulation | [Tutorial](https://www.tutorialspoint.com/jquery/jquery-overview.htm) |
+| React | 15.6.1 | Clientside view rendering | [Tutorial](https://facebook.github.io/react/tutorial/tutorial.html) |
+
+## Style Guides
+
+JavaScript: [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
+React: [Airbnb React Style Guide](https://github.com/airbnb/javascript/tree/master/react)
+CSS & Sass: [Airbnb CSS & Sass Style Guide](https://github.com/airbnb/css)
+Python: [PEP8](https://www.python.org/dev/peps/pep-0008/)
+
+
 
 | Previous | Next |
 |:---------|-----:|

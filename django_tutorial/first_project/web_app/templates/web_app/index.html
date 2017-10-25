@@ -9,48 +9,19 @@
         <title>SBA Region Analysis</title>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="{% static "web_app/css/style.css" %}">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet">
     </head>
     <body>
-        <div id="controls" class="nicebox">
-            <div>
-                <h2>Color by:</h2>
-                <select id="color-select">
-                </select>
-            </div>
-            <div id="legend">
-                <div id="legend-min">min</div>
-                <div class="color-key"></div>
-                <div id="legend-max">max</div>
-            </div>
-            <div>
-                <h2>Filter by:</h2>
-                <select id="filter-select">
-                </select>
-                <div>
-                    <div id="filter-min">0</div>
-                    <div id="filter-max">1</div>
-                    <div id="filter-slider"></div>
-                </div>
-            </div>
-            <div>
-
-            </div>
+        <div id="root">
         </div>
-        <div id="map"></div>
-        <div id="tooltip"></div>
         <script>
                 // TODO: don't use global vars like this
                 var regionsUrl = "{% url 'api_server:regions' %}"
+                var businessesUrl = "{% url 'api_server:businesses' %}"
                 var topoUrl = "{% static "web_app/tempdata/ca_zips_geo.json" %}"
         </script>
-        <script
-                src="https://code.jquery.com/jquery-3.2.1.min.js"
-                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-                crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script src="https://unpkg.com/redux@3.7.2/dist/redux.min.js"></script>
-        <script src="https://unpkg.com/redux-thunk@2.1.0/dist/redux-thunk.min.js"></script>
-        <script src="{% static "web_app/js/index.js" %}"></script>
+        <script src="{% static "web_app/js/index.bundle.js" %}"></script>
         <script async defer
                 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMkwqz_xwd2fA2nAKy5s5ruzdAIy6T354&callback=init">
         </script>
