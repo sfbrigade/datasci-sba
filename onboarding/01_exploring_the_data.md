@@ -1,7 +1,7 @@
 # Explore the data
 ## SQL
 Use basic SQL to query and explore the data! We now use Mode Analytics as a frontend tool to query our PostgreSQL database hosted on Microsoft Azure. Ping the #datasci-sba Slack Channel if you need access to Mode.
-https://modeanalytics.com/editor/code_for_san_francisco
+https://modeanalytics.com/home/code_for_san_francisco
 
 ## Data
 
