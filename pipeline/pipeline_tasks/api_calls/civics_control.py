@@ -9,10 +9,8 @@ def check_credentials():
     # Check that all required envars are set.
     try:
         if os.environ['GOOGLEAPI'] is None:
-            print("No GOOGLEAPI")
             return False
     except:
-        print("No GOOGLEAPI")
         return False
     return True
 

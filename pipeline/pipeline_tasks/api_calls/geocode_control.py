@@ -6,7 +6,11 @@ Control functions for Geocode external API
 
 def check_credentials():
     # Check that all required envars are set.
-    # None known at this point
+    try:
+        if os.environ['GOOGLE_MAPS_API'] is None:
+            return False
+    except:
+        return False
     return True
 
 

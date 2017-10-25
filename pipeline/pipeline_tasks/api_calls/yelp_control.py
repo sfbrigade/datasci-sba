@@ -13,10 +13,8 @@ def check_credentials():
     # Check that all required envars are set.
     try:
         if os.environ['YELP_ID'] is None:
-            print("No YELP_ID")
             return False
         if os.environ['YELP_SECRET'] is None:
-            print("No YELP_SECRET")
             return False
     except:
         return False
