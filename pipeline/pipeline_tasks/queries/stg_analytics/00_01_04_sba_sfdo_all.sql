@@ -52,7 +52,11 @@ revolver_status bigint,
 yelp_rating numeric,
 yelp_total_reviews bigint,
 yelp_url text,
-yelp_timestamp timestamp without time zone
+yelp_timestamp timestamp without time zone,
+civics_district text,
+civics_timestamp timestamp without time zone,
+geocode_data text,
+geocode_timestamp timestamp without time zone
 );
 
 insert into stg_analytics.sba_sfdo_all
