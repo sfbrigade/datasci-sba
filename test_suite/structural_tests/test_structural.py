@@ -67,4 +67,4 @@ def test_valid_folders_schemas():
     are what we expect.
     """
     queries_dir = os.path.join(os.path.dirname(__file__), '../../pipeline/pipeline_tasks/queries')
-    assert sorted(os.listdir(queries_dir)) == ['documentation', 'stg_analytics', 'trg_analytics']
+    assert sorted(os.listdir(queries_dir)) == ['documentation', 'sandbox', 'stg_analytics', 'trg_analytics']
