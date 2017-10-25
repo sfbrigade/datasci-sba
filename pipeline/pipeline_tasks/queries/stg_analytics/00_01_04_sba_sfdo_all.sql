@@ -108,7 +108,7 @@ select
   sba_sfdo.revolver_status,
   api_calls.yelp_rating,
   api_calls.yelp_total_reviews,
-  api_calls.yelp_url
+  api_calls.yelp_url,
   api_calls.yelp_timestamp,
   api_calls.civics_district,
   api_calls.civics_timestamp,
