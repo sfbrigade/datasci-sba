@@ -1,16 +1,28 @@
-"""
-Control functions for Yelp external API
+"""Control functions for Yelp external API
+Each package needs to provide three methods:
+1. check_credentials, which returns True if all necessary envars are
+defined, False otherwise.
+2. get_params, which returns a dictionary with max_records and
+max_days_to_store values. The request cannot exceed these values.
+3. update_records, which will process up to max_records which are
+older than the max_days_to_store value. This method actually writes to
+the database.
 """
 import os
+
+import time
+import datetime
 
 import pandas as pd
 import requests
 
+
 from utilities.db_manager import DBManager
 
 
+# Check that all required envars are set. Returns true if envars are set, false otherwise.
+# NOTE: Does not validate that the envar actually allows API access.
 def check_credentials():
-    # Check that all required envars are set.
     try:
         if os.environ['YELP_ID'] is None:
             return False
@@ -21,11 +33,11 @@ def check_credentials():
     return True
 
 
+# Set the parameters for Yelp. The maximum number of queries per day is 50,000.
+# We can only store the data for 14 days.
+# The user can specify values on the command line, but only values smaller than the max are honored.
+# Returns params in a dictionary.
 def get_params(max_records, older_than):
-    # Set the parameters for Yelp. The maximum number of queries per day is 50,000.
-    # We can only store the data for 14 days.
-    # The user can specify values on the command line, but only values smaller than the max are honored.
-    
     params = { 'max_records': 50000, 'max_days_to_store': 14 }
     if max_records > 0:
         params["max_records"] = min(params["max_records"], max_records)
@@ -34,44 +46,54 @@ def get_params(max_records, older_than):
     return params
 
 
-def get_record_ids(params):
-    max_records = params['max_records']
-    max_days_to_store = params['max_days_to_store']
-    db_url = params['db_url']
-    print("Return up to {} records that have not been updated in at least {} days.".format(max_records, max_days_to_store))
-
+# This actually gets the records to update, calls the API function and writes back to the database.
+# Returns the number of records updated, or None if a serious error occurred.
+# Can return 0 if nothing found to update.
+def update_records(api_params, db_params):
+    # Create a DB manager object and a pandas dataframe with just the set of records to be updated.
+    # Then call the Yelp API for each entry in the dataframe and update if it works.
+    max_records = api_params['max_records']
+    max_days_to_store = api_params['max_days_to_store']
+    db_url = db_params['db_url']
     dbm = DBManager(db_url=db_url)
-    # TODO call load_query_table to get only the desired record IDS
-    records = []
     
-    for i in range(1, max_records + 1):
-        records.append(i)
-    return records
+    sfdo = get_records(dbm, max_records, max_days_to_store)
+    if sfdo is None:
+        return None
+    elif len(sfdo) < 1:
+        return 0
+
+    update_count = update_yelp(sfdo)
+    if update_count is not None:
+        dbm.write_df_table(sfdo, table_name='sba_sfdo_api_calls', schema='stg_analytics', dtype=None, if_exists='append')
+    return update_count
 
 
-def process_ids(params, records):
-    # This function is the most complex as it needs to get a pandas dataframe, query yelp and write the updates back to the DB.
+# Internal only, to create a timetstamp string.
+def get_timestamp():
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    return st
 
-    print("Enter process_ids for {} records.".format(len(records)))
-
-    db_url = params['db_url']
-
-    dbm = DBManager(db_url=db_url)
-
-    # Use load_query_table to get only the desired records
-    sfdo = dbm.load_table('sba_sfdo', 'stg_analytics')
-    sfdo = sfdo[['sba_sfdo_id',
-                 'borr_name',
-                 'borr_street',
-                 'borr_city',
-                 'borr_state',
-                 'borr_zip',
-    ]]
+    
+# This is internal only, returning a pandas dataframe with the records to be updated.
+def get_records(dbm, max_records, max_days_to_store):
+    # Build the date/time to compare. Subtract appropriate number of seconds from current time
+    ts = time.time()
+    ts -= max_days_to_store * 24 * 60 * 60
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
+    query = "SELECT sba_sfdo.sba_sfdo_id, sba_sfdo.borr_name, sba_sfdo.borr_street, sba_sfdo.borr_city, sba_sfdo.borr_state, sba_sfdo.borr_zip, yelp_rating, yelp_total_reviews, yelp_url, yelp_timestamp FROM stg_analytics.sba_sfdo LEFT JOIN stg_analytics.sba_sfdo_api_calls ON sba_sfdo.sba_sfdo_id=sba_sfdo_api_calls.sba_sfdo_id WHERE yelp_timestamp is NULL OR yelp_timestamp <= '{}' ORDER BY yelp_timestamp LIMIT {}".format(st, max_records)
+    sfdo = dbm.load_query_table(query)
     sfdo['full_address'] = sfdo['borr_street'] + ', '\
                            + sfdo['borr_city'] + ', '\
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
+    return sfdo
 
+
+# This is internal only to actually get the Yelp data and add it to
+# the dataframe.
+def update_yelp(sfdo):
     data = { 'grant_type' : 'client_credentials',
              'client_id' : os.environ['YELP_ID'],
              'client_secret' : os.environ['YELP_SECRET'] }
@@ -80,11 +102,9 @@ def process_ids(params, records):
     url = 'https://api.yelp.com/v3/businesses/search'
     headers = { 'Authorization' : 'bearer %s' % access_token }
 
-    sfdo['yelp_rating'] = None
-    sfdo['yelp_total_reviews'] = None
-    sfdo['yelp_url'] = None
-
+    update_count = 0
     for i in range(len(sfdo)):
+        print('.', end='', flush=True)
         address = sfdo.loc[i]['full_address']
         name = sfdo.loc[i]['borr_name']
         params = { 'location' : address,
@@ -97,16 +117,11 @@ def process_ids(params, records):
             sfdo.loc[i, 'yelp_rating'] = bus['rating']
             sfdo.loc[i, 'yelp_total_reviews'] = bus['review_count']
             sfdo.loc[i, 'yelp_url'] = bus['url']
-            print("Found a Yelp match for name {} at address {} returned rating {} reviews {} url {}".
-                  format(name, address, bus['rating'], bus['review_count'], bus['url']))
+            sfdo.loc[i, 'yelp_timestamp'] = get_timestamp()
+            update_count += 1
         except:
-            print("Didn't find a Yelp match for name {} at address {}".format(name, address))
+            sfdo.loc[i, 'yelp_timestamp'] = get_timestamp()
             pass
-        if i > 20:
-            break
 
-    # TODO - actually update the database
-
-    # TODO - return something other than None
-    
-    return None
+    print(' ')
+    return update_count

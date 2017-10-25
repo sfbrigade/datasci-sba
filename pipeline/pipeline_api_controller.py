@@ -120,53 +120,50 @@ def main():
         else:
             do_geocode = True
             
+    db_params = { 'db_url' : args.db_url }
     if do_yelp:
+        print("...Updating Yelp")
         yelp_params = yc.get_params(max_records, older_than)
-        yelp_params['db_url'] = args.db_url
-        yelp_ids = yc.get_record_ids(yelp_params)
-        if yelp_ids is None or len(yelp_ids) <= 0:
-            print("Could not get Yelp records to update.")
-            if yelp_ids is None:
-                print("Internal error.")
-            else:
-                print("Empty record list.")
-                return
-            status = yc.process_ids(yelp_params, yelp_ids)
-            # TODO - handle status
+        yelp_updated = yc.update_records(yelp_params, db_params)
+        if yelp_updated is None :
+            print("Warning: Unable to complete requested Yelp update.")
+        elif yelp_updated is 0:
+            print("Warning: No Yelp records updated this run.")
+        else:
+            print("Updated Yelp information on {} records.".format(yelp_updated))
                 
     if do_civics:
-        print("Google Civics is true.")
+        print("...Updating Google Civics")
         civics_params = civc.get_params(max_records, older_than)
-        civics_ids = civc.get_record_ids(civics_params)
-        if civics_ids is None or len(civics_ids) <= 0:
-            print("Could not get Google Civics records to update.")
-            if civics_ids is None:
-                print("Internal error.")
-            else:
-                print("Empty record list.")
-            return
-        status = civc.process_ids(civics_ids)
-        # TODO - handle status
+        civics_updated = civc.update_records(civics_params, db_params)
+        if civics_updated is None:
+            print("Warning: Unable to complete rerquested Google Civics update.")
+#        civics_ids = civc.get_record_ids(civics_params)
+#        if civics_ids is None or len(civics_ids) <= 0:
+#            print("Could not get Google Civics records to update.")
+#            if civics_ids is None:
+#                print("Internal error.")
+#            else:
+#                print("Empty record list.")
+#            return
+#        status = civc.process_ids(civics_ids)
 
     if do_geocode:
+        print("...Updating Google Geocode")
         geocode_params = geoc.get_params(max_records, older_than)
-        geocode_ids = geoc.get_record_ids(geocode_params)
-        if geocode_ids is None or len(geocode_ids) <= 0:
-            print("Could not get Geocode records to update.")
-            if geocode_ids is None:
-                print("Internal error.")
-            else:
-                print("Empty record list.")
-            return
-        status = geoc.process_ids(geocode_ids)
-        # TODO - handle status
+        geocode_updated = geoc.update_records(geocode_params, db_params)
+        if geocode_updated is None:
+            print("Warning: Unable to complete requested Geocode update.")
+#        geocode_ids = geoc.get_record_ids(geocode_params)
+#        if geocode_ids is None or len(geocode_ids) <= 0:
+#            print("Could not get Geocode records to update.")
+#            if geocode_ids is None:
+#                print("Internal error.")
+#            else:
+#                print("Empty record list.")
+#            return
+#        status = geoc.process_ids(geocode_ids)
 
-
-# LOTS STILL TO DO, primarily need to factor out the APIs so they can
-# easily be run separately, and also need to make some schema changes
-# to have fields to store the last update time stamp for each type of
-# API. Then need to provide a way to select the appropriate records to
-# run through the given API.
 
 if __name__ == '__main__':
     main()
