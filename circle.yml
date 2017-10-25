@@ -15,5 +15,5 @@ dependencies:
 
 test:
   override:
-    - py.test
+    - py.test --ignore=django_tutorial/first_project/web_app/node_modules
     - npm --prefix django_tutorial/first_project/web_app/ test
