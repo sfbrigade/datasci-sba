@@ -57,17 +57,43 @@ def update_records(api_params, db_params):
     db_url = db_params['db_url']
     dbm = DBManager(db_url=db_url)
     
-    sfdo = get_records(dbm, max_records, max_days_to_store)
-    if sfdo is None:
+    sfdo_update = get_records(dbm, max_records, max_days_to_store)
+    if sfdo_update is None:
         return None
-    elif len(sfdo) < 1:
+    elif len(sfdo_update) < 1:
         return 0
 
-    update_count = update_yelp(sfdo)
-    if update_count is not None:
-        dbm.write_df_table(sfdo, table_name='sba_sfdo_api_calls', schema='stg_analytics', dtype=None, if_exists='append')
+    update_count = update_yelp(sfdo_update)
+    if update_count is not None and update_count > 0:
+        sfdo_orig = get_all_records(dbm)
+        if sfdo_orig is None:
+            return None
+        elif len(sfdo_orig) < 1:
+            return 0
+        sfdo_update.drop('borr_name', axis=1, inplace=True)
+        sfdo_update.drop('borr_street', axis=1, inplace=True)
+        sfdo_update.drop('borr_city', axis=1, inplace=True)
+        sfdo_update.drop('borr_state', axis=1, inplace=True)
+        sfdo_update.drop('borr_zip', axis=1, inplace=True)
+        sfdo_orig = sfdo_orig.set_index("sba_sfdo_id")
+        sfdo_update = sfdo_update.set_index("sba_sfdo_id")
+        sfdo_orig.update(sfdo_update)
+        dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
+        
     return update_count
 
+
+# Internal only
+def escape(str):
+    retval = ''
+    for letter in str:
+        if letter == "'":
+            retval += "''"
+        elif letter == '"':
+            retval += '""'
+        else:
+            retval += letter
+    return retval
 
 # Internal only, to create a timetstamp string.
 def get_timestamp():
@@ -82,18 +108,24 @@ def get_records(dbm, max_records, max_days_to_store):
     ts = time.time()
     ts -= max_days_to_store * 24 * 60 * 60
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
-    query = "SELECT sba_sfdo.sba_sfdo_id, sba_sfdo.borr_name, sba_sfdo.borr_street, sba_sfdo.borr_city, sba_sfdo.borr_state, sba_sfdo.borr_zip, yelp_rating, yelp_total_reviews, yelp_url, yelp_timestamp FROM stg_analytics.sba_sfdo LEFT JOIN stg_analytics.sba_sfdo_api_calls ON sba_sfdo.sba_sfdo_id=sba_sfdo_api_calls.sba_sfdo_id WHERE yelp_timestamp is NULL OR yelp_timestamp <= '{}' ORDER BY yelp_timestamp LIMIT {}".format(st, max_records)
+    query = "SELECT sba_sfdo.sba_sfdo_id as sba_sfdo_id, sba_sfdo.borr_name, sba_sfdo.borr_street, sba_sfdo.borr_city, sba_sfdo.borr_state, sba_sfdo.borr_zip, yelp_rating, yelp_total_reviews, yelp_url, yelp_timestamp FROM stg_analytics.sba_sfdo LEFT JOIN stg_analytics.sba_sfdo_api_calls ON sba_sfdo.sba_sfdo_id=sba_sfdo_api_calls.sba_sfdo_id WHERE yelp_timestamp is NULL OR yelp_timestamp <= '{}' ORDER BY yelp_timestamp LIMIT {}".format(st, max_records)
     sfdo = dbm.load_query_table(query)
     sfdo['full_address'] = sfdo['borr_street'] + ', '\
                            + sfdo['borr_city'] + ', '\
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
+    
     return sfdo
 
+# This is internal only, returning a pandas dataframe with the current
+# contents of the API table.
+def get_all_records(dbm):
+    sfdo = dbm.load_table('sba_sfdo_api_calls', 'stg_analytics')
+    return sfdo
 
 # This is internal only to actually get the Yelp data and add it to
 # the dataframe.
-def update_yelp(sfdo):
+def update_yelp(sfdo_update):
     data = { 'grant_type' : 'client_credentials',
              'client_id' : os.environ['YELP_ID'],
              'client_secret' : os.environ['YELP_SECRET'] }
@@ -103,10 +135,11 @@ def update_yelp(sfdo):
     headers = { 'Authorization' : 'bearer %s' % access_token }
 
     update_count = 0
-    for i in range(len(sfdo)):
+    print("......Contacting Yelp")
+    for i in range(len(sfdo_update)):
         print('.', end='', flush=True)
-        address = sfdo.loc[i]['full_address']
-        name = sfdo.loc[i]['borr_name']
+        address = sfdo_update.loc[i]['full_address']
+        name = sfdo_update.loc[i]['borr_name']
         params = { 'location' : address,
                    'term' : name,
                    'radius' : 100,
@@ -114,13 +147,16 @@ def update_yelp(sfdo):
         resp = requests.get(url=url, params=params, headers=headers)
         try:
             bus = resp.json()['businesses'][0]
-            sfdo.loc[i, 'yelp_rating'] = bus['rating']
-            sfdo.loc[i, 'yelp_total_reviews'] = bus['review_count']
-            sfdo.loc[i, 'yelp_url'] = bus['url']
-            sfdo.loc[i, 'yelp_timestamp'] = get_timestamp()
+            sfdo_update.loc[i, 'yelp_rating'] = bus['rating']
+            sfdo_update.loc[i, 'yelp_total_reviews'] = bus['review_count']
+            sfdo_update.loc[i, 'yelp_url'] = bus['url']
+            sfdo_update.loc[i, 'yelp_timestamp'] = get_timestamp()
             update_count += 1
         except:
-            sfdo.loc[i, 'yelp_timestamp'] = get_timestamp()
+            sfdo_update.loc[i, 'yelp_rating'] = 0.0
+            sfdo_update.loc[i, 'yelp_total_reviews'] = 0
+            sfdo_update.loc[i, 'yelp_url'] = ''
+            sfdo_update.loc[i, 'yelp_timestamp'] = get_timestamp()
             pass
 
     print(' ')

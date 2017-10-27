@@ -1,5 +1,47 @@
-"""
-Script to batch run external API flows
+"""Script to batch run external API flows
+
+This script controls all the external API processes. 
+
+An API process may require a special authorization key and may contain
+a limit to the number of queries per timeframe. This script allows you
+to manage those flows and schedule a cron job to stay within the
+limitation.
+
+The script allows multiple flows to run in a single invocation, but
+this often makes it harder to diagnose problems. It is generally
+suggested to run the API flows independently and manage the updates
+through a set of cron scripts. Be careful not to check in those cron
+scripts to any public source control like Github as anyone with
+internet access could discover your keys.
+
+To add a new flow, create a Python3 module that can be imported as
+shown below for yelp_control. Place the script in the
+pipeline/pipeline_tasks/api_calls dir.
+
+Each module needs to declare the following methods:
+
+- check_credentials(), which returns True is all required auth keys
+  can be found (standard practice is to set envars).
+
+- get_params(max_records, older_than), which will combine the user
+  specified maximum records and older than range with the ranges that
+  are permitted by the API. The more restrictive value is returned in
+  a dictionary.
+
+- update_records(api_params, db_params), which takes the params from
+  get_params() as well as the database params and does all the work to
+  call the API and save the updates in the sba_sfdo_api_calls
+  table. The return value is None if something major went wrong, or
+  the number of records updated. 0 could mean a minor error occurred
+  or simply that there were no records that needed updating given the
+  params.
+
+- reset_timestamps(), which will clear the specific timestamp for this
+  API from the sba_sfdo_api_calls table.
+
+After providing the new Python module, add arguments in get_args() and
+then call your module in the main() flow below.
+
 """
 
 import argparse
@@ -71,7 +113,6 @@ def get_args():
                                default=False,
                                help='Run the Geocode API process',
                                required=False)
-    #parser.print_help()
     args = parser.parse_args()
     if not (args.civics or args.geocode or args.yelp):
         print("No APIs selected to run.")
@@ -122,7 +163,7 @@ def main():
             
     db_params = { 'db_url' : args.db_url }
     if do_yelp:
-        print("...Updating Yelp")
+        print("...Processing Yelp")
         yelp_params = yc.get_params(max_records, older_than)
         yelp_updated = yc.update_records(yelp_params, db_params)
         if yelp_updated is None :
@@ -130,7 +171,7 @@ def main():
         elif yelp_updated is 0:
             print("Warning: No Yelp records updated this run.")
         else:
-            print("Updated Yelp information on {} records.".format(yelp_updated))
+            print("...Updated Yelp information on {} records (attempted {}).".format(yelp_updated, yelp_params['max_records']))
                 
     if do_civics:
         print("...Updating Google Civics")
@@ -164,6 +205,7 @@ def main():
 #            return
 #        status = geoc.process_ids(geocode_ids)
 
+    print("Complete")
 
 if __name__ == '__main__':
     main()
