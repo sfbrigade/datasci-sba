@@ -40,9 +40,9 @@ def check_credentials():
 def get_params(max_records, older_than):
     params = { 'max_records': 50000, 'max_days_to_store': 14 }
     if max_records > 0:
-        params["max_records"] = min(params["max_records"], max_records)
+        params['max_records'] = min(params['max_records'], max_records)
     if older_than > 0:
-        params["max_days_to_store"] = min(params["max_days_to_store"], older_than)
+        params['max_days_to_store'] = min(params['max_days_to_store'], older_than)
     return params
 
 
@@ -75,14 +75,41 @@ def update_records(api_params, db_params):
         sfdo_update.drop('borr_city', axis=1, inplace=True)
         sfdo_update.drop('borr_state', axis=1, inplace=True)
         sfdo_update.drop('borr_zip', axis=1, inplace=True)
-        sfdo_orig = sfdo_orig.set_index("sba_sfdo_id")
-        sfdo_update = sfdo_update.set_index("sba_sfdo_id")
+        sfdo_orig = sfdo_orig.set_index('sba_sfdo_id')
+        sfdo_update = sfdo_update.set_index('sba_sfdo_id')
         sfdo_orig.update(sfdo_update)
         dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
         
     return update_count
 
 
+# This method will erase all the timestamps for the API.  The effect
+# is that the batch update process will then need to update every
+# record.
+def reset_timestamp(db_params):
+    print("......Clear all Yelp timestamps")
+    db_url = db_params['db_url']
+    dbm = DBManager(db_url=db_url)
+    sfdo_orig = get_all_records(dbm)
+    sfdo_orig['yelp_timestamp'] = pd.to_datetime('None', errors='coerce')
+    sfdo_orig = sfdo_orig.set_index('sba_sfdo_id')
+    dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
+
+    
+# This method will erase all the stored data for the API. Use with caution.
+def clear_data(db_params):
+    print("......Clear all Yelp timestamps")
+    db_url = db_params['db_url']
+    dbm = DBManager(db_url=db_url)
+    sfdo_orig = get_all_records(dbm)
+    sfdo_orig['yelp_rating'] = 0.0
+    sfdo_orig['yelp_total_reviews'] = 0
+    sfdo_orig['yelp_url'] = None
+    sfdo_orig['yelp_timestamp'] = pd.to_datetime('None', errors='coerce')
+    sfdo_orig = sfdo_orig.set_index('sba_sfdo_id')
+    dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
+
+    
 # Internal only
 def escape(str):
     retval = ''
@@ -135,7 +162,7 @@ def update_yelp(sfdo_update):
     headers = { 'Authorization' : 'bearer %s' % access_token }
 
     update_count = 0
-    print("......Contacting Yelp")
+    print('......Contacting Yelp')
     for i in range(len(sfdo_update)):
         print('.', end='', flush=True)
         address = sfdo_update.loc[i]['full_address']

@@ -36,11 +36,17 @@ Each module needs to declare the following methods:
   or simply that there were no records that needed updating given the
   params.
 
-- reset_timestamps(), which will clear the specific timestamp for this
-  API from the sba_sfdo_api_calls table.
+- reset_timestamps(db_params), which will clear the specific timestamp
+  for this API from the sba_sfdo_api_calls table. As a result, the
+  script will proess all the records through the API, ordered by the
+  index.
 
-After providing the new Python module, add arguments in get_args() and
-then call your module in the main() flow below.
+- clear_data(db_params), which will clear all the API data from the
+  table.
+
+After providing the new Python module, add arguments in get_args()
+under the api_selection group and then call your module in the main()
+flow below.
 
 """
 
@@ -91,7 +97,13 @@ def get_args():
                         nargs='?',
                         const=True,
                         default=False,
-                        help='Reset the API update time on all records')
+                        help='Reset the API update time on all records. Operates only on the selected APIs.')
+    parser.add_argument('--clear_all_data',
+                        type=_str2bool,
+                        nargs='?',
+                        const=True,
+                        default=False,
+                        help='Clear the API data on all records. Operates only on the selected APIs.')
 
     api_selection = parser.add_argument_group('API Selection', 'At least one API Selection is required, but all may be selected.')
     api_selection.add_argument('--yelp',
@@ -124,13 +136,14 @@ def main():
     """Main function to run tasks."""
     print("Starting")
     args = get_args()
+
+    clear_all_data = args.clear_all_data
+    reset_update_time = False
+    # If we are clearing all data, there is no reason to also reset
+    # the update time since that is a side effect of clear all data.
+    if clear_all_data is False:
+        reset_update_time = args.reset_update_time
         
-    if args.reset_update_time:
-        reset_update_time = True
-        reset_str = ''
-    else:
-        reset_update_time = False
-        reset_str = 'NOT '
     if args.max_attempts:
         max_records = args.max_attempts
     else:
@@ -164,6 +177,10 @@ def main():
     db_params = { 'db_url' : args.db_url }
     if do_yelp:
         print("...Processing Yelp")
+        if clear_all_data:
+            yc.clear_data(db_params)
+        elif reset_update_time:
+            yc.reset_timestamp(db_params)
         yelp_params = yc.get_params(max_records, older_than)
         yelp_updated = yc.update_records(yelp_params, db_params)
         if yelp_updated is None :
@@ -175,6 +192,10 @@ def main():
                 
     if do_civics:
         print("...Updating Google Civics")
+        if clear_all_data:
+            civc.clear_data(db_params)
+        elif reset_update_time:
+            civc.reset_timestamp(db_params)
         civics_params = civc.get_params(max_records, older_than)
         civics_updated = civc.update_records(civics_params, db_params)
         if civics_updated is None:
@@ -191,6 +212,10 @@ def main():
 
     if do_geocode:
         print("...Updating Google Geocode")
+        if clear_all_data:
+            geoc.clear_data(db_params)
+        elif reset_update_time:
+            geoc.reset_timestamp(db_params)
         geocode_params = geoc.get_params(max_records, older_than)
         geocode_updated = geoc.update_records(geocode_params, db_params)
         if geocode_updated is None:
