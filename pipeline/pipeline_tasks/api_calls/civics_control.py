@@ -1,7 +1,18 @@
-"""
-Control functions for Google Civics external API
+"""Control functions for Google Civics external API
+
+Implements methods as required by the
+pipeline/pipeline_api_controller.py script.
+
+Has all knowledge of the Yelp API security requirements, limitations
+and how the data is stored.  Depends on the sba_sfdo_api_calls table
+being in place with one record for each record in the sba_sfdo table.
+
 """
 import os
+import re
+
+import time
+import datetime
 
 import pandas as pd
 import requests
@@ -21,16 +32,16 @@ def check_credentials():
     return True
 
 
-# Set the parameters for Yelp. The maximum number of queries per day is 25,000.
+# Set the parameters for Google Civics. The maximum number of queries per day is 25,000.
 # We will store the data no more than 21 days.
 # The user can specify values on the command line, but only values smaller than the max are honored.
 # Returns params in a dictionary.
 def get_params(max_records, older_than):
     params = { 'max_records': 25000, 'max_days_to_store': 21 }
     if max_records > 0:
-        params["max_records"] = min(params["max_records"], max_records)
+        params['max_records'] = min(params['max_records'], max_records)
     if older_than > 0:
-        params["max_days_to_store"] = min(params["max_days_to_store"], older_than)
+        params['max_days_to_store'] = min(params['max_days_to_store'], older_than)
     return params
 
 
@@ -38,19 +49,173 @@ def get_params(max_records, older_than):
 # Returns the number of records updated, or None if a serious error occurred.
 # Can return 0 if nothing found to update.
 def update_records(api_params, db_params):
-    # TODO TODO TODO
-    return None
+    # Create a DB manager object and a pandas dataframe with just the set of records to be updated.
+    # Then call the Google Civics API for each entry in the dataframe and update if it works.
+    max_records = api_params['max_records']
+    max_days_to_store = api_params['max_days_to_store']
+    db_url = db_params['db_url']
+    dbm = DBManager(db_url=db_url)
+    
+    sfdo_update = get_records(dbm, max_records, max_days_to_store)
+    if sfdo_update is None:
+        return None
+    elif len(sfdo_update) < 1:
+        return 0
+
+    update_count = update_google_civics(sfdo_update)
+    if update_count is not None and update_count > 0:
+        sfdo_orig = get_all_records(dbm)
+        if sfdo_orig is None:
+            return None
+        elif len(sfdo_orig) < 1:
+            return 0
+        sfdo_update.drop('borr_name', axis=1, inplace=True)
+        sfdo_update.drop('borr_street', axis=1, inplace=True)
+        sfdo_update.drop('borr_city', axis=1, inplace=True)
+        sfdo_update.drop('borr_state', axis=1, inplace=True)
+        sfdo_update.drop('borr_zip', axis=1, inplace=True)
+        sfdo_orig = sfdo_orig.set_index('sba_sfdo_id')
+        sfdo_update = sfdo_update.set_index('sba_sfdo_id')
+        sfdo_orig.update(sfdo_update)
+        print('......Save Civics data updates')
+        dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
+        
+    return update_count
+
+
+# This method will erase all the timestamps for the API.  The effect
+# is that the batch update process will then need to update every
+# record.
+def reset_timestamp(db_params):
+    print('......Clear all Civics timestamps')
+    db_url = db_params['db_url']
+    dbm = DBManager(db_url=db_url)
+    sfdo_orig = get_all_records(dbm)
+    sfdo_orig['civics_timestamp'] = pd.to_datetime('None', errors='coerce')
+    sfdo_orig = sfdo_orig.set_index('sba_sfdo_id')
+    dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
+
+    
+# This method will erase all the stored data for the API. Use with caution.
+def clear_data(db_params):
+    print('......Clear all Civics data')
+    db_url = db_params['db_url']
+    dbm = DBManager(db_url=db_url)
+    sfdo_orig = get_all_records(dbm)
+    sfdo_orig['civics_district'] = None
+    sfdo_orig['civics_timestamp'] = pd.to_datetime('None', errors='coerce')
+    sfdo_orig = sfdo_orig.set_index('sba_sfdo_id')
+    dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
+    
+    
+# Internal only
+def escape(str):
+    retval = ''
+    for letter in str:
+        if letter == "'":
+            retval += "''"
+        elif letter == '"':
+            retval += '""'
+        else:
+            retval += letter
+    return retval
+
+
+# Internal only, to create a timetstamp string.
+def get_timestamp():
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    return st
 
 
 # This is internal only, returning a pandas dataframe with the records to be updated.
 def get_records(dbm, max_records, max_days_to_store):
-    # TODO TODO TODO 
-    return None
+    # Build the date/time to compare. Subtract appropriate number of seconds from current time
+    ts = time.time()
+    ts -= max_days_to_store * 24 * 60 * 60
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
+    query = "SELECT sba_sfdo.sba_sfdo_id as sba_sfdo_id, sba_sfdo.borr_name, sba_sfdo.borr_street, sba_sfdo.borr_city, sba_sfdo.borr_state, sba_sfdo.borr_zip, civics_district, civics_timestamp FROM stg_analytics.sba_sfdo LEFT JOIN stg_analytics.sba_sfdo_api_calls ON sba_sfdo.sba_sfdo_id=sba_sfdo_api_calls.sba_sfdo_id WHERE civics_timestamp is NULL OR civics_timestamp <= '{}' ORDER BY civics_timestamp LIMIT {}".format(st, max_records)
+    sfdo = dbm.load_query_table(query)
+    sfdo['full_address'] = sfdo['borr_street'] + ', '\
+                           + sfdo['borr_city'] + ', '\
+                           + sfdo['borr_state'] + ', '\
+                           + sfdo['borr_zip']
+    
+    return sfdo
+
+
+# This is internal only, returning a pandas dataframe with the current
+# contents of the API table.
+def get_all_records(dbm):
+    sfdo = dbm.load_table('sba_sfdo_api_calls', 'stg_analytics')
+    return sfdo
 
 
 # This is internal only to actually get the Google Civics data and add it to
 # the dataframe.
-def update_google_civics(sfdo):
+def update_google_civics(sfdo_update):
     # TODO TODO TODO
+
+    url = 'https://www.googleapis.com/civicinfo/v2/representatives'
     update_count = 0
+    key = os.environ['GOOGLEAPI']
+    
+    print('......Contacting Google Civics')
+    for i in range(len(sfdo_update)):
+        print('.', end='', flush=True)
+        address = sfdo_update.loc[i]['full_address']
+        params = { 'address' : address,
+                   'includeOffices' : False,
+                   'key' : key }
+        resp = requests.get(url=url, params=params)
+        try:
+            civics = resp.json()
+            divisions = civics['divisions']
+            # Since we don't name what the field will look like, we have to regexp match to get the district.
+            # Store district string as 'st-nn' and store at-large as st-00
+            prog = re.compile('ocd-division/country:us/state:([a-z][a-z])/cd:([0-9]+)')
+            found = False
+            cong_district = ''
+            for nm in divisions:
+                result = prog.search(nm)
+                if result:
+                    state = result.group(1)
+                    district = result.group(2)
+                    cong_district = state + '-' + str(district).zfill(2)
+                    found = True
+                    break
+            if not found:
+                # For states with a single at-large district, we have
+                # to look at the state and find the 'alsoKnownAs'
+                # entry.
+                prog = re.compile('ocd-division/country:us/state:([a-z][a-z])')
+                for nm in divisions:
+                    result = prog.search(nm)
+                    if result:
+                        state = result.group(1)
+                        val = divisions[nm]
+                        aka = val['alsoKnownAs'][0]
+                        result = re.search('ocd-division/country:us/state:([a-z][a-z])/cd:([0-9]+)', aka)
+                        if result:
+                            new_state = result.group(1)
+                            new_district = result.group(2)
+                            if state == new_state:
+                                cong_district = state + '-' + '00'
+                                found = True
+                                break
+                            else:
+                                print('Warning: state mistmatch {} != {}'.format(state, new_state))
+            if found:
+                sfdo_update.loc[i, 'civics_district'] = cong_district
+                sfdo_update.loc[i ,'civics_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                update_count += 1
+            else:
+                sfdo_update.loc[i, 'civics_district'] = ''
+                sfdo_update.loc[i, 'civics_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+        except:
+            sfdo_update.loc[i, 'civics_district'] = ''
+            sfdo_update.loc[i, 'civics_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+            pass
+
+    print(' ')
     return update_count

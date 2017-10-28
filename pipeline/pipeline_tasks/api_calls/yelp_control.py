@@ -1,12 +1,12 @@
 """Control functions for Yelp external API
-Each package needs to provide three methods:
-1. check_credentials, which returns True if all necessary envars are
-defined, False otherwise.
-2. get_params, which returns a dictionary with max_records and
-max_days_to_store values. The request cannot exceed these values.
-3. update_records, which will process up to max_records which are
-older than the max_days_to_store value. This method actually writes to
-the database.
+
+Implements methods as required by the
+pipeline/pipeline_api_controller.py script.
+
+Has all knowledge of the Yelp API security requirements, limitations
+and how the data is stored.  Depends on the sba_sfdo_api_calls table
+being in place with one record for each record in the sba_sfdo table.
+
 """
 import os
 
@@ -78,6 +78,7 @@ def update_records(api_params, db_params):
         sfdo_orig = sfdo_orig.set_index('sba_sfdo_id')
         sfdo_update = sfdo_update.set_index('sba_sfdo_id')
         sfdo_orig.update(sfdo_update)
+        print('......Save Yelp data updates')
         dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
         
     return update_count
@@ -87,7 +88,7 @@ def update_records(api_params, db_params):
 # is that the batch update process will then need to update every
 # record.
 def reset_timestamp(db_params):
-    print("......Clear all Yelp timestamps")
+    print('......Clear all Yelp timestamps')
     db_url = db_params['db_url']
     dbm = DBManager(db_url=db_url)
     sfdo_orig = get_all_records(dbm)
@@ -98,7 +99,7 @@ def reset_timestamp(db_params):
     
 # This method will erase all the stored data for the API. Use with caution.
 def clear_data(db_params):
-    print("......Clear all Yelp timestamps")
+    print('......Clear all Yelp data')
     db_url = db_params['db_url']
     dbm = DBManager(db_url=db_url)
     sfdo_orig = get_all_records(dbm)
@@ -122,6 +123,7 @@ def escape(str):
             retval += letter
     return retval
 
+
 # Internal only, to create a timetstamp string.
 def get_timestamp():
     ts = time.time()
@@ -144,11 +146,13 @@ def get_records(dbm, max_records, max_days_to_store):
     
     return sfdo
 
+
 # This is internal only, returning a pandas dataframe with the current
 # contents of the API table.
 def get_all_records(dbm):
     sfdo = dbm.load_table('sba_sfdo_api_calls', 'stg_analytics')
     return sfdo
+
 
 # This is internal only to actually get the Yelp data and add it to
 # the dataframe.
@@ -177,13 +181,13 @@ def update_yelp(sfdo_update):
             sfdo_update.loc[i, 'yelp_rating'] = bus['rating']
             sfdo_update.loc[i, 'yelp_total_reviews'] = bus['review_count']
             sfdo_update.loc[i, 'yelp_url'] = bus['url']
-            sfdo_update.loc[i, 'yelp_timestamp'] = get_timestamp()
+            sfdo_update.loc[i, 'yelp_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             update_count += 1
         except:
             sfdo_update.loc[i, 'yelp_rating'] = 0.0
             sfdo_update.loc[i, 'yelp_total_reviews'] = 0
             sfdo_update.loc[i, 'yelp_url'] = ''
-            sfdo_update.loc[i, 'yelp_timestamp'] = get_timestamp()
+            sfdo_update.loc[i, 'yelp_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             pass
 
     print(' ')

@@ -200,15 +200,10 @@ def main():
         civics_updated = civc.update_records(civics_params, db_params)
         if civics_updated is None:
             print("Warning: Unable to complete rerquested Google Civics update.")
-#        civics_ids = civc.get_record_ids(civics_params)
-#        if civics_ids is None or len(civics_ids) <= 0:
-#            print("Could not get Google Civics records to update.")
-#            if civics_ids is None:
-#                print("Internal error.")
-#            else:
-#                print("Empty record list.")
-#            return
-#        status = civc.process_ids(civics_ids)
+        elif civics_updated is 0:
+            print("Warning: No Civics records updated this run.")
+        else:
+            print("...Updated Google Civics information on {} records (attempted {}).".format(civics_updated, civics_params['max_records']))
 
     if do_geocode:
         print("...Updating Google Geocode")
