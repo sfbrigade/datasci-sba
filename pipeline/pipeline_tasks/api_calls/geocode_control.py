@@ -162,22 +162,26 @@ def update_geocode(sfdo_update):
     geolocator = GoogleV3(api_key=api_key)
     update_count = 0
     print('......Contacting Google Geocode')
-    latitudes_longitudes = []
     for i in range(len(sfdo_update)):
         print('.', end='', flush=True)
         address = sfdo_update.loc[i]['full_address']
-        query_result = geolocator.geocode(address)
-        if query_result:
-            latitude = query_result.latitude
-            longitude = query_result.longitude
-            sfdo_update.loc[i, 'geocode_lat'] = float(latitude)
-            sfdo_update.loc[i, 'geocode_long'] = float(longitude)
-            sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
-            update_count += 1
-        else:
+        try:
+            query_result = geolocator.geocode(address)
+            if query_result:
+                latitude = query_result.latitude
+                longitude = query_result.longitude
+                sfdo_update.loc[i, 'geocode_lat'] = float(latitude)
+                sfdo_update.loc[i, 'geocode_long'] = float(longitude)
+                sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                update_count += 1
+            else:
+                sfdo_update.loc[i, 'geocode_lat'] = np.nan
+                sfdo_update.loc[i, 'geocode_long'] = np.nan
+                sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+        except:
             sfdo_update.loc[i, 'geocode_lat'] = np.nan
             sfdo_update.loc[i, 'geocode_long'] = np.nan
             sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
-        latitudes_longitudes.append([latitude, longitude])
+            pass
     return update_count
 
