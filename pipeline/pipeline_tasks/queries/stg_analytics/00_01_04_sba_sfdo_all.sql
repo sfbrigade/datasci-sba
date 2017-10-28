@@ -55,7 +55,8 @@ yelp_url text,
 yelp_timestamp timestamp without time zone,
 civics_district text,
 civics_timestamp timestamp without time zone,
-geocode_data text,
+geocode_lat double precision,
+geocode_long double precision,
 geocode_timestamp timestamp without time zone
 );
 
@@ -112,7 +113,8 @@ select
   api_calls.yelp_timestamp,
   api_calls.civics_district,
   api_calls.civics_timestamp,
-  api_calls.geocode_data,
+  api_calls.geocode_lat,
+  api_calls.geocode_long,
   api_calls.geocode_timestamp
 from stg_analytics.sba_sfdo as sba_sfdo
   left join stg_analytics.sba_sfdo_api_calls as api_calls
