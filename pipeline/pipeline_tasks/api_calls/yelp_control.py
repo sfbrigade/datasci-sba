@@ -179,7 +179,7 @@ def update_yelp(sfdo_update):
         try:
             bus = resp.json()['businesses'][0]
             sfdo_update.loc[i, 'yelp_rating'] = bus['rating']
-            sfdo_update.loc[i, 'yelp_total_reviews'] = bus['review_count']
+            sfdo_update.loc[i, 'yelp_total_reviews'] = int(bus['review_count'])
             sfdo_update.loc[i, 'yelp_url'] = bus['url']
             sfdo_update.loc[i, 'yelp_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             update_count += 1

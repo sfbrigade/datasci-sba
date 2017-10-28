@@ -214,16 +214,11 @@ def main():
         geocode_params = geoc.get_params(max_records, older_than)
         geocode_updated = geoc.update_records(geocode_params, db_params)
         if geocode_updated is None:
-            print("Warning: Unable to complete requested Geocode update.")
-#        geocode_ids = geoc.get_record_ids(geocode_params)
-#        if geocode_ids is None or len(geocode_ids) <= 0:
-#            print("Could not get Geocode records to update.")
-#            if geocode_ids is None:
-#                print("Internal error.")
-#            else:
-#                print("Empty record list.")
-#            return
-#        status = geoc.process_ids(geocode_ids)
+            print("Warning: Unable to complete requested Google Geocode update.")
+        elif geocode_updated is 0:
+            print("Warning: No Google Geocode records update this run.")
+        else:
+            print("...Updated Google Geocode information on {} records (attempted {}).".format(geocode_updated, geocode_params['max_records']))
 
     print("Complete")
 

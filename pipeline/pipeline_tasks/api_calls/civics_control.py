@@ -3,9 +3,10 @@
 Implements methods as required by the
 pipeline/pipeline_api_controller.py script.
 
-Has all knowledge of the Yelp API security requirements, limitations
-and how the data is stored.  Depends on the sba_sfdo_api_calls table
-being in place with one record for each record in the sba_sfdo table.
+Has all knowledge of the Google Civics API security requirements,
+limitations and how the data is stored.  Depends on the
+sba_sfdo_api_calls table being in place with one record for each
+record in the sba_sfdo table.
 
 """
 import os
@@ -154,8 +155,6 @@ def get_all_records(dbm):
 # This is internal only to actually get the Google Civics data and add it to
 # the dataframe.
 def update_google_civics(sfdo_update):
-    # TODO TODO TODO
-
     url = 'https://www.googleapis.com/civicinfo/v2/representatives'
     update_count = 0
     key = os.environ['GOOGLEAPI']

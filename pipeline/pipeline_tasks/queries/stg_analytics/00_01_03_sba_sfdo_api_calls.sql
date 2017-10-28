@@ -17,7 +17,8 @@ yelp_url text,
 yelp_timestamp timestamp without time zone,
 civics_district text,
 civics_timestamp timestamp without time zone,
-geocode_data text,
+geocode_lat double precision,
+geocode_long double precision,
 geocode_timestamp timestamp without time zone
 );
 
@@ -31,7 +32,8 @@ select
   NULL as yelp_timestamp,
   NULL as civics_district,
   NULL as civics_timestamp,
-  NULL as geocode_data,
+  NULL as geocode_lat,
+  NULL as geocode_long,
   NULL as geocode_timestamp
 from stg_analytics.sba_sfdo;
 
