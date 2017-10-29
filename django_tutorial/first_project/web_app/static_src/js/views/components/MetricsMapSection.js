@@ -16,7 +16,7 @@ export default function MetricsMapSection(props) {
           features={props.filteredBusinesses}
           useClusterer={true}
           useFilter={false}
-          onMouseover={(featureId) => {if(featureId) console.log(props.filteredBusinesses[featureId].borr_name)}}/>
+          onMouseover={(featureId) => {}}/>
       </div>
     </Card>
   )
