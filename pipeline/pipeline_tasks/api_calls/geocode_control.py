@@ -20,7 +20,7 @@ import pandas as pd
 import requests
 
 
-from geopy import GoogleV3
+import geopy
 from utilities.db_manager import DBManager
 
 
@@ -41,7 +41,7 @@ def check_credentials():
 # The user can specify values on the command line, but only values smaller than the max are honored.
 # Returns params in a dictionary.
 def get_params(max_records, older_than):
-    params = { 'max_records': 25000, 'max_days_to_store': 30 }
+    params = { 'max_records': 2500, 'max_days_to_store': 30 }
     if max_records > 0:
         params['max_records'] = min(params['max_records'], max_records)
     if older_than > 0:
@@ -159,7 +159,7 @@ def get_all_records(dbm):
 # the dataframe.
 def update_geocode(sfdo_update):
     api_key = os.environ['GOOGLE_MAPS_API']
-    geolocator = GoogleV3(api_key=api_key)
+    geolocator = geopy.GoogleV3(api_key=api_key)
     update_count = 0
     print('......Contacting Google Geocode')
     for i in range(len(sfdo_update)):
@@ -178,7 +178,11 @@ def update_geocode(sfdo_update):
                 sfdo_update.loc[i, 'geocode_lat'] = np.nan
                 sfdo_update.loc[i, 'geocode_long'] = np.nan
                 sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
-        except:
+        except geopy.exc.GeocoderQuotaExceeded as err:
+            print("Error: quota exceeded {}. No further processing attempted.".format(err))
+            break
+        except geopy.exc.GeopyError as err:
+            print("Exception: {}".format(err))
             sfdo_update.loc[i, 'geocode_lat'] = np.nan
             sfdo_update.loc[i, 'geocode_long'] = np.nan
             sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
