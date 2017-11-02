@@ -29,7 +29,7 @@ You must ensure that `anaconda3/envs/datasci-sba/bin`, `/anaconda/bin`, `/usr/bi
 You can create a cron entry similar to the following:
 `00,30 * * * * source /Users/michaelmathews/datasci-sba_setup.sh && /Users/michaelmathews/Documents/CodeForSF/datasci-sba/pipeline/pipeline_cron.sh --db_url $SBA_DWH --geocode --geocode_key $GOOGLE_MAPS_API --max_attempts 40`
 
-This will run a job on the hour and half hour every day which will attempt to update 40 records in geocode. Note that the `datasci-sba_setup.sh` script runs first to set the required envars. This script must never be placed in Git or it would expose your API keys.
+This will run a job on the hour and half hour every hour of every day. The job will attempt to update 40 records in geocode. Note that the `datasci-sba_setup.sh` script runs first to set the required envars. This script must never be placed in Git or it would expose your API keys.
 
 | Previous |
 |:---------:|
