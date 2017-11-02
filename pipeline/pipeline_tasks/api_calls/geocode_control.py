@@ -10,6 +10,7 @@ record in the sba_sfdo table.
 
 """
 import os
+import sys
 
 import time
 import datetime
@@ -27,9 +28,9 @@ from utilities.db_manager import DBManager
 
 # Check that all required envars are set. Returns true if envars are set, false otherwise.
 # NOTE: Does not validate that the envar value actually allows API access.
-def check_credentials():
+def check_credentials(args):
     try:
-        if os.environ['GOOGLE_MAPS_API'] is None:
+        if args.geocode_key is None and os.environ['GOOGLE_MAPS_API'] is None:
             return False
     except:
         return False
@@ -52,7 +53,7 @@ def get_params(max_records, older_than):
 # This actually gets the records to update, calls the API function and writes back to the database.
 # Returns the number of records updated, or None if a serious error occurred.
 # Can return 0 if nothing found to update.
-def update_records(api_params, db_params):
+def update_records(args, api_params, db_params):
     # Create a DB manager object and a pandas dataframe with just the set of records to be updated.
     # Then call the Google Maps API for each entry in the dataframe and update if it works.
     max_records = api_params['max_records']
@@ -66,8 +67,8 @@ def update_records(api_params, db_params):
     elif len(sfdo_update) < 1:
         return 0
 
-    update_count = update_geocode(sfdo_update)
-    if update_count is not None and update_count > 0:
+    update_count = update_geocode(args, sfdo_update)
+    if update_count is not None:
         sfdo_orig = get_all_records(dbm)
         if sfdo_orig is None:
             return None
@@ -157,13 +158,26 @@ def get_all_records(dbm):
 
 # This is internal only to actually get the Google Maps geocode data and add it to
 # the dataframe.
-def update_geocode(sfdo_update):
-    api_key = os.environ['GOOGLE_MAPS_API']
+def update_geocode(args, sfdo_update):
+    if args.geocode_key:
+        api_key = args.geocode_key
+    else:
+        api_key = os.environ['GOOGLE_MAPS_API']
     geolocator = geopy.GoogleV3(api_key=api_key)
     update_count = 0
+    pct_complete = -1
+    total_records = len(sfdo_update)
     print('......Contacting Google Geocode')
-    for i in range(len(sfdo_update)):
-        print('.', end='', flush=True)
+    for i in range(total_records):
+        # https://stackoverflow.com/questions/3002085/python-to-print-out-status-bar-and-percentage
+        my_pct = 100 * i // total_records;
+        if my_pct > pct_complete:
+            five_pct = my_pct // 5;
+            if five_pct > (pct_complete // 5):
+                sys.stdout.write('\r')
+                sys.stdout.write('%-20s %3d%%' % ('.'*five_pct, 5*five_pct))
+                sys.stdout.flush()
+            pct_complete = my_pct
         address = sfdo_update.loc[i]['full_address']
         try:
             query_result = geolocator.geocode(address)
@@ -179,25 +193,34 @@ def update_geocode(sfdo_update):
                 sfdo_update.loc[i, 'geocode_long'] = np.nan
                 sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
         except geopy.exc.GeocoderQuotaExceeded as err:
-            print("Quota exceeded: {} No further processing attempted.".format(err))
+            sys.stdout.write('\r')
+            print('Quota exceeded: {}: No further processing attempted.'.format(err))
             break
         except geopy.exc.ConfigurationError as err:
-            print("Configuration Error: {} No further processing attempted.".format(err))
+            sys.stdout.write('\r')
+            print('Configuration Error: {}: No further processing attempted.'.format(err))
             break
         except geopy.exc.GeocoderServiceError as err:
-            print("Geocoder Service Error: {} No further processing attempted.".format(err))
+            sys.stdout.write('\r')
+            print('Geocoder Service Error: {}: No further processing attempted.'.format(err))
             break
         except geopy.exc.GeocoderQueryError as err:
-            print("Geocoder Query Error: {} No further processing attempted.".format(err))
+            sys.stdout.write('\r')
+            print('Geocoder Query Error: {}: No further processing attempted.'.format(err))
             break
         except geopy.exc.GeocoderAuthenticationFailure as err:
-            print("Geocoder Authentication Failure: {} No further processing attempted.".format(err))
+            sys.stdout.write('\r')
+            print('Geocoder Authentication Failure: {}: No further processing attempted.'.format(err))
             break
         except geopy.exc.GeopyError as err:
-            print("Exception: {}".format(err))
+            sys.stdout.write('\r')
+            print('Exception: {}'.format(err))
             sfdo_update.loc[i, 'geocode_lat'] = np.nan
             sfdo_update.loc[i, 'geocode_long'] = np.nan
             sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             pass
+    sys.stdout.write('\r')
+    sys.stdout.write('%-20s 100%%\n' % ('.'*20))
+    sys.stdout.flush()
     return update_count
 

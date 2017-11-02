@@ -20,21 +20,21 @@ pipeline/pipeline_tasks/api_calls dir.
 
 Each module needs to declare the following methods:
 
-- check_credentials(), which returns True is all required auth keys
-  can be found (standard practice is to set envars).
+- check_credentials(args), which returns True is all required auth keys
+  can be found (keys can be specified with optional arguments or envars).
 
 - get_params(max_records, older_than), which will combine the user
   specified maximum records and older than range with the ranges that
   are permitted by the API. The more restrictive value is returned in
   a dictionary.
 
-- update_records(api_params, db_params), which takes the params from
-  get_params() as well as the database params and does all the work to
-  call the API and save the updates in the sba_sfdo_api_calls
-  table. The return value is None if something major went wrong, or
-  the number of records updated. 0 could mean a minor error occurred
-  or simply that there were no records that needed updating given the
-  params.
+- update_records(args, api_params, db_params), which takes the command
+  line args, the params from get_params() and the database params and
+  does all the work to call the API and save the updates in the
+  sba_sfdo_api_calls table. The return value is None if something
+  major went wrong, or the number of records updated. 0 could mean a
+  minor error occurred or simply that there were no records that
+  needed updating given the params.
 
 - reset_timestamps(db_params), which will clear the specific timestamp
   for this API from the sba_sfdo_api_calls table. As a result, the
@@ -105,19 +105,33 @@ def get_args():
                         default=False,
                         help='Clear the API data on all records. Operates only on the selected APIs.')
 
-    api_selection = parser.add_argument_group('API Selection', 'At least one API Selection is required, but all may be selected.')
+    api_selection = parser.add_argument_group('API Selection', 'At least one API Selection is required, but all may be selected. Keys may be required for the API to function.')
     api_selection.add_argument('--yelp',
                                type=_str2bool,
                                nargs='?',
                                const=True,
                                default=False,
                                help='Run the Yelp API process')
+    parser.add_argument('--yelp_id',
+                        help='Yelp ID key',
+                        type=str,
+                        required=False)
+    parser.add_argument('--yelp_secret',
+                        help='Yelp secret key',
+                        type=str,
+                        required=False)
+
     api_selection.add_argument('--civics',
                                type=_str2bool,
                                nargs='?',
                                const=True,
                                default=False,
                                help='Run the Google Civics API process')
+    parser.add_argument('--civics_key',
+                        help='Google Civics API key',
+                        type=str,
+                        required=False)
+
     api_selection.add_argument('--geocode',
                                type=_str2bool,
                                nargs='?',
@@ -125,6 +139,11 @@ def get_args():
                                default=False,
                                help='Run the Geocode API process',
                                required=False)
+    parser.add_argument('--geocode_key',
+                        help='Google Maps API key',
+                        type=str,
+                        required=False)
+
     args = parser.parse_args()
     if not (args.civics or args.geocode or args.yelp):
         print("No APIs selected to run.")
@@ -155,21 +174,21 @@ def main():
 
     do_yelp = False
     if args.yelp:
-        if yc.check_credentials() is False:
+        if yc.check_credentials(args) is False:
             print("Warning: Yelp credentials not set, cannot process.")
         else:
             do_yelp = True
 
     do_civics = False
     if args.civics:
-        if civc.check_credentials() is False:
+        if civc.check_credentials(args) is False:
             print("Warning: Google Civics credentials not set, cannot process.")
         else:
             do_civics = True
 
     do_geocode = False
     if args.geocode:
-        if geoc.check_credentials() is False:
+        if geoc.check_credentials(args) is False:
             print("Warning: Geocode credentials not set, cannot process.")
         else:
             do_geocode = True
@@ -182,7 +201,7 @@ def main():
         elif reset_update_time:
             yc.reset_timestamp(db_params)
         yelp_params = yc.get_params(max_records, older_than)
-        yelp_updated = yc.update_records(yelp_params, db_params)
+        yelp_updated = yc.update_records(args, yelp_params, db_params)
         if yelp_updated is None :
             print("Warning: Unable to complete requested Yelp update.")
         elif yelp_updated is 0:
@@ -197,7 +216,7 @@ def main():
         elif reset_update_time:
             civc.reset_timestamp(db_params)
         civics_params = civc.get_params(max_records, older_than)
-        civics_updated = civc.update_records(civics_params, db_params)
+        civics_updated = civc.update_records(args, civics_params, db_params)
         if civics_updated is None:
             print("Warning: Unable to complete rerquested Google Civics update.")
         elif civics_updated is 0:
@@ -212,7 +231,7 @@ def main():
         elif reset_update_time:
             geoc.reset_timestamp(db_params)
         geocode_params = geoc.get_params(max_records, older_than)
-        geocode_updated = geoc.update_records(geocode_params, db_params)
+        geocode_updated = geoc.update_records(args, geocode_params, db_params)
         if geocode_updated is None:
             print("Warning: Unable to complete requested Google Geocode update.")
         elif geocode_updated is 0:

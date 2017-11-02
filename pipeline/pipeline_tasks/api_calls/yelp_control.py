@@ -9,6 +9,7 @@ being in place with one record for each record in the sba_sfdo table.
 
 """
 import os
+import sys
 
 import time
 import datetime
@@ -22,11 +23,11 @@ from utilities.db_manager import DBManager
 
 # Check that all required envars are set. Returns true if envars are set, false otherwise.
 # NOTE: Does not validate that the envar actually allows API access.
-def check_credentials():
+def check_credentials(args):
     try:
-        if os.environ['YELP_ID'] is None:
+        if args.yelp_id is None and os.environ['YELP_ID'] is None:
             return False
-        if os.environ['YELP_SECRET'] is None:
+        if args.yelp_secret is None and os.environ['YELP_SECRET'] is None:
             return False
     except:
         return False
@@ -49,7 +50,7 @@ def get_params(max_records, older_than):
 # This actually gets the records to update, calls the API function and writes back to the database.
 # Returns the number of records updated, or None if a serious error occurred.
 # Can return 0 if nothing found to update.
-def update_records(api_params, db_params):
+def update_records(args, api_params, db_params):
     # Create a DB manager object and a pandas dataframe with just the set of records to be updated.
     # Then call the Yelp API for each entry in the dataframe and update if it works.
     max_records = api_params['max_records']
@@ -63,8 +64,8 @@ def update_records(api_params, db_params):
     elif len(sfdo_update) < 1:
         return 0
 
-    update_count = update_yelp(sfdo_update)
-    if update_count is not None and update_count > 0:
+    update_count = update_yelp(args, sfdo_update)
+    if update_count is not None:
         sfdo_orig = get_all_records(dbm)
         if sfdo_orig is None:
             return None
@@ -156,19 +157,37 @@ def get_all_records(dbm):
 
 # This is internal only to actually get the Yelp data and add it to
 # the dataframe.
-def update_yelp(sfdo_update):
+def update_yelp(args, sfdo_update):
+    if args.yelp_id:
+        yelp_id = args.yelp_id
+    else:
+        yelp_id = os.environ['YELP_ID']
+    if args.yelp_secret:
+        yelp_secret = args.yelp_secret
+    else:
+        yelp_secret = os.environ['YELP_SECRET']
     data = { 'grant_type' : 'client_credentials',
-             'client_id' : os.environ['YELP_ID'],
-             'client_secret' : os.environ['YELP_SECRET'] }
+             'client_id' : yelp_id,
+             'client_secret' : yelp_secret }
     token = requests.post('https://api.yelp.com/oauth2/token', data=data)
     access_token = token.json()['access_token']
     url = 'https://api.yelp.com/v3/businesses/search'
     headers = { 'Authorization' : 'bearer %s' % access_token }
 
     update_count = 0
+    pct_complete = -1
+    total_records = len(sfdo_update)
     print('......Contacting Yelp')
-    for i in range(len(sfdo_update)):
-        print('.', end='', flush=True)
+    for i in range(total_records):
+        # https://stackoverflow.com/questions/3002085/python-to-print-out-status-bar-and-percentage
+        my_pct = 100 * i // total_records;
+        if my_pct > pct_complete:
+            five_pct = my_pct // 5;
+            if five_pct > (pct_complete // 5):
+                sys.stdout.write('\r')
+                sys.stdout.write('%-20s %3d%%' % ('.'*five_pct, 5*five_pct))
+                sys.stdout.flush()
+            pct_complete = my_pct
         address = sfdo_update.loc[i]['full_address']
         name = sfdo_update.loc[i]['borr_name']
         params = { 'location' : address,
@@ -183,6 +202,14 @@ def update_yelp(sfdo_update):
             sfdo_update.loc[i, 'yelp_url'] = bus['url']
             sfdo_update.loc[i, 'yelp_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             update_count += 1
+        # TODO should determine the types of exceptions and write more
+        # specific handlers. If there is a configuration related
+        # exception, we should abort and return None so no database
+        # write is attempted. An exception because an address or name
+        # doesn't find a match should be treated as an attempt
+        # (including a timestamp update) so we don't get into a race
+        # condition and attempt the same bad address or name lookup
+        # each time the script runs.
         except:
             sfdo_update.loc[i, 'yelp_rating'] = 0.0
             sfdo_update.loc[i, 'yelp_total_reviews'] = 0
@@ -190,5 +217,7 @@ def update_yelp(sfdo_update):
             sfdo_update.loc[i, 'yelp_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             pass
 
-    print(' ')
+    sys.stdout.write('\r')
+    sys.stdout.write('%-20s 100%%\n' % ('.'*20))
+    sys.stdout.flush()
     return update_count
