@@ -179,7 +179,19 @@ def update_geocode(sfdo_update):
                 sfdo_update.loc[i, 'geocode_long'] = np.nan
                 sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
         except geopy.exc.GeocoderQuotaExceeded as err:
-            print("Error: quota exceeded {}. No further processing attempted.".format(err))
+            print("Quota exceeded: {} No further processing attempted.".format(err))
+            break
+        except geopy.exc.ConfigurationError as err:
+            print("Configuration Error: {} No further processing attempted.".format(err))
+            break
+        except geopy.exc.GeocoderServiceError as err:
+            print("Geocoder Service Error: {} No further processing attempted.".format(err))
+            break
+        except geopy.exc.GeocoderQueryError as err:
+            print("Geocoder Query Error: {} No further processing attempted.".format(err))
+            break
+        except geopy.exc.GeocoderAuthenticationFailure as err:
+            print("Geocoder Authentication Failure: {} No further processing attempted.".format(err))
             break
         except geopy.exc.GeopyError as err:
             print("Exception: {}".format(err))
