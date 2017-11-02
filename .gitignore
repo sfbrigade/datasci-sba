@@ -19,4 +19,3 @@ django_tutorial/first_project/web_app/coverage
 
 table_def_dump.py
 pg_dump_output.sql
-pipeline/pipeline_cron.sh
