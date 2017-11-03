@@ -153,9 +153,9 @@ def get_args():
 
 def main():
     """Main function to run tasks."""
-    print("Starting")
     args = get_args()
 
+    print("Starting API Update")
     clear_all_data = args.clear_all_data
     reset_update_time = False
     # If we are clearing all data, there is no reason to also reset
