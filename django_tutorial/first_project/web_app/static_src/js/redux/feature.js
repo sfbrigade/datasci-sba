@@ -19,6 +19,7 @@ export const FEATURE_TYPE_REGION = 'region'
 // these are the possible values of the selectedRegionType field of the state;
 // note they should match the correspnding field on each business object, e.g.
 // business[REGION_TYPE_ZIP] should give the zip code of that business
+export const REGION_TYPE_ALL = 'ALL'
 export const REGION_TYPE_ZIP = 'borr_zip'
 export const REGION_TYPE_CITY = 'borr_city'
 export const REGION_TYPE_COUNTY = 'project_county'
@@ -121,7 +122,7 @@ export const getFilteredBusinesses = createSelector(
     if(featureType !== FEATURE_TYPE_BUSINESS || selectedRegion == null)
       return {}
     else {
-      const filter = feature => feature[selectedRegionType] == selectedRegion && (!selectedYear || feature.year >= 2017-selectedYear)
+      const filter = feature => (selectedRegionType === REGION_TYPE_ALL || feature[selectedRegionType] == selectedRegion) && (!selectedYear || feature.year >= 2017-selectedYear)
       let result = {}
       for(let id in features) {
         if(filter(features[id])) {
@@ -148,6 +149,7 @@ export const getAvailableRegionsByRegionType = createSelector(
       orderedRegions.sort()
       result[regionType] = orderedRegions
     }
+    result[REGION_TYPE_ALL] = ['All']
     return result
   })
 
