@@ -168,7 +168,10 @@ def update_geocode(args, sfdo_update):
     pct_complete = -1
     total_records = len(sfdo_update)
     print('......Contacting Google Geocode')
-    for i in range(total_records):
+    failures = 0
+    max_failures = 10
+    i = 0
+    while i < total_records:
         # https://stackoverflow.com/questions/3002085/python-to-print-out-status-bar-and-percentage
         my_pct = 100 * i // total_records;
         if my_pct > pct_complete:
@@ -201,9 +204,15 @@ def update_geocode(args, sfdo_update):
             print('Configuration Error: {}: No further processing attempted.'.format(err))
             break
         except geopy.exc.GeocoderServiceError as err:
-            sys.stdout.write('\r')
-            print('Geocoder Service Error: {}: No further processing attempted.'.format(err))
-            break
+            if failures < max_failures:
+                failures = failures + 1
+                # We want to repeat this record, so don't increment the index
+                continue
+            else:
+                sys.stdout.write('\r')
+                print('Geocoder Service Error Encountered {} Times: {}: No further processing attempted.'.
+                      format(failures, err))
+                break
         except geopy.exc.GeocoderQueryError as err:
             sys.stdout.write('\r')
             print('Geocoder Query Error: {}: No further processing attempted.'.format(err))
@@ -219,8 +228,13 @@ def update_geocode(args, sfdo_update):
             sfdo_update.loc[i, 'geocode_long'] = np.nan
             sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             pass
+        # Force a short pause, to minimize the timeout errors.
+        time.sleep(1)
+        i = i + 1
     sys.stdout.write('\r')
     sys.stdout.write('%-20s 100%%\n' % ('.'*20))
     sys.stdout.flush()
+    if failures > 0:
+        print('......Reprocessed {} records after failures during processing.'.format(failures))
     return update_count
 
