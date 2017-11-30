@@ -25,9 +25,10 @@ import geopy
 from utilities.db_manager import DBManager
 
 
+"""Check that all required envars are set. Returns true if envars are set, false otherwise.
 
-# Check that all required envars are set. Returns true if envars are set, false otherwise.
-# NOTE: Does not validate that the envar value actually allows API access.
+NOTE: Does not validate that the envar value actually allows API access.
+"""
 def check_credentials(args):
     try:
         if args.geocode_key is None and os.environ['GOOGLE_MAPS_API'] is None:
@@ -37,10 +38,11 @@ def check_credentials(args):
     return True
 
 
-# Set the parameters for Google Maps. The maximum number of queries per day is 25,000.
-# We will store the data no more than 21 days.
-# The user can specify values on the command line, but only values smaller than the max are honored.
-# Returns params in a dictionary.
+"""Set the parameters for Google Maps. The maximum number of queries
+per day is 25,000.  We will store the data no more than 21 days.  The
+user can specify values on the command line, but only values smaller
+than the max are honored.  Returns params in a dictionary.  
+"""
 def get_params(max_records, older_than):
     params = { 'max_records': 2500, 'max_days_to_store': 30 }
     if max_records > 0:
@@ -50,9 +52,11 @@ def get_params(max_records, older_than):
     return params
 
 
-# This actually gets the records to update, calls the API function and writes back to the database.
-# Returns the number of records updated, or None if a serious error occurred.
-# Can return 0 if nothing found to update.
+"""This actually gets the records to update, calls the API function
+and writes back to the database.  Returns the number of records
+updated, or None if a serious error occurred.  Can return 0 if nothing
+found to update.
+"""
 def update_records(args, api_params, db_params):
     # Create a DB manager object and a pandas dataframe with just the set of records to be updated.
     # Then call the Google Maps API for each entry in the dataframe and update if it works.
@@ -88,9 +92,10 @@ def update_records(args, api_params, db_params):
     return update_count
 
 
-# This method will erase all the timestamps for the API.  The effect
-# is that the batch update process will then need to update every
-# record.
+"""This method will erase all the timestamps for the API.  The effect
+is that the batch update process will then need to update every
+record.
+"""
 def reset_timestamp(db_params):
     print('......Clear all Google Geocode timestamps')
     db_url = db_params['db_url']
@@ -101,7 +106,7 @@ def reset_timestamp(db_params):
     dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
 
 
-# This method will erase all the stored data for the API. Use with caution.
+"""This method will erase all the stored data for the API. Use with caution."""
 def clear_data(db_params):
     print('......Clear all Google Geocode data')
     db_url = db_params['db_url']
@@ -114,7 +119,7 @@ def clear_data(db_params):
     dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
 
 
-# Internal only
+"""Escapes quote characters in a string. Internal only."""
 def escape(str):
     retval = ''
     for letter in str:
@@ -127,14 +132,14 @@ def escape(str):
     return retval
 
 
-# Internal only, to create a timetstamp string.
+"""Creates a timestamp string. Internal only."""
 def get_timestamp():
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     return st
 
 
-# This is internal only, returning a pandas dataframe with the records to be updated.
+"""Returns a pandas dataframe with all the records to be updated. Internal only."""
 def get_records(dbm, max_records, max_days_to_store):
     # Build the date/time to compare. Subtract appropriate number of seconds from current time
     ts = time.time()
@@ -149,6 +154,9 @@ def get_records(dbm, max_records, max_days_to_store):
     return sfdo
 
 
+"""Returns a pandas dataframe with all the current records in the API
+table.  Internal only.
+"""
 # This is internal only, returning a pandas dataframe with the current
 # contents of the API table.
 def get_all_records(dbm):
@@ -156,8 +164,9 @@ def get_all_records(dbm):
     return sfdo
 
 
-# This is internal only to actually get the Google Maps geocode data and add it to
-# the dataframe.
+"""This gets the geocode data using the Google Maps API and adds it to
+the dataframe. Internal only.
+"""
 def update_geocode(args, sfdo_update):
     if args.geocode_key:
         api_key = args.geocode_key
