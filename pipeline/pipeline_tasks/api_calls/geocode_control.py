@@ -228,6 +228,13 @@ def update_geocode(args, sfdo_update):
             sfdo_update.loc[i, 'geocode_long'] = np.nan
             sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             pass
+        except:
+            sys.stdout.write('\r')
+            print('Unknown exception occurred')
+            sfdo_update.loc[i, 'geocode_lat'] = np.nan
+            sfdo_update.loc[i, 'geocode_long'] = np.nan
+            sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+            pass
         # Force a short pause, to minimize the timeout errors.
         time.sleep(1)
         i = i + 1
