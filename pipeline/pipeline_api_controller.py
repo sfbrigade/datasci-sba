@@ -66,8 +66,8 @@ SQL_PATH = os.path.join(os.path.dirname(__file__), 'pipeline_tasks')
 
 starttime = dt.datetime.now()
 
+"""Define a function that converts string to bool used in argparse"""
 def _str2bool(v):
-    """Define a function that converts string to bool used in argparse"""
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
         return True
     elif v.lower() in ('no', 'false', 'f', 'n', '0'):
@@ -75,8 +75,8 @@ def _str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+""" Use argparse to pare command line arguments."""
 def get_args():
-    """ Use argparse to pare command line arguments. """
     parser = argparse.ArgumentParser(description='Control script to run external API tasks')
     parser.add_argument('--db_url',
                         help='Database url string to the db.',
@@ -151,15 +151,17 @@ def get_args():
         parser.exit(2);
     return args
 
+"""Main function to run tasks."""
 def main():
-    """Main function to run tasks."""
     args = get_args()
 
     print("Starting API Update")
     clear_all_data = args.clear_all_data
     reset_update_time = False
-    # If we are clearing all data, there is no reason to also reset
-    # the update time since that is a side effect of clear all data.
+
+    """If we are clearing all data, there is no reason to also reset the
+    update times since that is a side effect of clearing the data.
+    """
     if clear_all_data is False:
         reset_update_time = args.reset_update_time
         
