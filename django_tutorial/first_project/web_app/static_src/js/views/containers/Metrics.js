@@ -9,7 +9,7 @@ import MetricsVisualizationSection from '../components/MetricsVisualizationSecti
 
 import { getFeatureState } from '../../redux/root'
 import { getAvailableRegionsByRegionType, getSelectedRegionType, getSelectedRegion, getSelectedYear,
-  REGION_TYPE_ZIP, REGION_TYPE_CITY, REGION_TYPE_COUNTY, REGION_TYPE_CONGRESSIONAL_DISTRICT,
+  REGION_TYPE_ZIP, REGION_TYPE_CITY, REGION_TYPE_COUNTY, REGION_TYPE_CONGRESSIONAL_DISTRICT, REGION_TYPE_ALL,
   setMetricsFilters, getFilteredBusinesses } from '../../redux/feature'
 
 
@@ -42,7 +42,8 @@ class Metrics extends React.Component {
       [REGION_TYPE_ZIP]: 'ZIP Code',
       [REGION_TYPE_CITY]: 'City',
       [REGION_TYPE_COUNTY]: 'County',
-      [REGION_TYPE_CONGRESSIONAL_DISTRICT]: 'Congressional District'
+      [REGION_TYPE_CONGRESSIONAL_DISTRICT]: 'Congressional District',
+      [REGION_TYPE_ALL]: 'All',
     }
     this.availableYears = [5, 10, 15, 20, 25]
   }
