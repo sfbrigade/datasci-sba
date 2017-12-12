@@ -140,12 +140,17 @@ export const getFilteredBusinesses = createSelector(
  */
 export const getAvailableRegionsByRegionType = createSelector(
   getFeatures,
-  (features) => {
+  getSelectedDistrict,
+  (features, district) => {
     let result = {}
     for(let regionType of [REGION_TYPE_ZIP, REGION_TYPE_COUNTY, REGION_TYPE_CITY, REGION_TYPE_CONGRESSIONAL_DISTRICT]) {
       let uniqueRegions = {}
       Object.values(features).forEach(business => uniqueRegions[business[regionType]] = true)
       let orderedRegions = Object.keys(uniqueRegions)
+      if(regionType === REGION_TYPE_COUNTY && district === "SFDO") {
+        // HACK: special case to restrict the set of counties for SFDO, to avoid spurious data points from making the list of counties too long
+        orderedRegions = ["DEL NORTE","HUMBOLDT","MENDOCINO","LAKE","SONOMA","NAPA","MARIN","SAN FRANCISCO","SOLANO","CONTRA COSTA","ALAMEDA","SAN MATEO","SANTA CRUZ","SANTA CLARA"]
+      }
       orderedRegions.sort()
       result[regionType] = orderedRegions
     }
