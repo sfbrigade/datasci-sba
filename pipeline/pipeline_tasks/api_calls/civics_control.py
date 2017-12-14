@@ -178,9 +178,9 @@ def update_google_civics(args, sfdo_update):
     i = 0
     for index, row in sfdo_update.iterrows():
         # https://stackoverflow.com/questions/3002085/python-to-print-out-status-bar-and-percentage
-        my_pct = 100 * i // total_records;
+        my_pct = 100 * i // total_records
         if my_pct > pct_complete:
-            five_pct = my_pct // 5;
+            five_pct = my_pct // 5
             if five_pct > (pct_complete // 5):
                 sys.stdout.write('\r')
                 sys.stdout.write('%-20s %3d%%' % ('.'*five_pct, 5*five_pct))
