@@ -327,12 +327,14 @@ STG_ANALYTICS__SBA_SFDO_ZIPS = sa.Table(
 STG_ANALYTICS__SBA_SFDO_API_CALLS = sa.Table(
     'sba_sfdo_api_calls', METADATA,
     sa.Column('sba_sfdo_id', sa.BigInteger),
+    sa.Column('full_address', sa.Text),
     sa.Column('yelp_rating', sa.Numeric),
-    sa.Column('yelp_total_reviews', sa.BigInteger),
+    sa.Column('yelp_total_reviews', sa.Numeric),
     sa.Column('yelp_url', sa.Text),
     sa.Column('yelp_timestamp', sa.DateTime),
     sa.Column('civics_district', sa.Text),
     sa.Column('civics_timestamp', sa.DateTime),
-    sa.Column('geocode_data', sa.Text),
+    sa.Column('geocode_lat', sa.Numeric),
+    sa.Column('geocode_long', sa.Numeric),
     sa.Column('geocode_timestamp', sa.DateTime),
     schema='stg_analytics')
