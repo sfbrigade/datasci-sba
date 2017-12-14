@@ -101,7 +101,7 @@ def reset_timestamp(db_params):
     db_url = db_params['db_url']
     dbm = DBManager(db_url=db_url)
     sfdo_orig = get_all_records(dbm)
-    sfdo_orig['geocode_timestamp'] = pd.to_datetime('None', errors='coerce')
+    sfdo_orig['geocode_timestamp'] = pd.to_datetime(None, errors='coerce')
     sfdo_orig = sfdo_orig.set_index('sba_sfdo_id')
     dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
 
@@ -114,7 +114,7 @@ def clear_data(db_params):
     sfdo_orig = get_all_records(dbm)
     sfdo_orig['geocode_lat'] = np.nan
     sfdo_orig['geocode_long'] = np.nan
-    sfdo_orig['geocode_timestamp'] = pd.to_datetime('None', errors='coerce')
+    sfdo_orig['geocode_timestamp'] = pd.to_datetime(None, errors='coerce')
     sfdo_orig = sfdo_orig.set_index('sba_sfdo_id')
     dbm.write_df_table(sfdo_orig, table_name='sba_sfdo_api_calls', schema='stg_analytics', index=True)
 
@@ -151,6 +151,7 @@ def get_records(dbm, max_records, max_days_to_store):
                            + sfdo['borr_city'] + ', '\
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
+    sfdo['geocode_timestamp'] = pd.to_datetime(sfdo['geocode_timestamp'], errors='coerce')
     return sfdo
 
 
@@ -178,9 +179,9 @@ def update_geocode(args, sfdo_update):
     total_records = len(sfdo_update)
     print('......Contacting Google Geocode')
     failures = 0
-    max_failures = 10
+    max_failures = 50
     i = 0
-    while i < total_records:
+    for index, row in sfdo_update.iterrows():
         # https://stackoverflow.com/questions/3002085/python-to-print-out-status-bar-and-percentage
         my_pct = 100 * i // total_records;
         if my_pct > pct_complete:
@@ -190,20 +191,20 @@ def update_geocode(args, sfdo_update):
                 sys.stdout.write('%-20s %3d%%' % ('.'*five_pct, 5*five_pct))
                 sys.stdout.flush()
             pct_complete = my_pct
-        address = sfdo_update.loc[i]['full_address']
+        address = row.full_address;
         try:
             query_result = geolocator.geocode(address)
             if query_result:
                 latitude = query_result.latitude
                 longitude = query_result.longitude
-                sfdo_update.loc[i, 'geocode_lat'] = float(latitude)
-                sfdo_update.loc[i, 'geocode_long'] = float(longitude)
-                sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                sfdo_update.loc[index, 'geocode_lat'] = float(latitude)
+                sfdo_update.loc[index, 'geocode_long'] = float(longitude)
+                sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
                 update_count += 1
             else:
-                sfdo_update.loc[i, 'geocode_lat'] = np.nan
-                sfdo_update.loc[i, 'geocode_long'] = np.nan
-                sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                sfdo_update.loc[index, 'geocode_lat'] = np.nan
+                sfdo_update.loc[index, 'geocode_long'] = np.nan
+                sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), error='coerce')
         except geopy.exc.GeocoderQuotaExceeded as err:
             sys.stdout.write('\r')
             print('Quota exceeded: {}: No further processing attempted.'.format(err))
@@ -233,16 +234,16 @@ def update_geocode(args, sfdo_update):
         except geopy.exc.GeopyError as err:
             sys.stdout.write('\r')
             print('Exception: {}'.format(err))
-            sfdo_update.loc[i, 'geocode_lat'] = np.nan
-            sfdo_update.loc[i, 'geocode_long'] = np.nan
-            sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+            sfdo_update.loc[index, 'geocode_lat'] = np.nan
+            sfdo_update.loc[index, 'geocode_long'] = np.nan
+            sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             pass
         except:
             sys.stdout.write('\r')
             print('Unknown exception occurred')
-            sfdo_update.loc[i, 'geocode_lat'] = np.nan
-            sfdo_update.loc[i, 'geocode_long'] = np.nan
-            sfdo_update.loc[i, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+            sfdo_update.loc[index, 'geocode_lat'] = np.nan
+            sfdo_update.loc[index, 'geocode_long'] = np.nan
+            sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             pass
         # Force a short pause, to minimize the timeout errors.
         time.sleep(1)
