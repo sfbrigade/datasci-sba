@@ -149,7 +149,7 @@ def get_records(dbm, max_records, max_days_to_store):
                            + sfdo['borr_city'] + ', '\
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
-    
+    sfdo['civics_timestamp'] = pd.to_datetime(sfdo['civics_timestamp'], errors='coerce')
     return sfdo
 
 
@@ -175,7 +175,8 @@ def update_google_civics(args, sfdo_update):
     pct_complete = -1
     total_records = len(sfdo_update)
     print('......Contacting Google Civics')
-    for i in range(total_records):
+    i = 0
+    for index, row in sfdo_update.iterrows():
         # https://stackoverflow.com/questions/3002085/python-to-print-out-status-bar-and-percentage
         my_pct = 100 * i // total_records;
         if my_pct > pct_complete:
@@ -185,7 +186,7 @@ def update_google_civics(args, sfdo_update):
                 sys.stdout.write('%-20s %3d%%' % ('.'*five_pct, 5*five_pct))
                 sys.stdout.flush()
             pct_complete = my_pct
-        address = sfdo_update.loc[i]['full_address']
+        address = row.full_address
         params = { 'address' : address,
                    'includeOffices' : False,
                    'key' : key }
@@ -228,12 +229,12 @@ def update_google_civics(args, sfdo_update):
                             else:
                                 print('Warning: state mistmatch {} != {}'.format(state, new_state))
             if found:
-                sfdo_update.loc[i, 'civics_district'] = cong_district
-                sfdo_update.loc[i ,'civics_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                sfdo_update.loc[index, 'civics_district'] = cong_district
+                sfdo_update.loc[index ,'civics_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
                 update_count += 1
             else:
-                sfdo_update.loc[i, 'civics_district'] = ''
-                sfdo_update.loc[i, 'civics_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                sfdo_update.loc[index, 'civics_district'] = ''
+                sfdo_update.loc[index, 'civics_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
         # TODO should determine the types of exceptions and write more
         # specific handlers. If there is a configuration related
         # exception, we should abort and return None so no database
@@ -243,9 +244,10 @@ def update_google_civics(args, sfdo_update):
         # condition and attempt the same bad address or name lookup
         # each time the script runs.
         except:
-            sfdo_update.loc[i, 'civics_district'] = ''
-            sfdo_update.loc[i, 'civics_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+            sfdo_update.loc[index, 'civics_district'] = ''
+            sfdo_update.loc[index, 'civics_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             pass
+        i = i + 1
 
     sys.stdout.write('\r')
     sys.stdout.write('%-20s 100%%\n' % ('.'*20))

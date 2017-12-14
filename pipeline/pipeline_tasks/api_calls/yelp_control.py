@@ -150,7 +150,7 @@ def get_records(dbm, max_records, max_days_to_store):
                            + sfdo['borr_city'] + ', '\
                            + sfdo['borr_state'] + ', '\
                            + sfdo['borr_zip']
-    
+    sfdo['yelp_timestamp'] = pd.to_datetime(sfdo['yelp_timestamp'], errors='coerce')
     return sfdo
 
 
@@ -186,18 +186,19 @@ def update_yelp(args, sfdo_update):
     pct_complete = -1
     total_records = len(sfdo_update)
     print('......Contacting Yelp')
-    for i in range(total_records):
+    i = 0
+    for index, row in sfdo_update.iterrows():
         # https://stackoverflow.com/questions/3002085/python-to-print-out-status-bar-and-percentage
-        my_pct = 100 * i // total_records;
+        my_pct = 100 * i // total_records
         if my_pct > pct_complete:
-            five_pct = my_pct // 5;
+            five_pct = my_pct // 5
             if five_pct > (pct_complete // 5):
                 sys.stdout.write('\r')
                 sys.stdout.write('%-20s %3d%%' % ('.'*five_pct, 5*five_pct))
                 sys.stdout.flush()
             pct_complete = my_pct
-        address = sfdo_update.loc[i]['full_address']
-        name = sfdo_update.loc[i]['borr_name']
+        address = row.full_address
+        name = row.borr_name
         params = { 'location' : address,
                    'term' : name,
                    'radius' : 100,
@@ -205,10 +206,10 @@ def update_yelp(args, sfdo_update):
         resp = requests.get(url=url, params=params, headers=headers)
         try:
             bus = resp.json()['businesses'][0]
-            sfdo_update.loc[i, 'yelp_rating'] = bus['rating']
-            sfdo_update.loc[i, 'yelp_total_reviews'] = int(bus['review_count'])
-            sfdo_update.loc[i, 'yelp_url'] = bus['url']
-            sfdo_update.loc[i, 'yelp_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+            sfdo_update.loc[index, 'yelp_rating'] = bus['rating']
+            sfdo_update.loc[index, 'yelp_total_reviews'] = int(bus['review_count'])
+            sfdo_update.loc[index, 'yelp_url'] = bus['url']
+            sfdo_update.loc[index, 'yelp_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             update_count += 1
         # TODO should determine the types of exceptions and write more
         # specific handlers. If there is a configuration related
@@ -219,11 +220,12 @@ def update_yelp(args, sfdo_update):
         # condition and attempt the same bad address or name lookup
         # each time the script runs.
         except:
-            sfdo_update.loc[i, 'yelp_rating'] = 0.0
-            sfdo_update.loc[i, 'yelp_total_reviews'] = 0
-            sfdo_update.loc[i, 'yelp_url'] = ''
-            sfdo_update.loc[i, 'yelp_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+            sfdo_update.loc[index, 'yelp_rating'] = 0.0
+            sfdo_update.loc[index, 'yelp_total_reviews'] = 0
+            sfdo_update.loc[index, 'yelp_url'] = ''
+            sfdo_update.loc[index, 'yelp_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
             pass
+        i = i + 1
 
     sys.stdout.write('\r')
     sys.stdout.write('%-20s 100%%\n' % ('.'*20))
