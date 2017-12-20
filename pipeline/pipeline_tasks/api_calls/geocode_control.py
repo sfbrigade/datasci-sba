@@ -192,62 +192,69 @@ def update_geocode(args, sfdo_update):
                 sys.stdout.flush()
             pct_complete = my_pct
         address = row.full_address
-        try:
-            query_result = geolocator.geocode(address)
-            if query_result:
-                latitude = query_result.latitude
-                longitude = query_result.longitude
-                sfdo_update.loc[index, 'geocode_lat'] = float(latitude)
-                sfdo_update.loc[index, 'geocode_long'] = float(longitude)
-                sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
-                update_count += 1
-            else:
+        worked = False
+        while not worked:
+            try:
+                query_result = geolocator.geocode(address)
+                if query_result:
+                    latitude = query_result.latitude
+                    longitude = query_result.longitude
+                    sfdo_update.loc[index, 'geocode_lat'] = float(latitude)
+                    sfdo_update.loc[index, 'geocode_long'] = float(longitude)
+                    sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                    update_count += 1
+                else:
+                    sfdo_update.loc[index, 'geocode_lat'] = np.nan
+                    sfdo_update.loc[index, 'geocode_long'] = np.nan
+                    sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                worked = True
+            except geopy.exc.GeocoderQuotaExceeded as err:
+                sys.stdout.write('\r')
+                print('Quota exceeded: {}: No further processing attempted.'.format(err))
+                break
+            except geopy.exc.ConfigurationError as err:
+                sys.stdout.write('\r')
+                print('Configuration Error: {}: No further processing attempted.'.format(err))
+                break
+            except geopy.exc.GeocoderServiceError as err:
+                if failures < max_failures:
+                    failures = failures + 1
+                    # We want to repeat this record, so don't increment the index
+                    continue
+                else:
+                    sys.stdout.write('\r')
+                    print('Geocoder Service Error Encountered {} Times: {}: No further processing attempted.'.
+                          format(failures, err))
+                break
+            except geopy.exc.GeocoderQueryError as err:
+                sys.stdout.write('\r')
+                print('Geocoder Query Error: {}: No further processing attempted.'.format(err))
+                break
+            except geopy.exc.GeocoderAuthenticationFailure as err:
+                sys.stdout.write('\r')
+                print('Geocoder Authentication Failure: {}: No further processing attempted.'.format(err))
+                break
+            except geopy.exc.GeopyError as err:
+                sys.stdout.write('\r')
+                print('Exception: {}'.format(err))
                 sfdo_update.loc[index, 'geocode_lat'] = np.nan
                 sfdo_update.loc[index, 'geocode_long'] = np.nan
-                sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), error='coerce')
-        except geopy.exc.GeocoderQuotaExceeded as err:
-            sys.stdout.write('\r')
-            print('Quota exceeded: {}: No further processing attempted.'.format(err))
-            break
-        except geopy.exc.ConfigurationError as err:
-            sys.stdout.write('\r')
-            print('Configuration Error: {}: No further processing attempted.'.format(err))
-            break
-        except geopy.exc.GeocoderServiceError as err:
-            if failures < max_failures:
-                failures = failures + 1
-                # We want to repeat this record, so don't increment the index
-                continue
-            else:
+                sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                worked = True
+                pass
+            except:
                 sys.stdout.write('\r')
-                print('Geocoder Service Error Encountered {} Times: {}: No further processing attempted.'.
-                      format(failures, err))
-                break
-        except geopy.exc.GeocoderQueryError as err:
-            sys.stdout.write('\r')
-            print('Geocoder Query Error: {}: No further processing attempted.'.format(err))
+                print('Unknown exception occurred')
+                sfdo_update.loc[index, 'geocode_lat'] = np.nan
+                sfdo_update.loc[index, 'geocode_long'] = np.nan
+                sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
+                worked = True
+                pass
+            # Force a short pause, to minimize the timeout errors.
+            time.sleep(1)
+            i = i + 1
+        if not worked:
             break
-        except geopy.exc.GeocoderAuthenticationFailure as err:
-            sys.stdout.write('\r')
-            print('Geocoder Authentication Failure: {}: No further processing attempted.'.format(err))
-            break
-        except geopy.exc.GeopyError as err:
-            sys.stdout.write('\r')
-            print('Exception: {}'.format(err))
-            sfdo_update.loc[index, 'geocode_lat'] = np.nan
-            sfdo_update.loc[index, 'geocode_long'] = np.nan
-            sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
-            pass
-        except:
-            sys.stdout.write('\r')
-            print('Unknown exception occurred')
-            sfdo_update.loc[index, 'geocode_lat'] = np.nan
-            sfdo_update.loc[index, 'geocode_long'] = np.nan
-            sfdo_update.loc[index, 'geocode_timestamp'] = pd.to_datetime(get_timestamp(), errors='coerce')
-            pass
-        # Force a short pause, to minimize the timeout errors.
-        time.sleep(1)
-        i = i + 1
     sys.stdout.write('\r')
     sys.stdout.write('%-20s 100%%\n' % ('.'*20))
     sys.stdout.flush()
