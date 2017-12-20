@@ -53,6 +53,6 @@ See https://github.com/sfbrigade/datasci-sba/blob/master/notebooks/query_sql_tem
 
 - D3 Visualization Package - One-time free course at Rithm School (via meetup.com): https://www.meetup.com/meetup-code-your-face-off/events/241379532/
 
-| Previous | 
-|:---------|
-| [Development Environment](./02_development_environment.md) |
+| Previous | Next |
+|:---------|-----:|
+| [Development Environment](./02_development_environment.md) | [Third Party Data](./06_third_party.md) |

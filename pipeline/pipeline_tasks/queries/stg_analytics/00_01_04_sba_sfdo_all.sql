@@ -51,7 +51,13 @@ sba_guaranteed_approval bigint,
 revolver_status bigint,
 yelp_rating numeric,
 yelp_total_reviews bigint,
-yelp_url text
+yelp_url text,
+yelp_timestamp timestamp without time zone,
+civics_district text,
+civics_timestamp timestamp without time zone,
+geocode_lat double precision,
+geocode_long double precision,
+geocode_timestamp timestamp without time zone
 );
 
 insert into stg_analytics.sba_sfdo_all
@@ -103,7 +109,13 @@ select
   sba_sfdo.revolver_status,
   api_calls.yelp_rating,
   api_calls.yelp_total_reviews,
-  api_calls.yelp_url
+  api_calls.yelp_url,
+  api_calls.yelp_timestamp,
+  api_calls.civics_district,
+  api_calls.civics_timestamp,
+  api_calls.geocode_lat,
+  api_calls.geocode_long,
+  api_calls.geocode_timestamp
 from stg_analytics.sba_sfdo as sba_sfdo
   left join stg_analytics.sba_sfdo_api_calls as api_calls
     on sba_sfdo.sba_sfdo_id = api_calls.sba_sfdo_id
