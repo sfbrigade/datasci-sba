@@ -41,3 +41,17 @@ In this section, we describe example use cases that we will support for the Busi
     4. The idea here is that the use case is someone meets with a city/government official, and they want to know the different businesses funded by the SBA in a given area. How can we show that in an easy manner?
 3. Filter based on some metric that proxies for successful businesses (high yelp ratings, loans paid in full). 
 
+## Endpoint Url Format
+
+- GET /api/v1/districts
+    - Returns the list of supported districts.  We may want to add a DB table and Model for districts and give `sba_sfdo` and `sba_region_level` foreign keys to this district table, which will make the API mapping easier.
+    - Sample result: `[{id: 1, name: 'SFDO', businesses: '/api/v1/districts/sfdo/businesses', regiontypes: [{id: 1, name: 'zip', regions: '/api/v1/districts/sfdo/regions?regiontype=zip', businesses: '/api/v1/districts/sfdo/businesses?regiontype=zip', geometry: '/api/v1/districts/sfdo/geometry?regiontype=zip'}]`
+- GET /api/v1/districts/`sfdo`/regions?regiontype=`zip`
+    - Returns the SBA region level data.  Can be implemented in the REST framework as the list of SbaRegionLevel elements related to the given district, and filtered by the given regiontype.
+    - Sample result: same as the current /api/v1/regions
+- GET /api/v1/districts/`sfdo`/geometry?regiontype=`zip`
+    - Gives the GeoJSON (or TopoJSON?) encoding of the regions.  Can be implemented as a `@detail_route` that streams the contents of the appropriate static json file.  We may want to rename the static json files into some consistent naming scheme so we can look up by district and region type; e.g. rename `tempdata/ca_zips_geo.json` to `tempdata/geometry_sfdo_zip.json`
+    - Sample result: contents of `tempdata/ca_zips_geo.json`
+- GET /api/v1/districts/`sfdo`/businesses
+    - Returns the list of businesses from the `sba_sfdo` table.  Exact fields TBD. Can be implemented in the REST framework as the list of SbaSfdo elements related to the given district.
+    - Sample result: `[{id: 1, name: 'Apple, Inc.', latitude: 37.3230, longitude: -122.0322, yelp_rating: 4.3}] `
